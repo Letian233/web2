@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <link rel="stylesheet" href="../CSS/bootstrap.css">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/card.css">
+    <link rel="stylesheet" href="../CSS/hamberger.css">
+    <script src="../JS/hamberger.js"></script>
+    <script src="../JS/jQuery_v3.7.1.js"></script>
+    <script src="../JS/jQuery_fadeIn.js"></script>
+    <script src="../JS/jQuery_ToTop.js"></script>
+</head>
+<body>
+    <div id="container">
+        <header>
+            <nav>
+              <button class="hamburger" aria-label="Menu" aria-controls="nav" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+              <ul id="nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="menu.html">Menu</a></li>
+                <li><a href="gallery.html" class="current">Gallery</a></li>
+                <li><a href="reviews.html">Review</a></li>
+                <li><a href="contact.html">Contact</a></li>
+              </ul>
+            </nav>
+          </header>
+        
+          <div class="card-column column-0">
+            <div class="card card-color-0" data-index="0">
+              <div class="border"></div>
+              <img src="../images/beef-stew-15.png" alt="beef-stew-15">
+              <h1>Boeuf Bourguignon</h1>
+            </div>
+            <div class="card card-color-2" data-index="1">
+              <div class="border"></div>
+              <img src="../images/black_cake.jpg" alt="black_cake">
+              <h1>Black Forest Cake</h1>
+            </div>
+          </div>
+          <div class="card-column column-1" data-index="2">
+            <div class="card card-color-1">
+              <div class="border"></div>
+              <img src="../images/Spaghetti.jpg" alt="Spaghetti">
+              <h1>Spaghetti</h1>
+            </div>
+            <div class="card card-color-3" data-index="3">
+              <div class="border"></div>
+              <img src="../images/pizza1.jpg" alt="Pizza">
+              <h1>Pizza Margherita</h1>
+            </div>
+          </div>
+      
+    </div>
+    <div id="cover" class="cover"></div>
+
+<div id="open-content" class="open-content">
+  <a href="#" id="close-content" class="close-content" title="open card"><span class="x-1"></span><span class="x-2"></span></a>
+  <img id="open-content-image" src="#" alt="open-content-image">
+  <div class="text" id="open-content-text">
+  </div>
+</div>
+<!-- partial -->
+  <script  src="../JS/card.js"></script>
+
+  
+  <div class="container2">
+    <div class="pic">
+      <div class="home-widget">
+        <h3>French Snails</h3>
+        <img src="../images/snails.jpg" width="300" alt="snails" >
+        <p>Snails have been a source of easily accessible protein since ancient Roman times. This culinary tradition was passed down through Europe, and the French have known the delicacy of snails for centuries, preparing various dishes with them.During the Middle Ages, snails were a food source for the common people due to poverty. </p>
+      </div>
+      <div class="home-widget">
+        <h3>Tiramisu</h3>
+        <img src="../images/Tiramisu.jpg" width="300" alt="Tiramisu" >
+        <p>The Soldier and His Wife:
+          A widely circulated story is that Tiramisu originated during World War II. An Italian soldier was about to go to war, and his wife, wanting to prepare provisions for him, used all the biscuits and bread in their home to create a single dessert for him to take along. This dessert was Tiramisu.</p>
+      </div>
+      <div class="home-widget">
+        <h3>Lasagna</h3>
+        <img src="../images/lasagna.png" width="300" alt="Lasagna" >
+        <p>The origins of lasagna can be traced back to medieval Italy, particularly the region of Naples. The earliest recorded recipe is found in the "Liber de Coquina," a cookbook from the early 14th century. This recipe, while slightly different from the lasagna we know today</p>
+      </div>
+      <br >
+    </div>
+    <footer>
+      <div class="wid">
+        <div class="footer-widget">
+          <h4>About Us</h4>
+          <p>EpicEats is a food ordering platform dedicated to elevating the dining experience to new heights. We believe that every meal is not just a simple combination of food, but an adventure for the taste buds and a cultural exchange. Our mission is to connect diners with culinary creators, making every food order a memorable gastronomic journey. We promise that through our service, you will not only enjoy delicious food but also experience the culture and stories behind it. Join EpicEats and let's embark on a legendary journey of gastronomy together. </p>
+        </div>
+        <div class="footer-widget">
+          <h4>From The Blog</h4>
+          <ul class="blog">
+            <li><a href="#">Culinary Explorations</a><br>
+              We delve into the stories behind various dishes, from traditional cuisines to modern culinary innovations, with each post being a profound tribute to food. </li>
+            <li><a href="#">Recipe Sharing</a><br>
+              Our team of chefs carefully selects and shares exclusive recipes, allowing you to recreate restaurant-quality dishes at home. </li>
+            <li><a href="#">Diner Experiences</a><br>
+              Share real experiences and reviews from diners, giving you firsthand information before you make a reservation. </li>
+            
+          </ul>
+        </div>
+        <div class="footer-widget">
+          <h4>We Are Social!</h4>
+          <div id="social"> 
+            
+            <a href="https://m-face-book.com/" class="s3d facebook" target="_blank"> Facebook <span class="icons facebook"></span> </a> 
+            <a href="https://zurb.com/blog/zurb-acquires-forrst" class="s3d forrst" target="_blank"> Forrst <span class="icons forrst"></span> </a> 
+            <a href="https://blog.flickr.net/zh" class="s3d flickr" target="_blank"> Flickr <span class="icons flickr"></span> </a> 
+            <a href="https://designmodo.com/" class="s3d designmoo" target="_blank"> Designmoo <span class="icons designmoo"></span> </a> </div>
+        </div>
+      </div>
+        <div class="border2"></div>
+        <br >
+        <span class="copyright"><span class="left"><br >
+        &copy; Copyright 2024 - All Rights Reserved - <a href="https://github.com/missmeso?tab=repositories" target="_blank">Letian</a></span><span class="right"><br >
+    Design by 1029573707@qq.com | <a href="https://mail.qq.com/?_sm_nck=1" target="_blank">Sent Email</a><br >
+    <br >
+        <br >
+        </span></span>
+      </footer>
+      <button id="scrollToTop" title="Scroll to top">Top</button>
+  </div>
+  
+</body>
+</html>
