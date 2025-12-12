@@ -14,7 +14,26 @@
     <script src="../JS/hamberger.js"></script>
     <script src="../JS/jQuery_fadeIn.js"></script>
     <script src="../JS/jQuery_ToTop.js"></script>
-    
+    <style>
+      #scrollToTop {
+        position: fixed !important;
+        bottom: 30px;
+        right: 20px;
+        z-index: 9999;
+        cursor: pointer;
+        padding: 8px 14px;
+        font-size: 16px;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      #scrollToTop:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+      }
+      #scrollToTop:active {
+        position: fixed !important;
+        bottom: 27px;
+      }
+    </style>
 </head>
 <body>
     <div id="container">
@@ -31,9 +50,7 @@
                   <li class="nav-item"><a class="nav-link current" href="index.html">Home</a></li>
                   <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
                   <li class="nav-item"><a class="nav-link" href="menu.html">Menu</a></li>
-                  <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
                   <li class="nav-item"><a class="nav-link" href="reviews.html">Review</a></li>
-                  <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
                 </ul>
               </div>
             </div>
@@ -229,7 +246,7 @@
           <div class="row">
             <div class="col-12 col-md-6">
               <span class="copyright"><span class="left"><br>
-                &copy; Copyright 2024 - All Rights Reserved - <a href="https://github.com/missmeso?tab=repositories" target="_blank">Letian</a></span><button id="scrollToTop" title="Scroll to top">Top</button>
+                &copy; Copyright 2024 - All Rights Reserved - <a href="https://github.com/missmeso?tab=repositories" target="_blank">Letian</a></span>
             </div>
             <div class="col-12 col-md-6 text-md-end">
               <span class="copyright"><span class="right"><br>
@@ -241,7 +258,7 @@
           </div>
         </div>
       </footer>
-      
+      <button id="scrollToTop" title="Scroll to top">Top</button>
     </div>
     </body>
     <script>
