@@ -12,6 +12,10 @@
     <script src="../JS/hamberger.js"></script>
     <script src="../JS/jQuery_fadeIn.js"></script>
     <script src="../JS/jQuery_ToTop.js"></script>
+    <script src="../JS/data.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/main.js"></script>
+    <script src="../JS/reviews.js"></script>
     <style>
       /* 覆盖原有冲突样式 */
       .reviews-page article {
@@ -62,6 +66,8 @@
     </style>
 </head>
 <body class="reviews-page">
+    <!-- 用户菜单 - 固定在右上角 -->
+    <div id="userMenuContainer" class="user-menu-fixed"></div>
     <div id="container">
         <header>
           <nav class="navbar navbar-expand-lg navbar-dark">
@@ -92,21 +98,51 @@
           <div class="col-12 col-lg-8">
             <article>
               <h3>Reviews</h3>
-              <blockquote>
-                <p>I had the pan-seared steak at this restaurant last night, and it was tender and juicy with perfect seasoning. The herb sauce added a delightful touch to the dish. The service was attentive, making for a pleasant dining experience.<span>~John Doe</span></p>
-              </blockquote>
-              <div class="border3"></div>
-              <blockquote>
-                <p>The seafood pasta was a delightful surprise, with fresh seafood perfectly combined with pasta, and a rich sauce that wasn't too heavy. Every bite was a taste of the ocean's freshness. The ambiance was comfortable, perfect for sharing a meal with family and friends.<span>~Emily Smith</span></p>
-              </blockquote>
-              <div class="border3"></div>
-              <blockquote>
-                <p>Dessert lovers must not miss the chocolate lava cake, with a crust that's just right and a molten chocolate center that flows out, sweet but not too rich. The vanilla ice cream that comes with it is the cherry on top.<span>~Sarah Johnson</span></p>
-              </blockquote>
-              <div class="border3"></div>
-              <blockquote>
-                <p>The roasted chicken had a crispy skin and juicy meat, seasoned just right to enhance the natural flavor of the chicken without overpowering it. The side dishes were also abundant, making it a satisfying main course overall.<span>~David Wilson</span></p>
-              </blockquote>
+              
+              <!-- 表单一：顶部静态表单（位于评论列表上方） -->
+              <div class="bili-comment-input" id="static-review-form">
+                <div class="comment-avatar">
+                  <div class="avatar-circle" id="currentUserAvatar">U</div>
+                </div>
+                <div class="comment-input-wrapper">
+                  <textarea 
+                    id="review-text" 
+                    class="comment-textarea" 
+                    placeholder="Share your thoughts..."
+                    rows="3"
+                  ></textarea>
+                </div>
+                <button type="button" class="comment-submit-btn" id="submitReviewBtn">Send</button>
+              </div>
+
+              <!-- 评论展示容器（固定高度，内部滚动） -->
+              <div class="reviews-widget">
+                <!-- 滚动区域 -->
+                <div class="reviews-scroll-area" id="reviews-scroll-area">
+                  <!-- 评论列表容器（容器内滚动） -->
+                  <div id="reviews-list" class="bili-comments-list">
+                    <!-- 评论将在这里动态生成 -->
+                  </div>
+                </div>
+
+                <!-- 表单二：底部悬浮栏（固定在评论区底部，默认隐藏） -->
+                <div id="sticky-bottom-bar" class="sticky-bottom-bar" aria-hidden="true">
+                  <div class="sticky-bar-content">
+                    <div class="comment-avatar">
+                      <div class="avatar-circle" id="stickyUserAvatar">U</div>
+                    </div>
+                    <div class="sticky-input-wrapper">
+                      <textarea 
+                        id="sticky-review-text" 
+                        class="sticky-textarea" 
+                        placeholder="Share your thoughts..."
+                        rows="1"
+                      ></textarea>
+                    </div>
+                    <button type="button" class="sticky-submit-btn" id="stickySubmitBtn">Send</button>
+                  </div>
+                </div>
+              </div>
             </article>
           </div>
           
@@ -125,63 +161,6 @@
         <div class="border2 mt-4"></div>
       </div>
     </div>
-      
-    <footer>
-      <div class="container">
-        <div class="border"></div>
-        <div class="wid">
-          <div class="row g-4">
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="footer-widget">
-                <h4>About Us</h4>
-                <p>EpicEats is a food ordering platform dedicated to elevating the dining experience to new heights. We believe that every meal is not just a simple combination of food, but an adventure for the taste buds and a cultural exchange. Our mission is to connect diners with culinary creators, making every food order a memorable gastronomic journey. We promise that through our service, you will not only enjoy delicious food but also experience the culture and stories behind it. Join EpicEats and let's embark on a legendary journey of gastronomy together. </p>
-              </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="footer-widget">
-                <h4>From The Blog</h4>
-                <ul class="blog">
-                  <li><a href="#">Culinary Explorations</a><br>
-                    We delve into the stories behind various dishes, from traditional cuisines to modern culinary innovations, with each post being a profound tribute to food. </li>
-                  <li><a href="#">Recipe Sharing</a><br>
-                    Our team of chefs carefully selects and shares exclusive recipes, allowing you to recreate restaurant-quality dishes at home. </li>
-                  <li><a href="#">Diner Experiences</a><br>
-                    Share real experiences and reviews from diners, giving you firsthand information before you make a reservation. </li>
-                  
-                </ul>
-              </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="footer-widget">
-                <h4>We Are Social!</h4>
-                <div id="social"> 
-                  <!-- <a href="http//twitter.com/priteshgupta" class="s3d twitter" target="_blank"> Twitter <span class="icons twitter"></span> </a>  -->
-                  <a href="https://m-face-book.com/" class="s3d facebook" target="_blank"> Facebook <span class="icons facebook"></span> </a> 
-                  <a href="https://zurb.com/blog/zurb-acquires-forrst" class="s3d forrst" target="_blank"> Forrst <span class="icons forrst"></span> </a> 
-                  <a href="https://blog.flickr.net/zh" class="s3d flickr" target="_blank"> Flickr <span class="icons flickr"></span> </a> 
-                  <a href="https://designmodo.com/" class="s3d designmoo" target="_blank"> Designmoo <span class="icons designmoo"></span> </a> </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="border2"></div>
-        <br>
-        <div class="row">
-          <div class="col-12 col-md-6">
-            <span class="copyright"><span class="left"><br>
-              &copy; Copyright 2024 - All Rights Reserved - <a href="https://github.com/missmeso?tab=repositories" target="_blank">Letian</a></span>
-          </div>
-          <div class="col-12 col-md-6 text-md-end">
-            <span class="copyright"><span class="right"><br>
-              Design by 1029573707@qq.com | <a href="https://mail.qq.com/?_sm_nck=1" target="_blank">Sent Email</a><br>
-              <br>
-              <br>
-            </span></span>
-          </div>
-        </div>
-      </div>
-    </footer>
-    <button id="scrollToTop" title="Scroll to top">Top</button>
   </div>
 </body>
 </html>

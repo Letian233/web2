@@ -12,81 +12,14 @@
     <script src="../JS/hamberger.js"></script>
     <script src="../JS/jQuery_fadeIn.js"></script>
     <script src="../JS/jQuery_ToTop.js"></script>
-    <script src="../JS/GetPosition.js"></script>
-    <script src="../JS/WebStore2.js"></script>
-    <style>
-      /* 覆盖原有冲突样式 */
-      .menu-page article.menu {
-        width: 100% !important;
-        float: none !important;
-        border-right: none !important;
-        padding: 0 !important;
-      }
-      .menu-page .sidebar {
-        width: 100% !important;
-        float: none !important;
-        padding: 15px !important;
-        background: #f5f0e0;
-        border-radius: 5px;
-      }
-      .menu-page .menu-item {
-        padding: 15px 0;
-        clear: both;
-      }
-      .menu-page .menu-item .item-image {
-        max-width: 200px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      }
-      .menu-page .menu-header {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-      .menu-page .menu-header h3 {
-        margin: 0;
-        flex: 1;
-      }
-      .menu-page .star img {
-        width: 20px;
-        height: 20px;
-      }
-      .menu-page .sidebar h3 {
-        text-align: left;
-      }
-      .menu-page .sidebar .blog {
-        width: 100%;
-      }
-      @media (max-width: 991px) {
-        .menu-page .menu-item .item-image {
-          max-width: 100%;
-          width: 100%;
-        }
-      }
-      #scrollToTop {
-        position: fixed !important;
-        bottom: 30px;
-        right: 20px;
-        z-index: 9999;
-        cursor: pointer;
-        padding: 8px 14px;
-        font-size: 16px;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-      }
-      #scrollToTop:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-      }
-      #scrollToTop:active {
-        position: fixed !important;
-        bottom: 27px;
-      }
-    </style>
+    <script src="../JS/data.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/menu.js"></script>
+    <script src="../JS/main.js"></script>
 </head>
 <body class="menu-page">
+    <!-- 用户菜单 - 固定在右上角 -->
+    <div id="userMenuContainer" class="user-menu-fixed"></div>
     <div id="container">
         <header>
           <nav class="navbar navbar-expand-lg navbar-dark">
@@ -112,115 +45,51 @@
       <div class="container">
         <div class="border"></div>
         <div id="orderHistory"></div>
-        <div id="locationInfo"></div>
         
         <div class="row mt-4">
           <!-- 左侧菜单区域 -->
           <div class="col-12 col-lg-8">
             <article class="menu">
-              
-              <!-- Pizza -->
-              <div class="menu-item">
-                <div class="menu-header">
-                  <h3>Pizza: $25</h3>
-                  <a class="button" href="" data-pizza-type="Pizza">Order Now</a>
-                </div>
-                <div class="star mb-2">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_half_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_empty.png" class="noeffects" alt="star">
-                </div>
-                <div class="row align-items-start">
-                  <div class="col-12 col-md-4 mb-3 mb-md-0">
-                    <img src="../images/pizza1.jpg" class="img-fluid item-image" alt="Pizza">
-                  </div>
-                  <div class="col-12 col-md-8">
-                    <p>Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.</p>
-                  </div>
-                </div>
-                <div class="border3 mt-3"></div>
-              </div>
-              
-              <!-- Black Forest Cake -->
-              <div class="menu-item">
-                <div class="menu-header">
-                  <h3>Black Forest Cake: $20</h3>
-                  <a class="button" href="" data-pizza-type="Black Forest Cake">Order Now</a>
-                </div>
-                <div class="star mb-2">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_empty.png" class="noeffects" alt="star">
-                </div>
-                <div class="row align-items-start">
-                  <div class="col-12 col-md-4 mb-3 mb-md-0">
-                    <img src="../images/black_cake.jpg" class="img-fluid item-image" alt="Black Forest Cake">
-                  </div>
-                  <div class="col-12 col-md-8">
-                    <p>Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.</p>
-                  </div>
-                </div>
-                <div class="border3 mt-3"></div>
-              </div>
-              
-              <!-- Boeuf Bourguignon -->
-              <div class="menu-item">
-                <div class="menu-header">
-                  <h3>Boeuf Bourguignon: $45</h3>
-                  <a class="button" href="" data-pizza-type="Boeuf Bourguignon">Order Now</a>
-                </div>
-                <div class="star mb-2">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                </div>
-                <div class="row align-items-start">
-                  <div class="col-12 col-md-4 mb-3 mb-md-0">
-                    <img src="../images/beef-stew-15.png" class="img-fluid item-image" alt="Boeuf Bourguignon">
-                  </div>
-                  <div class="col-12 col-md-8">
-                    <p>Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.</p>
-                  </div>
-                </div>
-                <div class="border3 mt-3"></div>
-              </div>
-              
-              <!-- French Snails -->
-              <div class="menu-item">
-                <div class="menu-header">
-                  <h3>French Snails: $30</h3>
-                  <a class="button" href="#" data-pizza-type="French Snails">Order Now</a>
-                </div>
-                <div class="star mb-2">
-                  <img src="../images/star_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_half_full.png" class="noeffects" alt="star">
-                  <img src="../images/star_empty.png" class="noeffects" alt="star">
-                  <img src="../images/star_empty.png" class="noeffects" alt="star">
-                  <img src="../images/star_empty.png" class="noeffects" alt="star">
-                </div>
-                <div class="row align-items-start">
-                  <div class="col-12 col-md-4 mb-3 mb-md-0">
-                    <img src="../images/snails.jpg" class="img-fluid item-image" alt="French Snails">
-                  </div>
-                  <div class="col-12 col-md-8">
-                    <p>Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.</p>
-                  </div>
+              <!-- 搜索栏 -->
+              <div class="menu-search-bar mb-4">
+                <div class="search-input-wrapper">
+                  <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search dishes, categories..."
+                    aria-label="Search menu items"
+                  >
+                  <button type="button" id="searchBtn" class="search-button" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5f5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                  </button>
                 </div>
               </div>
               
+              <!-- 菜品容器 -->
+              <div id="menu-container">
+                <!-- 菜单项将在这里动态生成 -->
+              </div>
+              
+              <!-- 分页控件 -->
+              <div class="menu-pagination mt-4">
+                <button id="prevBtn" class="pagination-btn">Previous</button>
+                <span id="pageInfo" class="pagination-info">Page 1 of 3</span>
+                <button id="nextBtn" class="pagination-btn">Next</button>
+              </div>
             </article>
           </div>
           
           <!-- 右侧边栏 -->
           <div class="col-12 col-lg-4 mt-4 mt-lg-0">
             <aside class="sidebar">
-              <h3>Today's Specials</h3>
+              <div class="sidebar-header">
+                <h3>Today's Specials</h3>
+                <button class="button view-cart-btn" id="viewCartBtn">View Cart</button>
+              </div>
               <ul class="blog">
                 <li><a href="#">Seafood Pasta</a><br>
                   Fresh seafood with traditional pasta, served with a white wine cream sauce, $18</li>
@@ -236,6 +105,24 @@
               <img src="../images/beef_ribs.jpg" class="img-fluid mb-3" alt="Beef Ribs">
               <p><strong>Slow-Roasted Beef Ribs</strong> Slow-roasted beef ribs are one of the signature dishes of our restaurant, embodying our passion for fine cuisine and commitment to culinary craftsmanship. This dish is renowned for its tender meat and unique flavor profile.<br>
                 <a href="#"><strong>Continue Reading &raquo;</strong></a></p>
+              
+              <!-- Delivery Info Widget -->
+              <div class="border3 mt-4"></div>
+              <div class="sidebar-widget">
+                <h4>Free Delivery</h4>
+                <div style="margin-top: 15px; color: #693434;">
+                  <p style="margin-bottom: 15px; line-height: 1.6;">
+                    Free delivery for orders over $50 within 5km radius!
+                  </p>
+                  <p style="margin-bottom: 0; color: #9c5959; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9c5959" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>Avg. time: 30-45 mins</span>
+                  </p>
+                </div>
+              </div>
             </aside>
           </div>
         </div>
@@ -300,6 +187,48 @@
       </div>
     </footer>
     <button id="scrollToTop" title="Scroll to top">Top</button>
+  </div>
+
+  <!-- 购物车模态框 -->
+  <div id="cartModal" class="cart-modal">
+    <div class="cart-modal-overlay"></div>
+    <div class="cart-modal-content">
+      <div class="cart-modal-header">
+        <h3>Shopping Cart</h3>
+        <button class="cart-modal-close" id="cartModalClose">&times;</button>
+      </div>
+      <!-- 标签页导航 -->
+      <div class="cart-modal-tabs">
+        <button class="cart-tab-btn active" data-tab="current" id="tabCurrent">Current Order</button>
+        <button class="cart-tab-btn" data-tab="history" id="tabHistory">Order History</button>
+      </div>
+      <div class="cart-modal-body">
+        <!-- 当前订单区域 -->
+        <div id="currentOrderTab" class="cart-tab-content active">
+          <div id="cartItemsList" class="cart-items-list">
+            <!-- 购物车商品列表将在这里动态生成 -->
+          </div>
+          <div class="cart-empty-message" id="cartEmptyMessage" style="display: none;">
+            <p>Your cart is empty.</p>
+          </div>
+        </div>
+        <!-- 历史订单区域 -->
+        <div id="orderHistoryTab" class="cart-tab-content">
+          <div id="orderHistoryList" class="order-history-list">
+            <!-- 历史订单列表将在这里动态生成 -->
+          </div>
+          <div class="order-history-empty" id="orderHistoryEmpty" style="display: none;">
+            <p>No order history yet.</p>
+          </div>
+        </div>
+      </div>
+      <div class="cart-modal-footer">
+        <div class="cart-total">
+          <strong>Total: $<span id="cartTotalPrice">0.00</span></strong>
+        </div>
+        <button class="button checkout-btn" id="checkoutBtn">Checkout</button>
+      </div>
+    </div>
   </div>
 </body>
 </html>

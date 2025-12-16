@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - EpicEats</title>
+    <link rel="stylesheet" href="../CSS/bootstrap.css">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/hamberger.css">
+    <script src="../JS/jQuery_v3.7.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../JS/hamberger.js"></script>
+    <script src="../JS/jQuery_fadeIn.js"></script>
+    <script src="../JS/jQuery_ToTop.js"></script>
+    <script src="../JS/data.js"></script>
+    <script src="../JS/cart.js"></script>
+    <script src="../JS/main.js"></script>
+    <script src="../JS/profile.js"></script>
+</head>
+<body>
+    <!-- 用户菜单 - 固定在右上角 -->
+    <div id="userMenuContainer" class="user-menu-fixed"></div>
+    <div id="container">
+        <header>
+          <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+              <button class="navbar-toggler hamburger" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" id="nav">
+                  <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                  <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                  <li class="nav-item"><a class="nav-link" href="menu.html">Menu</a></li>
+                  <li class="nav-item"><a class="nav-link" href="reviews.html">Review</a></li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </header>
+    
+        <div class="wrapper">
+          <div class="container">
+            <div class="border"></div>
+            
+            <div class="profile-page mt-4">
+              <div class="row">
+                <!-- 左侧侧边栏 (30%) -->
+                <div class="col-12 col-md-4 col-lg-3">
+                  <div class="profile-sidebar">
+                    <h3 style="font-family: 'Lobster13Regular', cursive; color: #9c5959; margin-bottom: 20px; text-align: center;">My Account</h3>
+                    <ul class="sidebar-menu">
+                      <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link active" data-tab="profile">My Profile</a>
+                      </li>
+                      <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link" data-tab="orders">Order History</a>
+                      </li>
+                      <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link" data-tab="addresses">Addresses</a>
+                      </li>
+                      <li class="sidebar-menu-item">
+                        <a href="#" class="sidebar-link" id="logoutSidebarLink">Logout</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <!-- 右侧内容区域 (70%) -->
+                <div class="col-12 col-md-8 col-lg-9">
+                  <div class="profile-content">
+                    <!-- Tab 1: My Profile -->
+                    <div id="profileTab" class="tab-content-panel active">
+                      <h2 style="font-family: 'Lobster13Regular', cursive; color: #9c5959; margin-bottom: 30px;">My Profile</h2>
+                      
+                      <div class="profile-avatar-section">
+                        <div id="profileAvatarDisplay" class="profile-avatar-placeholder-large">U</div>
+                        <button class="button" style="font-size: 14px; padding: 6px 15px;">Change Avatar</button>
+                      </div>
+                      
+                      <form class="profile-form" id="profileForm">
+                        <div class="form-group">
+                          <label for="profileUsername">Username</label>
+                          <input type="text" id="profileUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="profileEmail">Email</label>
+                          <input type="email" id="profileEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="profilePhone">Phone</label>
+                          <input type="tel" id="profilePhone" name="phone" placeholder="Enter your phone number">
+                        </div>
+                        <button type="submit" class="button" style="width: 100%; font-size: 18px; padding: 12px;">Save Changes</button>
+                      </form>
+                    </div>
+                    
+                    <!-- Tab 2: Order History -->
+                    <div id="ordersTab" class="tab-content-panel">
+                      <h2 style="font-family: 'Lobster13Regular', cursive; color: #9c5959; margin-bottom: 30px;">Order History</h2>
+                      
+                      <div class="table-responsive">
+                        <table class="order-history-table">
+                          <thead>
+                            <tr>
+                              <th>Order ID</th>
+                              <th>Date</th>
+                              <th>Total</th>
+                              <th>Status</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody id="orderHistoryTableBody">
+                            <!-- 订单数据将在这里动态生成 -->
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <div id="orderItemsAccordion" class="order-items-accordion">
+                        <!-- Accordion 将在这里动态生成 -->
+                      </div>
+                    </div>
+                    
+                    <!-- Tab 3: Addresses -->
+                    <div id="addressesTab" class="tab-content-panel">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="font-family: 'Lobster13Regular', cursive; color: #9c5959; margin: 0;">Addresses</h2>
+                        <button class="button add-address-btn" id="addAddressBtn">Add New Address</button>
+                      </div>
+                      
+                      <div class="address-cards" id="addressCardsContainer">
+                        <!-- 地址卡片将在这里动态生成 -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="border2 mt-4"></div>
+          </div>
+        </div>
+      
+        <footer>
+          <div class="container">
+            <div class="border"></div>
+            <div class="wid">
+              <div class="row g-4">
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="footer-widget">
+                    <h4>About Us</h4>
+                    <p>EpicEats is a food ordering platform dedicated to elevating the dining experience to new heights. We believe that every meal is not just a simple combination of food, but an adventure for the taste buds and a cultural exchange. Our mission is to connect diners with culinary creators, making every food order a memorable gastronomic journey. We promise that through our service, you will not only enjoy delicious food but also experience the culture and stories behind it. Join EpicEats and let's embark on a legendary journey of gastronomy together. </p>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="footer-widget">
+                    <h4>From The Blog</h4>
+                    <ul class="blog">
+                      <li><a href="#">Culinary Explorations</a><br>
+                        We delve into the stories behind various dishes, from traditional cuisines to modern culinary innovations, with each post being a profound tribute to food. </li>
+                      <li><a href="#">Recipe Sharing</a><br>
+                        Our team of chefs carefully selects and shares exclusive recipes, allowing you to recreate restaurant-quality dishes at home. </li>
+                      <li><a href="#">Diner Experiences</a><br>
+                        Share real experiences and reviews from diners, giving you firsthand information before you make a reservation. </li>
+                      
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="footer-widget">
+                    <h4>We Are Social!</h4>
+                    <div id="social"> 
+                      <a href="https://m-face-book.com/" class="s3d facebook" target="_blank"> Facebook <span class="icons facebook"></span> </a> 
+                      <a href="https://zurb.com/blog/zurb-acquires-forrst" class="s3d forrst" target="_blank"> Forrst <span class="icons forrst"></span> </a> 
+                      <a href="https://blog.flickr.net/zh" class="s3d flickr" target="_blank"> Flickr <span class="icons flickr"></span> </a> 
+                      <a href="https://designmodo.com/" class="s3d designmoo" target="_blank"> Designmoo <span class="icons designmoo"></span> </a> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="border2"></div>
+            <br>
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <span class="copyright"><span class="left"><br>
+                  &copy; Copyright 2024 - All Rights Reserved - <a href="https://github.com/missmeso?tab=repositories" target="_blank">Letian</a></span>
+              </div>
+              <div class="col-12 col-md-6 text-md-end">
+                <span class="copyright"><span class="right"><br>
+                  Design by 1029573707@qq.com | <a href="https://mail.qq.com/?_sm_nck=1" target="_blank">Sent Email</a><br>
+                  <br>
+                  <br>
+                </span></span>
+              </div>
+            </div>
+          </div>
+        </footer>
+        <button id="scrollToTop" title="Scroll to top">Top</button>
+    </div>
+
+</body>
+</html>
+
