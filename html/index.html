@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="../CSS/hamberger.css">
     <script src="../JS/jQuery_v3.7.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../JS/sliceshow.js"></script>
-    <script src="../JS/slider.js"></script>
     <script src="../JS/hamberger.js"></script>
     <script src="../JS/jQuery_fadeIn.js"></script>
     <script src="../JS/jQuery_ToTop.js"></script>
@@ -60,153 +58,213 @@
               </div>
             </div>
           </nav>
-          <div class="subject">
-            <div class="container">
-              <div class="row align-items-center">
-                <div class="col-12 col-md-8 col-lg-6 intro">
-                  <h1 class="title">EpicEats</h1>
-                  <h3 class="tagline">Table Reservation: Come and order your deliclous food</h3>
-                </div>
-                <div class="col-12 col-md-4 col-lg-6 reservations text-center text-md-end">
-                  <br>
-                  <span class="reservations-title">Call Us:</span>
-                  <hr class="hr-solid">
-                  <span>+86 114514</span>
-                  <hr class="hr-dashed">
-                  <div class="button3"> <a class="button" href="#" title="Email Us">Or Email Us</a> </div>
-                </div>
+         
+        </header>
+        
+        <!-- Hero Carousel Section (BBC Style) -->
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+          </div>
+          
+          <div class="carousel-inner">
+            <!-- Slide 1: Beef Stew -->
+            <div class="carousel-item active">
+              <div class="hero-slide-image-wrapper">
+                <img src="../images/beef-stew-15.png" class="hero-slide-image" alt="Perfect Winter Beef Stew">
+              </div>
+              <div class="hero-card">
+                <span class="hero-card-label">TRENDING NOW</span>
+                <h1 class="hero-card-title">Perfect Winter Beef Stew</h1>
+                <p class="hero-card-description">A hearty, comforting dish that warms your soul. Slow-cooked to perfection with tender beef, rich red wine, and aromatic vegetables.</p>
+                <a href="menu.html" class="hero-card-button button">View Recipe</a>
               </div>
             </div>
-          </div>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-        </header>
-        <div class="out">
-          <div class="swiper-list"></div>
-          <div class="inner container-fluid px-0">
-            <div class="row g-0">
-              <div class="col-12">
-                <div class="img">
-                  <img src="../images/1.jpg" alt="delicious snacks" class="img-fluid">
-                </div>
-                <div class="img">
-                  <img src="../images/beef-stew-15.png" alt="Boeuf Bourguignon is a classic French stew made with beef, red wine, and a variety of vegetables, simmered in a rich, flavorful sauce." class="img-fluid">
-                </div>
-                <div class="img">
-                  <img src="../images/Spaghetti.jpg" alt="Spaghetti Bolognese is a hearty Italian pasta dish featuring tender spaghetti tossed with a slow-cooked meat sauce traditionally made with ground beef, tomatoes, and a medley of herbs." class="img-fluid">
-                </div>
-                <div class="img">
-                  <img src="../images/snails.jpg" alt="Escargots are a delicacy in French cuisine, typically prepared with garlic, parsley, and butter, served in their shells." class="img-fluid">
-                </div>
-                <div class="img">
-                  <img src="../images/pizza1.jpg" alt="Pizza is a popular Italian dish consisting of a yeasted flatbread topped with tomato sauce, cheese, and various toppings, baked until golden." class="img-fluid">
-                </div>
-                <div class="img">
-                  <img src="../images/black_cake.jpg" alt="Black Forest Cake, a traditional German dessert, is a layered chocolate cake filled with whipped cream and cherries." class="img-fluid">
-                </div>
-                <div class="img">
-                  <img src="../images/Tiramisu.jpg" alt="Tiramisu" class="img-fluid">
-                </div>
-                <div class="arrow">
-                  <i class="fas left"><img src="../images/slice_left.png" alt="slice_left" class="img-fluid"></i>
-                  <i class="fas right"><img src="../images/slice_right.png" alt="slice_right" class="img-fluid"></i>
-                </div>
-                <div class="button1">
-                  <p></p>
-                  <p></p>
-                  <p></p>
-                  <p></p>
-                  <p></p>
-                  <p></p>
-                  <p></p>
-                </div>
+            
+            <!-- Slide 2: Classic Pizza -->
+            <div class="carousel-item">
+              <div class="hero-slide-image-wrapper">
+                <img src="../images/1.jpg" class="hero-slide-image" alt="Classic Italian Pizza" loading="lazy">
+              </div>
+              <div class="hero-card">
+                <span class="hero-card-label">CHEF'S CHOICE</span>
+                <h1 class="hero-card-title">Classic Italian Pizza</h1>
+                <p class="hero-card-description">Authentic Italian-style pizza with fresh mozzarella, vibrant tomato sauce, and hand-picked toppings. Baked to golden perfection.</p>
+                <a href="menu.html" class="hero-card-button button">View Recipe</a>
+              </div>
+            </div>
+            
+            <!-- Slide 3: Black Forest Cake -->
+            <div class="carousel-item">
+              <div class="hero-slide-image-wrapper">
+                <img src="../images/black_cake.jpg" class="hero-slide-image" alt="Decadent Black Forest Cake" loading="lazy">
+              </div>
+              <div class="hero-card">
+                <span class="hero-card-label">DESSERT SPECIAL</span>
+                <h1 class="hero-card-title">Decadent Black Forest Cake</h1>
+                <p class="hero-card-description">Layers of rich chocolate sponge, whipped cream, and cherries. A traditional German dessert that's simply irresistible.</p>
+                <a href="menu.html" class="hero-card-button button">View Recipe</a>
               </div>
             </div>
           </div>
           
+          <!-- Carousel Controls -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Previous">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          </button>
         </div>
         
       <div class="wrapper">
         <div class="container">
           <div class="clear"></div>
           <div class="border"></div>
-          <div class="row g-4 mb-4">
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="home-widget">
-                <h3>Pizza</h3>
-                <img src="../images/pizza1.jpg" alt="Pizza" class="img-fluid mb-3">
-                <p>Pizza is a beloved Italian culinary creation that has become a global favorite. It starts with a base of yeast-leavened dough, which is rolled out and baked until it's crispy on the outside and soft on the inside. The dough is then topped with a vibrant red tomato sauce, often made from ripe tomatoes, garlic, and a blend of herbs. A generous layer of melted mozzarella cheese is added, which stretches and bubbles as it cooks, creating a deliciously gooey texture.</p>
+          
+          
+          
+          <div class="border2"></div>
+          <br>
+          
+          <!-- Popular Categories Section -->
+          <div class="popular-categories-section mb-5">
+            <h2 class="section-title text-center mb-4">Popular Categories</h2>
+            <div class="row g-4">
+              <div class="col-12 col-md-4">
+                <div class="category-card bbc-style-card">
+                  <div class="category-image-wrapper">
+                    <img src="../images/pizza1.jpg" alt="Pizza" class="category-image" loading="lazy">
+                  </div>
+                  <div class="category-content">
+                    <h3 class="category-title">Pizza</h3>
+                    <div class="category-metadata">
+                      <div class="metadata-left">
+                        <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                        <span class="rating-text">4.8</span>
+                        <span class="reviews-count">(120 reviews)</span>
+                      </div>
+                      <div class="metadata-right">
+                        <span class="delivery-time">🕒 30-40 mins</span>
+                      </div>
+                    </div>
+                    <p class="category-description">Delicious Italian-style pizzas with fresh toppings and authentic flavors.</p>
+                    <a href="menu.html" class="category-button">Add to Cart</a>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="home-widget">
-                <h3>Black Forest Cake</h3>
-                <img src="../images/black_cake.jpg" alt="black_cake" class="img-fluid mb-3">
-                <p>The Black Forest Cake, a renowned dessert originating from the Black Forest region of Germany, is a chocolate cake with a distinctive and delightful composition. It typically features several layers of moist, dark chocolate sponge cake, each layer separated by a generous helping of whipped cream. The cream is often infused with the flavors of the region, such as kirschwasser, a cherry brandy, which adds a unique and slightly alcoholic tang to the dessert.</p>
+              <div class="col-12 col-md-4">
+                <div class="category-card bbc-style-card">
+                  <div class="category-image-wrapper">
+                    <img src="../images/black_cake.jpg" alt="Dessert" class="category-image" loading="lazy">
+                  </div>
+                  <div class="category-content">
+                    <h3 class="category-title">Dessert</h3>
+                    <div class="category-metadata">
+                      <div class="metadata-left">
+                        <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                        <span class="rating-text">4.9</span>
+                        <span class="reviews-count">(95 reviews)</span>
+                      </div>
+                      <div class="metadata-right">
+                        <span class="delivery-time">🕒 25-35 mins</span>
+                      </div>
+                    </div>
+                    <p class="category-description">Indulge in our exquisite selection of handcrafted desserts and sweet treats.</p>
+                    <a href="menu.html" class="category-button">Add to Cart</a>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="home-widget">
-                <h3>Tiramisu</h3>
-                <img src="../images/Tiramisu.jpg" alt="Tiramisu" class="img-fluid mb-3">
-                <p>Tiramisu is a classic Italian dessert that features layers of coffee-soaked ladyfingers (savoiardi) and a rich, creamy filling made from mascarpone cheese, eggs, and sugar
-                  . The dessert is typically flavored with coffee and Marsala wine, and it's often finished with a dusting of cocoa powder on top
-                  . The name "Tiramisu" translates to "pick me up" in Italian, which is fitting for a dessert that combines the energy of coffee with the indulgence of cheese and chocolate
-                  </p>
+              <div class="col-12 col-md-4">
+                <div class="category-card bbc-style-card">
+                  <div class="category-image-wrapper">
+                    <img src="../images/beef-stew-15.png" alt="Specials" class="category-image" loading="lazy">
+                  </div>
+                  <div class="category-content">
+                    <h3 class="category-title">Specials</h3>
+                    <div class="category-metadata">
+                      <div class="metadata-left">
+                        <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                        <span class="rating-text">4.7</span>
+                        <span class="reviews-count">(78 reviews)</span>
+                      </div>
+                      <div class="metadata-right">
+                        <span class="delivery-time">🕒 35-45 mins</span>
+                      </div>
+                    </div>
+                    <p class="category-description">Discover our chef's special creations and limited-time offers that will delight your taste buds.</p>
+                    <a href="menu.html" class="category-button">Add to Cart</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+          
+          <div class="border2"></div>
+          <br>
+          
+          <!-- Browse by Mood Section -->
+          <div class="browse-by-mood-section mb-5">
+            <h2 class="section-title text-center mb-4">Browse by Mood</h2>
+            <div class="row g-4 justify-content-center">
+              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="mood-item">
+                  <div class="mood-circle">
+                    <img src="../images/pizza1.jpg" alt="Vegan" class="mood-image" loading="lazy">
+                  </div>
+                  <p class="mood-label">🌿 Vegan</p>
+                </div>
+              </div>
+              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="mood-item">
+                  <div class="mood-circle">
+                    <img src="../images/Spaghetti.jpg" alt="Spicy Lovers" class="mood-image" loading="lazy">
+                  </div>
+                  <p class="mood-label">🌶️ Spicy Lovers</p>
+                </div>
+              </div>
+              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="mood-item">
+                  <div class="mood-circle">
+                    <img src="../images/black_cake.jpg" alt="Budget Meals" class="mood-image" loading="lazy">
+                  </div>
+                  <p class="mood-label">💰 Budget Meals</p>
+                  <p class="mood-subtitle">&lt;$15</p>
+                </div>
+              </div>
+              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="mood-item">
+                  <div class="mood-circle">
+                    <img src="../images/beef-stew-15.png" alt="Family Bundle" class="mood-image" loading="lazy">
+                  </div>
+                  <p class="mood-label">👨‍👩‍👧‍👦 Family Bundle</p>
+                </div>
+              </div>
+              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="mood-item">
+                  <div class="mood-circle">
+                    <img src="../images/Tiramisu.jpg" alt="Healthy Choice" class="mood-image" loading="lazy">
+                  </div>
+                  <p class="mood-label">🥗 Healthy Choice</p>
+                </div>
+              </div>
+              <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="mood-item">
+                  <div class="mood-circle">
+                    <img src="../images/1.jpg" alt="Quick Bites" class="mood-image" loading="lazy">
+                  </div>
+                  <p class="mood-label">⚡ Quick Bites</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div class="border2"></div>
           <br>
         </div>
       
-        <aside id="pricing-table" class="clear">
-          <div class="container">
-            <div class="row g-4">
-              <div class="col-12 col-md-6 col-lg-4">
-                <div class="plan h-100">
-                  <h3>Breakfast<span>$16</span></h3>
-                  <a class="button" href="#">Order Now</a>
-                  <ul>
-                    <li><strong>Bacon & Egg Breakfast Sandwich</strong> Fresh eggs, crispy bacon, lettuce, and tomato on a whole-grain bun.</li>
-                    <li><strong>Oatmeal Bowl</strong> Steel-cut oats topped with fresh fruits and a drizzle of honey.</li>
-                    <li><strong>Greek Yogurt Parfait</strong> Rich Greek yogurt layered with granola, honey, and a mix of fresh berries.</li>
-                    <li><strong>Blueberry Pancakes</strong> Fluffy pancakes stacked high with fresh blueberries and served with maple syrup.</li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-12 col-md-6 col-lg-4">
-                <div class="plan h-100">
-                  <h3>Lunch<span>$88</span></h3>
-                  <a class="button" href="#">Order Now</a>
-                  <ul>
-                    <li><strong>Spaghetti Bolognese</strong> Hearty meat sauce with ground beef, tomatoes, and herbs, served with spaghetti.</li>
-                    <li><strong>Grilled Chicken Salad</strong> Marinated grilled chicken, mixed greens, cucumbers, tomatoes, and croutons with a balsamic vinaigrette.</li>
-                    <li><strong>Tiramisu</strong>  Italian dessert that features layers of coffee-soaked ladyfingers</li>
-                    <li><strong>Veggie Wrap</strong> A blend of fresh vegetables, hummus.</li>
-                  </ul>
-                </div>
-              </div>
-              <div class="col-12 col-md-6 col-lg-4">
-                <div class="plan h-100">
-                  <h3>Dinner<span>$99</span></h3>
-                  <a class="button" href="#">Order Now</a>
-                  <ul>
-                    <li><strong>Grilled Salmon</strong> Sustainably sourced salmon grilled to perfection, served with a side of quinoa and seasonal vegetables.</li>
-                    <li><strong>Steak and Potatoes</strong> A juicy 8 oz. sirloin steak cooked to your liking, paired with garlic mashed potatoes.</li>
-                    <li><strong>Mushroom Risotto</strong> Creamy Arborio rice with a blend of wild mushrooms</li>
-                    <li><strong>Eggplant Parmesan</strong> Breaded and eggplant layered with marinara sauce</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </aside>
       </div>
       <footer>
         <div class="container">
@@ -267,45 +325,23 @@
     </div>
     </body>
     <script>
-      console.time();
-      let imgArr = [
-        {
-          url: '#',
-          imgPath: '../images/1.jpg',
-          alt: '123'
-        },
-        {
-          url: '#',
-          imgPath: '../images/beef-stew-15.png',
-          alt: '123'
-        },
-        {
-          url: '#',
-          imgPath: '../images/Spaghetti.jpg',
-          alt: '123'
-        },
-        {
-          url: '#',
-          imgPath: '../images/snails.jpg',
-          alt: '123'
-        },
-        {
-          url: '#',
-          imgPath: '../images/black_cake.jpg',
-          alt: '123'
+      // Initialize Bootstrap Carousel
+      document.addEventListener('DOMContentLoaded', function() {
+        // Ensure Bootstrap Carousel is initialized
+        const carouselElement = document.querySelector('#heroCarousel');
+        if (carouselElement) {
+          // Bootstrap 5 should auto-initialize with data-bs-ride="carousel"
+          // But we can manually initialize if needed
+          const carousel = new bootstrap.Carousel(carouselElement, {
+            interval: 5000,
+            wrap: true,
+            keyboard: true
+          });
+          
+          // Log for debugging
+          console.log('Carousel initialized:', carousel);
         }
-      ];
-      // let imgArr = ['i.jpg', 'o.jpg', 'q.jpeg'];
-      // let imgArr = ['i.jpg', 'o.jpg'];
-      // let imgArr = ['i.jpg'];
-      new Swiper({
-        imgArr: imgArr,
-        aniTIme: 1000,
-        intervalTime: 1000,
-        autoplay: true
-      }).init();
-      console.timeEnd();
-    
+      });
     </script>
 
 
