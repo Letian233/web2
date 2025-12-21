@@ -1,0 +1,47 @@
+.hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+    flex-direction: column;
+    height: 21px;
+    justify-content: space-between;
+    position: relative;
+    width: 30px;
+    margin-top: 10px; /* Adjust the position of the hamburger menu */
+    margin-left: 0;
+}
+
+.hamburger span {
+    background: black;
+    border-radius: 3px;
+    display: block;
+    height: 3px;
+    width: 100%;
+}
+
+/* Responsive navbar styles */
+@media screen and (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    #nav {
+        background: #fff;
+        display: none;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #nav li {
+        text-align: center;
+        width: 100%;
+    }
+
+    #nav li a {
+        display: block;
+        padding: 10px;
+        color: black; /* Adjust the link color */
+        text-decoration: none; /* Remove the underline */
+    }
+}
