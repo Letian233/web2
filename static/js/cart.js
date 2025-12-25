@@ -1,5 +1,5 @@
 // ==================== 购物车模块 ====================
-// 依赖：data.js (需要 menuDatabase 和 MOCK_ORDER_HISTORY)
+// 依赖：data.js (需要 menuDatabase)，订单历史改为通过后端 API 获取
 
 // ==================== Toast 通知系统 ====================
 const Toast = {
@@ -54,6 +54,7 @@ const Toast = {
 
 // ==================== 购物车对象 ====================
 const Cart = {
+  orderHistory: [],
   // 从 localStorage 读取购物车数据
   get: function() {
     const cartData = localStorage.getItem('cart');
@@ -258,8 +259,8 @@ const Cart = {
     } else if (tabName === 'history') {
       if (currentTab) currentTab.classList.remove('active');
       if (historyTab) historyTab.classList.add('active');
-      // 渲染历史订单
-      this.renderHistory();
+      // 从后端加载并渲染历史订单
+      this.fetchHistory();
     }
   },
 
@@ -276,7 +277,7 @@ const Cart = {
     // 清空列表
     orderHistoryList.innerHTML = '';
 
-    if (MOCK_ORDER_HISTORY.length === 0) {
+    if (!this.orderHistory || this.orderHistory.length === 0) {
       orderHistoryList.style.display = 'none';
       orderHistoryEmpty.style.display = 'block';
       return;
@@ -286,7 +287,7 @@ const Cart = {
     orderHistoryEmpty.style.display = 'none';
 
     // 渲染每个订单
-    MOCK_ORDER_HISTORY.forEach(order => {
+    this.orderHistory.forEach(order => {
       const orderItem = document.createElement('div');
       orderItem.className = 'order-history-item';
       orderItem.innerHTML = `
@@ -343,6 +344,43 @@ const Cart = {
         }
       });
     });
+  },
+
+  // 从后端加载订单历史
+  fetchHistory: function() {
+    const orderHistoryList = document.getElementById('orderHistoryList');
+    const orderHistoryEmpty = document.getElementById('orderHistoryEmpty');
+    if (!orderHistoryList || !orderHistoryEmpty) return;
+
+    // 简单的加载状态
+    orderHistoryList.innerHTML = '<p style="padding: 16px;">Loading orders...</p>';
+    orderHistoryList.style.display = 'block';
+    orderHistoryEmpty.style.display = 'none';
+
+    fetch('/api/orders', {
+      method: 'GET',
+      credentials: 'same-origin'
+    })
+      .then(res => res.json().then(data => ({ ok: res.ok, data })))
+      .then(result => {
+        if (!result.ok) {
+          // 未登录或其他错误
+          this.orderHistory = [];
+          if (result.data && result.data.error) {
+            Toast.show(result.data.error);
+          }
+        } else if (Array.isArray(result.data)) {
+          this.orderHistory = result.data;
+        } else {
+          this.orderHistory = [];
+        }
+        this.renderHistory();
+      })
+      .catch(() => {
+        this.orderHistory = [];
+        Toast.show('Failed to load order history, please try again later.');
+        this.renderHistory();
+      });
   }
 };
 

@@ -85,6 +85,33 @@ class Review(Base):
     parent_id = Column(Integer, ForeignKey("reviews.id"), nullable=True)
 
 
+class Order(Base):
+    """
+    ORM 映射到已存在的 orders 表（不自动建表）。
+    """
+
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    date = Column(DateTime)
+    total_amount = Column(Numeric(10, 2), nullable=False)
+    status = Column(String(20))
+
+
+class OrderItem(Base):
+    """
+    ORM 映射到已存在的 order_items 表（不自动建表）。
+    """
+
+    __tablename__ = "order_items"
+
+    order_id = Column(Integer, ForeignKey("orders.id"), primary_key=True)
+    menu_item_id = Column(Integer, ForeignKey("menu_items.id"), primary_key=True)
+    quantity = Column(Integer, nullable=False)
+    price_at_purchase = Column(Numeric(10, 2), nullable=False)
+
+
 def init_db() -> None:
     """
     仅检查数据库连接是否可用，不做任何建库 / 建表操作。
@@ -195,6 +222,7 @@ def init_auth_routes(app) -> None:
             session.clear()
             session["user_id"] = user.id
             session["username"] = user.username
+            session["email"] = user.email
             session["is_admin"] = bool(user.is_admin)
 
             return redirect(url_for("index"))

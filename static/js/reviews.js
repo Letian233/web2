@@ -65,7 +65,7 @@ const ReviewsManager = {
       const base = Array.isArray(source) ? source.slice() : [];
       base.sort((a, b) => new Date(b.date) - new Date(a.date));
       this._reviews = base;
-    }
+      }
     return this._reviews;
   },
 
@@ -305,14 +305,14 @@ const ReviewsManager = {
             }
             // 用后端数据添加到本地列表
             ReviewsManager.addReview(result.data);
-            stickyInput.value = '';
-            const mainInput = document.getElementById('review-text');
-            if (mainInput) mainInput.value = '';
+        stickyInput.value = '';
+        const mainInput = document.getElementById('review-text');
+        if (mainInput) mainInput.value = '';
             ReviewsManager.renderReviews();
           })
           .catch(() => {
             alert('Network error, please try again.');
-          });
+      });
       };
 
       stickySubmit.addEventListener('click', sendStickyComment);
@@ -472,7 +472,7 @@ const ReviewsManager = {
         }
         // 使用后端返回的数据更新本地 replies 列表
         this.addReply(reviewId, result.data);
-        this.renderReviews();
+    this.renderReviews();
       })
       .catch(() => {
         alert('Network error, please try again.');
@@ -500,7 +500,7 @@ const ReviewsManager = {
     // 绑定提交评论按钮（点击按钮或按 Enter 发送，Shift+Enter 换行）
     const submitBtn = document.getElementById('submitReviewBtn');
     const textInput = document.getElementById('review-text');
-
+    
     if (submitBtn && textInput) {
       const sendMainComment = () => {
         const text = textInput.value.trim();
@@ -522,8 +522,8 @@ const ReviewsManager = {
             }
             // 用后端返回的数据添加到本地列表
             ReviewsManager.addReview(result.data);
-            textInput.value = '';
-            const stickyInput = document.getElementById('sticky-review-text');
+        textInput.value = '';
+        const stickyInput = document.getElementById('sticky-review-text');
             if (stickyInput) {
               stickyInput.value = '';
             }

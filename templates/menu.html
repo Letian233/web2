@@ -12,6 +12,10 @@
     <script src="{{ url_for('static', filename='js/hamberger.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jQuery_fadeIn.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jQuery_ToTop.js') }}"></script>
+    <!-- 从后端注入菜单数据（来自 MySQL menu_items 表） -->
+    <script>
+      window.MENU_ITEMS_FROM_DB = JSON.parse('{{ menu_items|tojson|safe }}');
+    </script>
     <script src="{{ url_for('static', filename='js/data.js') }}"></script>
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>

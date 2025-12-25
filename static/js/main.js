@@ -169,9 +169,41 @@ if (typeof(Storage) === "undefined") {
           Toast.show('Your cart is empty');
           return;
         }
-        // 这里可以添加结账逻辑
-        Toast.show('Checkout functionality coming soon!');
-        // 可以在这里添加跳转到结账页面的逻辑
+
+        // 构造发送给后端的订单数据
+        const payload = {
+          items: cartItems.map(item => ({
+            id: item.id,
+            quantity: item.quantity
+          }))
+        };
+
+        fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload)
+        })
+          .then(res => res.json().then(data => ({ ok: res.ok, data })))
+          .then(result => {
+            if (!result.ok) {
+              const msg = (result.data && result.data.error) || 'Failed to place order';
+              Toast.show(msg);
+              return;
+            }
+
+            // 下单成功：清空购物车、本地存储，并提示成功
+            localStorage.removeItem('cart');
+            Cart.updateCartUI();
+            Cart.renderCartModal();
+            Toast.show('Order placed successfully!');
+
+            // 自动切换到订单历史标签并刷新历史订单
+            Cart.switchTab('history');
+          })
+          .catch(() => {
+            Toast.show('Network error, please try again later.');
+          });
       });
     }
 

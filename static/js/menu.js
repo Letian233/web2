@@ -80,13 +80,13 @@ const MenuController = {
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
     for (let i = 0; i < fullStars; i++) {
-      starsHtml += '<img src="../images/star_full.png" class="noeffects" alt="star">';
+      starsHtml += '<img src="/static/images/star_full.png" class="noeffects" alt="star">';
     }
     if (hasHalfStar) {
-      starsHtml += '<img src="../images/star_half_full.png" class="noeffects" alt="star">';
+      starsHtml += '<img src="/static/images/star_half_full.png" class="noeffects" alt="star">';
     }
     for (let i = 0; i < emptyStars; i++) {
-      starsHtml += '<img src="../images/star_empty.png" class="noeffects" alt="star">';
+      starsHtml += '<img src="/static/images/star_empty.png" class="noeffects" alt="star">';
     }
     return starsHtml;
   },
