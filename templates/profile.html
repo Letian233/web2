@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-current-user='{{ current_user|tojson|safe }}'>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/hamberger.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
     <script src="{{ url_for('static', filename='js/jQuery_v3.7.1.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/pages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/hamberger.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jQuery_fadeIn.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jQuery_ToTop.js') }}"></script>
@@ -16,9 +18,6 @@
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
-    <script>
-      window.CURRENT_USER = JSON.parse('{{ current_user|tojson|safe }}');
-    </script>
 </head>
 <body>
     <!-- 用户菜单 - 固定在右上角 -->
@@ -53,7 +52,7 @@
                 <!-- 左侧侧边栏 (30%) -->
                 <div class="col-12 col-md-4 col-lg-3">
                   <div class="profile-sidebar">
-                    <h3 style="font-family: 'Lobster13Regular', cursive; color: #9c5959; margin-bottom: 20px; text-align: center;">My Account</h3>
+                    <h3>My Account</h3>
                     <ul class="sidebar-menu">
                       <li class="sidebar-menu-item">
                         <a href="#" class="sidebar-link active" data-tab="profile">My Profile</a>
@@ -76,11 +75,12 @@
                   <div class="profile-content">
                     <!-- Tab 1: My Profile -->
                     <div id="profileTab" class="tab-content-panel active">
-                      <h2 style="font-family: 'Lobster13Regular', cursive; color: #9c5959; margin-bottom: 30px;">My Profile</h2>
+                      <h2>My Profile</h2>
                       
                       <div class="profile-avatar-section">
-                        <div id="profileAvatarDisplay" class="profile-avatar-placeholder-large">U</div>
-                        <button class="button" style="font-size: 14px; padding: 6px 15px;">Change Avatar</button>
+                        <div id="profileAvatarDisplay" class="profile-avatar-display profile-avatar-placeholder-large">U</div>
+                        <input type="file" id="avatarFileInput" accept="image/*" hidden>
+                        <button type="button" class="button profile-change-avatar-btn" id="changeAvatarBtn">Change Avatar</button>
                       </div>
                       
                       <form class="profile-form" id="profileForm">
@@ -90,19 +90,19 @@
                         </div>
                         <div class="form-group">
                           <label for="profileEmail">Email</label>
-                          <input type="email" id="profileEmail" name="email" required>
+                          <input type="email" id="profileEmail" name="email" readonly>
                         </div>
                         <div class="form-group">
                           <label for="profilePhone">Phone</label>
                           <input type="tel" id="profilePhone" name="phone" placeholder="Enter your phone number">
                         </div>
-                        <button type="submit" class="button" style="width: 100%; font-size: 18px; padding: 12px;">Save Changes</button>
+                        <button type="submit" class="button profile-save-btn">Save Changes</button>
                       </form>
                     </div>
                     
                     <!-- Tab 2: Order History -->
                     <div id="ordersTab" class="tab-content-panel">
-                      <h2 style="font-family: 'Lobster13Regular', cursive; color: #9c5959; margin-bottom: 30px;">Order History</h2>
+                      <h2>Order History</h2>
                       
                       <div class="table-responsive">
                         <table class="order-history-table">
@@ -124,17 +124,31 @@
                       <div id="orderItemsAccordion" class="order-items-accordion">
                         <!-- Accordion 将在这里动态生成 -->
                       </div>
+                      
+                      <!-- 订单分页控件 -->
+                      <div class="order-pagination" id="orderPagination" style="display: none;">
+                        <button class="button pagination-btn" id="prevOrderPageBtn" disabled>Previous</button>
+                        <span class="pagination-info" id="orderPaginationInfo"></span>
+                        <button class="button pagination-btn" id="nextOrderPageBtn" disabled>Next</button>
+                      </div>
                     </div>
                     
                     <!-- Tab 3: Addresses -->
                     <div id="addressesTab" class="tab-content-panel">
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h2 style="font-family: 'Lobster13Regular', cursive; color: #9c5959; margin: 0;">Addresses</h2>
-                        <button class="button add-address-btn" id="addAddressBtn">Add New Address</button>
+                      <div class="addresses-tab-header">
+                        <h2>Addresses</h2>
+                        <button class="button add-address-btn" id="addAddressBtn" aria-label="Add New Address">+</button>
                       </div>
                       
                       <div class="address-cards" id="addressCardsContainer">
                         <!-- 地址卡片将在这里动态生成 -->
+                      </div>
+                      
+                      <!-- 分页控件 -->
+                      <div class="address-pagination" id="addressPagination" style="display: none;">
+                        <button class="button pagination-btn" id="prevPageBtn" disabled>Previous</button>
+                        <span class="pagination-info" id="paginationInfo"></span>
+                        <button class="button pagination-btn" id="nextPageBtn" disabled>Next</button>
                       </div>
                     </div>
                   </div>
@@ -202,6 +216,63 @@
           </div>
         </footer>
         <button id="scrollToTop" title="Scroll to top">Top</button>
+    </div>
+
+    <!-- Address Modal -->
+    <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addressModalLabel">Address</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addressForm">
+              <input type="hidden" id="addressId" value="">
+              <div class="mb-3">
+                <label for="addressTitle" class="form-label">Title</label>
+                <input type="text" class="form-control" id="addressTitle" required>
+              </div>
+              <div class="mb-3">
+                <label for="addressRecipient" class="form-label">Recipient Name</label>
+                <input type="text" class="form-control" id="addressRecipient" required>
+              </div>
+              <div class="mb-3">
+                <label for="addressPhone" class="form-label">Phone</label>
+                <input type="text" class="form-control" id="addressPhone" required>
+              </div>
+              <div class="mb-3">
+                <label for="addressLine" class="form-label">Address Line</label>
+                <input type="text" class="form-control" id="addressLine" required>
+              </div>
+              <div class="row">
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="addressCity" class="form-label">City</label>
+                  <input type="text" class="form-control" id="addressCity" required>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                  <label for="addressState" class="form-label">State</label>
+                  <input type="text" class="form-control" id="addressState" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="addressZip" class="form-label">Zip Code</label>
+                <input type="text" class="form-control" id="addressZip" required>
+              </div>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="addressDefault">
+                <label class="form-check-label" for="addressDefault">
+                  Set as default
+                </label>
+              </div>
+              <div class="profile-form-actions">
+                <button type="submit" class="button button-sm">Save</button>
+                <button type="button" class="button button-sm button-secondary" data-bs-dismiss="modal">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
 
 </body>

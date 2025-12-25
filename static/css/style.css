@@ -3472,3 +3472,25 @@ body {
 	}
 }
 
+/* ==================== Scroll To Top 按钮（从 index.html 内联样式迁移） ==================== */
+#scrollToTop {
+	position: fixed !important;
+	bottom: 30px;
+	right: 20px;
+	z-index: 9999;
+	cursor: pointer;
+	padding: 8px 14px;
+	font-size: 16px;
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#scrollToTop:hover {
+	opacity: 0.9;
+	transform: translateY(-2px);
+}
+
+#scrollToTop:active {
+	position: fixed !important;
+	bottom: 27px;
+}
+

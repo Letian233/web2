@@ -1,0 +1,1096 @@
+/* Page-specific styles */
+
+/* About Page Styles */
+.about-page article {
+  width: 100% !important;
+  float: none !important;
+  border-right: none !important;
+  padding: 0 !important;
+}
+
+.about-page .sidebar {
+  width: 100% !important;
+  float: none !important;
+  padding: 15px !important;
+  background: #f5f0e0;
+  border-radius: 5px;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  border: none !important;
+}
+
+.about-page .sidebar-widget {
+  border: none !important;
+}
+
+.about-page .sidebar h3 {
+  text-align: left;
+}
+
+.about-page article .img img {
+  width: 100%;
+  height: auto;
+  max-height: 350px;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.about-page .date {
+  float: none;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.about-page .chef-avatar img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 3px solid #9c5959;
+}
+
+.about-page .chef-card h4 {
+  color: #9c5959;
+  font-family: 'Lobster13Regular', cursive;
+}
+
+.about-page .chef-card p {
+  color: #693434;
+  font-weight: bold;
+}
+
+.about-page .sidebar-widget-info {
+  margin-top: 15px;
+  color: #693434;
+}
+
+.about-page .sidebar-widget-info p {
+  margin-bottom: 15px;
+}
+
+.about-page .sidebar-widget-info p:last-child {
+  margin-bottom: 0;
+}
+
+.about-page .sidebar-widget-info strong {
+  color: #9c5959;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.about-page .sidebar-widget-info a {
+  color: #9c5959;
+  text-decoration: none;
+  border-bottom: 1px dotted #9c5959;
+}
+
+.about-page .newsletter-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px dotted #9C5959;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #f5f0e0;
+  box-sizing: border-box;
+}
+
+.about-page .newsletter-form button {
+  width: 100%;
+}
+
+.about-page .sidebar-widget .row img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+}
+
+.about-page .instagram-image {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+}
+
+.about-page .newsletter-description {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: #693434;
+}
+
+/* Reviews Page Styles */
+.reviews-page article {
+  width: 100% !important;
+  float: none !important;
+  border-right: none !important;
+  padding: 0 !important;
+}
+
+.reviews-page .sidebar {
+  width: 100% !important;
+  float: none !important;
+  padding: 15px !important;
+  background: #f5f0e0;
+  border-radius: 5px;
+}
+
+.reviews-page .sidebar h3 {
+  text-align: left;
+}
+
+.reviews-page .sidebar img {
+  width: 100%;
+  height: auto;
+  max-height: 350px;
+  object-fit: cover;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.reviews-page blockquote {
+  margin-bottom: 20px;
+}
+
+/* Scroll to Top Button (shared) */
+#scrollToTop {
+  position: fixed !important;
+  bottom: 30px;
+  right: 20px;
+  z-index: 9999;
+  cursor: pointer;
+  padding: 8px 14px;
+  font-size: 16px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#scrollToTop:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+#scrollToTop:active {
+  position: fixed !important;
+  bottom: 27px;
+}
+
+/* Menu Page Styles */
+.menu-page .sidebar-widget-delivery {
+  margin-top: 15px;
+  color: #693434;
+}
+
+.menu-page .sidebar-widget-delivery p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.menu-page .sidebar-widget-delivery p:last-child {
+  margin-bottom: 0;
+  color: #9c5959;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-page .sidebar-widget-delivery svg {
+  flex-shrink: 0;
+}
+
+.menu-page .cart-empty-message {
+  display: none;
+}
+
+.menu-page .order-history-empty {
+  display: none;
+}
+
+/* Profile Page Styles */
+.user-menu-fixed {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10000;
+}
+
+.user-auth-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.user-dropdown-toggle {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.user-dropdown-wrapper {
+  position: relative;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #9c5959;
+}
+
+.user-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #9c5959;
+  color: #f5f0e0;
+  font-weight: bold;
+  border: 2px solid #9c5959;
+}
+
+/* Profile Avatar Display Container */
+.profile-avatar-display {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #9c5959;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #9c5959;
+  margin: 0 auto 15px;
+}
+
+/* Avatar Image - fills the circle completely */
+.profile-avatar-display img.profile-avatar-large {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Placeholder when no avatar */
+.profile-avatar-display.profile-avatar-placeholder-large {
+  color: #f5f0e0;
+  font-weight: bold;
+  font-size: 48px;
+  text-align: center;
+  line-height: 120px;
+}
+
+.profile-avatar-placeholder-large,
+.profile-avatar-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+}
+
+.profile-avatar-img {
+  object-fit: cover;
+  border: 3px solid #9c5959;
+}
+
+.button-sm {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.button-secondary {
+  background: #693434;
+}
+
+.profile-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.address-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.address-card {
+  background: #fff;
+  border: 1px solid #e0d5c5;
+  border-radius: 6px;
+  padding: 14px;
+}
+
+.address-card.default {
+  border-color: #9c5959;
+  box-shadow: 0 2px 10px rgba(156, 89, 89, 0.15);
+}
+
+.address-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.default-badge {
+  background: #9c5959;
+  color: #f5f0e0;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.address-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.profile-page .profile-sidebar h3 {
+  font-family: 'Lobster13Regular', cursive;
+  color: #9c5959;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.profile-page .tab-content-panel h2 {
+  font-family: 'Lobster13Regular', cursive;
+  color: #9c5959;
+  margin-bottom: 30px;
+}
+
+.profile-page .profile-form button[type="submit"] {
+  width: 100%;
+  font-size: 18px;
+  padding: 12px;
+}
+
+.profile-page .profile-avatar-section button {
+  font-size: 14px;
+  padding: 6px 15px;
+}
+
+.profile-page .addresses-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-page .addresses-tab-header h2 {
+  font-family: 'Lobster13Regular', cursive;
+  color: #9c5959;
+  margin: 0;
+}
+
+.profile-page .add-address-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+}
+
+/* Profile Avatar Styles */
+.profile-avatar-display {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #9c5959;
+  color: #f5f0e0;
+  font-size: 48px;
+  font-weight: bold;
+  margin: 0 auto 15px;
+  border: 3px solid #9c5959;
+  overflow: hidden;
+}
+
+.profile-avatar-display img.profile-avatar-large {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Address Card Styles */
+.address-card {
+  background: #f5f0e0;
+  border: 2px solid #9c5959;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.address-card.default {
+  border-color: #693434;
+  background: #fff8e8;
+}
+
+.address-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #9c5959;
+}
+
+.address-card-title {
+  font-family: 'Lobster13Regular', cursive;
+  color: #9c5959;
+  margin: 0;
+  font-size: 24px;
+}
+
+.default-badge {
+  background: #693434;
+  color: #f5f0e0;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.address-card-content {
+  color: #693434;
+  line-height: 1.8;
+  margin-bottom: 15px;
+}
+
+.address-card-content p {
+  margin-bottom: 8px;
+}
+
+.address-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.address-card-actions .button {
+  flex: 1;
+  min-width: 80px;
+}
+
+/* Order History Styles */
+.order-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.order-status.completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.order-status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.order-status.cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.accordion-item {
+  margin-top: 15px;
+  border: 1px solid #9c5959;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  background: #f5f0e0;
+  padding: 12px 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #693434;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.accordion-header:hover {
+  background: #e8e0d0;
+}
+
+.accordion-header.active {
+  background: #9c5959;
+  color: #f5f0e0;
+}
+
+.accordion-content {
+  padding: 15px;
+  background: #fff;
+  display: none;
+}
+
+.accordion-content.active {
+  display: block;
+}
+
+.order-item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-item-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dotted #9c5959;
+}
+
+.order-item-list li:last-child {
+  border-bottom: none;
+}
+
+/* Profile Form Styles */
+.profile-form {
+  max-width: 500px;
+}
+
+.profile-form .form-group {
+  margin-bottom: 20px;
+}
+
+.profile-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #693434;
+  font-weight: bold;
+}
+
+.profile-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #9c5959;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.profile-form input:focus {
+  outline: none;
+  border-color: #693434;
+  box-shadow: 0 0 5px rgba(156, 89, 89, 0.3);
+}
+
+.profile-form input[readonly] {
+  background-color: #f5f0e0;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.profile-form input[readonly]:focus {
+  border-color: #9c5959;
+  box-shadow: none;
+}
+
+.profile-form .form-text {
+  color: #693434;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+  font-style: italic;
+}
+
+/* ==================== Modal Styles (Bootstrap Grid doesn't include these) ==================== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1055;
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block !important;
+}
+
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 1.75rem auto;
+  max-width: 500px;
+  pointer-events: none;
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+}
+
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background-color: #f5f0e0;
+  background-clip: padding-box;
+  border: 1px solid rgba(156, 89, 89, 0.2);
+  border-radius: 8px;
+  outline: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(105, 52, 52, 0.3);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: #f5f0e0;
+}
+
+.modal-title {
+  margin: 0;
+  line-height: 1.5;
+  color: #9C5959;
+  font-family: 'Lobster13Regular', cursive;
+  font-size: 1.75rem;
+  text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(156, 89, 89, 0.2);
+  gap: 0.5rem;
+}
+
+.btn-close {
+  box-sizing: content-box;
+  width: 1em;
+  height: 1em;
+  padding: 0.25em 0.25em;
+  color: #9C5959;
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23693434'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+  border: 0;
+  border-radius: 0.25rem;
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
+
+/* Modal Form Styles */
+.modal .form-label {
+  color: #9C5959;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.modal .form-control {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #9C5959;
+  background-color: #ebe5d5;
+  background-clip: padding-box;
+  border: 1px solid rgba(105, 52, 52, 0.3);
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.modal .form-control:focus {
+  border-color: #9c5959;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(156, 89, 89, 0.15);
+  background-color: #f5f0e0;
+}
+
+.modal .form-control::placeholder {
+  color: rgba(105, 52, 52, 0.5);
+}
+
+.modal .form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.modal .form-check-input {
+  width: 1.25em;
+  height: 1.25em;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #9c5959;
+  background-color: #ebe5d5;
+  border: 1px solid rgba(105, 52, 52, 0.3);
+  border-radius: 3px;
+}
+
+.modal .form-check-input:checked {
+  background-color: #9c5959;
+  border-color: #9c5959;
+}
+
+.modal .form-check-label {
+  color: #9C5959;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.modal .mb-3 {
+  margin-bottom: 1rem;
+}
+
+.modal .mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+/* Modal animation */
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out;
+  transform: translate(0, -50px);
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+}
+
+/* ==================== Address Cards Styles ==================== */
+.address-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.address-card {
+  background-color: #f5f0e0;
+  border: 1px solid rgba(105, 52, 52, 0.2);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.address-card:hover {
+  box-shadow: 0 2px 8px rgba(105, 52, 52, 0.15);
+}
+
+.address-card.default {
+  border-color: #9C5959;
+  border-width: 2px;
+}
+
+.address-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(105, 52, 52, 0.15);
+}
+
+.address-card-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #693434;
+  font-family: 'Lobster13Regular', cursive;
+}
+
+.default-badge {
+  background-color: #9C5959;
+  color: #f5f0e0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.address-card-content {
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.address-card-content p {
+  margin: 0.15rem 0;
+  font-size: 0.85rem;
+  color: #693434;
+}
+
+.address-card-content p strong {
+  color: #9C5959;
+  font-weight: 600;
+}
+
+.address-card-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(105, 52, 52, 0.1);
+}
+
+.address-card-actions .button {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: Century, sans-serif;
+  padding: 0.4rem 0.8rem;
+  min-height: auto;
+}
+
+.addresses-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.addresses-tab-header h2 {
+  margin: 0;
+}
+
+/* ==================== Order History Table Styles ==================== */
+.order-history-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(105, 52, 52, 0.2);
+  background-color: #f5f0e0;
+}
+
+.order-history-table thead {
+  background-color: #9C5959;
+}
+
+.order-history-table thead th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  color: #f5f0e0;
+  font-weight: 600;
+  font-family: 'Lobster13Regular', cursive;
+  border-bottom: 2px solid rgba(245, 240, 224, 0.3);
+}
+
+.order-history-table thead th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.order-history-table thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.order-history-table tbody tr {
+  background-color: #f5f0e0;
+  transition: background-color 0.2s ease;
+}
+
+.order-history-table tbody tr:hover {
+  background-color: transparent;
+}
+
+.order-history-table tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(105, 52, 52, 0.1);
+  color: #693434;
+}
+
+.order-history-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+.order-history-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
+}
+
+.order-status {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: Century, sans-serif;
+}
+
+.order-status.pending {
+  background-color: #ffc107;
+  color: #693434;
+}
+
+.order-status.completed {
+  background-color: #28a745;
+  color: #f5f0e0;
+}
+
+.order-status.cancelled {
+  background-color: #dc3545;
+  color: #f5f0e0;
+}
+
+/* ==================== Order Items Accordion Styles ==================== */
+.order-items-accordion {
+  margin-top: 1.5rem;
+}
+
+.accordion-item {
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(105, 52, 52, 0.2);
+  background-color: #f5f0e0;
+}
+
+.accordion-header {
+  padding: 0.75rem 1rem;
+  background-color: #ebe5d5;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  color: #693434;
+  font-weight: 600;
+}
+
+.accordion-header:hover {
+  background-color: #d4cdb8;
+}
+
+.accordion-header.active {
+  background-color: #9C5959;
+  color: #f5f0e0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.accordion-content {
+  display: none;
+  padding: 1rem;
+  background-color: #f5f0e0;
+  border-top: 1px solid rgba(105, 52, 52, 0.2);
+}
+
+.accordion-content.active {
+  display: block;
+}
+
+.order-item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-item-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(105, 52, 52, 0.1);
+  color: #693434;
+}
+
+.order-item-list li:last-child {
+  border-bottom: none;
+}
+
+.order-item-list li span:first-child {
+  font-weight: 500;
+}
+
+.order-item-list li span:last-child {
+  color: #9C5959;
+  font-weight: 600;
+}
+
+/* ==================== Address Pagination Styles ==================== */
+.address-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(105, 52, 52, 0.2);
+}
+
+.pagination-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  min-height: auto;
+  background-color: #9C5959;
+  color: #f5f0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #693434;
+}
+
+.pagination-btn:disabled {
+  background-color: rgba(156, 89, 89, 0.5);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination-info {
+  color: #693434;
+  font-size: 0.95rem;
+  font-weight: 500;
+  min-width: 120px;
+  text-align: center;
+}
+
+/* ==================== Order Pagination Styles ==================== */
+.order-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(105, 52, 52, 0.2);
+}

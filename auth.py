@@ -52,6 +52,9 @@ class User(Base):
     # 实际数据库中可以是 VARCHAR(255) 或 TEXT，ORM 这里用 Text 兼容
     password_hash = Column(Text, nullable=False)
     is_admin = Column(Boolean, default=False)
+    # Optional columns (see sql/Users.sql ALTER TABLE)
+    phone = Column(String(20), nullable=True)
+    avatar_url = Column(String(255), nullable=True)
 
 
 class MenuItem(Base):
@@ -110,6 +113,25 @@ class OrderItem(Base):
     menu_item_id = Column(Integer, ForeignKey("menu_items.id"), primary_key=True)
     quantity = Column(Integer, nullable=False)
     price_at_purchase = Column(Numeric(10, 2), nullable=False)
+
+
+class Address(Base):
+    """
+    ORM 映射到已存在的 addresses 表（不自动建表）。
+    """
+
+    __tablename__ = "addresses"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String(50), nullable=False)
+    recipient_name = Column(String(100), nullable=False)
+    phone = Column(String(20), nullable=False)
+    address_line = Column(String(255), nullable=False)
+    city = Column(String(100), nullable=False)
+    state = Column(String(100), nullable=False)
+    zip_code = Column(String(20), nullable=False)
+    is_default = Column(Boolean, default=False)
 
 
 def init_db() -> None:

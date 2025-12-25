@@ -8,15 +8,59 @@ if (typeof(Storage) === "undefined") {
 } else {
   // ==================== 用户菜单管理 ====================
   const UserMenu = {
+    // 判断用户对象是否代表已登录（后端可能返回 {id: null, username: null, ...}）
+    isLoggedIn: function(user) {
+      return user && (user.id || user.username);
+    },
+
     // 获取当前用户
     getCurrentUser: function() {
-      // 优先使用后端通过模板注入的全局变量（基于 Flask session）
-      if (window.CURRENT_USER && window.CURRENT_USER.username) {
+      // 1）优先使用 window.CURRENT_USER（由 pages.js 从 <html data-current-user> 设置）
+      if (window.CURRENT_USER !== undefined) {
         return window.CURRENT_USER;
       }
-      // 兼容旧数据（如果之前曾使用 localStorage 模拟登录，可以在这里读取）
-      const userData = localStorage.getItem('currentUser');
-      return userData ? JSON.parse(userData) : null;
+
+      // 2）从 <html data-current-user="..."> 读取（pages.js 可能还没执行）
+      try {
+        const html = document.documentElement;
+        if (html && html.getAttribute) {
+          const htmlData = html.getAttribute('data-current-user');
+          if (htmlData !== null && htmlData !== '') {
+            const parsed = JSON.parse(htmlData);
+            window.CURRENT_USER = parsed;
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse html data-current-user:', e);
+      }
+
+      // 3）从 <body data-current-user="..."> 读取（兼容旧模板）
+      try {
+        const body = document.body;
+        if (body && body.dataset && body.dataset.currentUser) {
+          const parsed = JSON.parse(body.dataset.currentUser);
+          window.CURRENT_USER = parsed;
+          return parsed;
+        }
+      } catch (e) {
+        console.error('Failed to parse body data-current-user:', e);
+      }
+
+      // 4）最后兼容旧的 localStorage 模拟登录数据
+      try {
+        const userData = localStorage.getItem('currentUser');
+        if (userData) {
+          const parsed = JSON.parse(userData);
+          if (this.isLoggedIn(parsed)) {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse localStorage currentUser:', e);
+      }
+
+      return null;
     },
 
     // 设置当前用户
@@ -41,10 +85,11 @@ if (typeof(Storage) === "undefined") {
       requestAnimationFrame(() => {
         const currentUser = this.getCurrentUser();
 
-        if (currentUser) {
+        // 检查是否真正登录（后端可能返回 {id: null, username: null, ...}）
+        if (this.isLoggedIn(currentUser)) {
           // 已登录：显示头像下拉菜单
           container.innerHTML = `
-            <div class="dropdown" style="position: relative;">
+            <div class="dropdown user-dropdown-wrapper">
               <button 
                 class="user-dropdown-toggle" 
                 type="button" 
@@ -55,8 +100,8 @@ if (typeof(Storage) === "undefined") {
                 aria-label="User menu"
                 aria-haspopup="true"
               >
-                ${currentUser.avatar ? 
-                  `<img src="${currentUser.avatar}" alt="User avatar" class="user-avatar">` :
+                ${(currentUser.avatar_url || currentUser.avatar) ? 
+                  `<img src="${currentUser.avatar_url || currentUser.avatar}" alt="User avatar" class="user-avatar">` :
                   `<div class="user-avatar-placeholder">${currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U'}</div>`
                 }
               </button>
@@ -122,6 +167,9 @@ if (typeof(Storage) === "undefined") {
         });
     }
   };
+
+  // Expose for other scripts (profile.js)
+  window.UserMenu = UserMenu;
 
   // ==================== 初始化 ====================
   document.addEventListener('DOMContentLoaded', function() {

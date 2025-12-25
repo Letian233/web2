@@ -6,6 +6,9 @@ CREATE TABLE users (
     is_admin TINYINT(1) DEFAULT 0 -- 0: 普通用戶, 1: 管理員
 );
 
+ALTER TABLE users
+ADD COLUMN phone VARCHAR(20) DEFAULT NULL,
+ADD COLUMN avatar_url VARCHAR(255) DEFAULT NULL;
 
 INSERT INTO users (username, email, password_hash, is_admin) VALUES 
 -- 管理员用户 (对应 reviews.js 中的回复者)
