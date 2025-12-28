@@ -1,5 +1,253 @@
 // ==================== Bilibili 风格评论系统 ====================
 
+// ===========================================================================
+// AJAX 點讚功能 - 使用 Fetch API 實現異步請求
+// ===========================================================================
+// 
+// 此模組展示了以下關鍵技術點：
+// 1. Fetch API - 現代 JavaScript 異步 HTTP 請求標準
+// 2. 防抖處理 (Debouncing) - 防止用戶瘋狂點擊導致的重複請求
+// 3. DOM 動態更新 - 無需頁面刷新即可更新 UI
+// 4. 錯誤處理 - 網絡異常和服務器錯誤的優雅處理
+// 5. Toggle 模式 - 點讚/取消點讚切換
+// 6. 身份驗證 - 未登入用戶提示登入
+//
+// 時間複雜度：O(1) - 單次 DOM 查詢和更新
+// 空間複雜度：O(n) - n 為追蹤的按鈕數量
+// ===========================================================================
+
+// 防抖狀態追蹤器 - 記錄每個評論的點讚按鈕是否處於冷卻期
+const likeDebounceState = {};
+
+// 正在處理的請求追蹤器 - 防止並發請求
+const likeRequestInProgress = {};
+
+// 防抖冷卻時間（毫秒）- 防止用戶在此時間內重複點擊
+// 注意：此時間應該足夠短，以允許用戶快速切換點讚/取消點讚
+const DEBOUNCE_COOLDOWN_MS = 300;
+
+/**
+ * AJAX 點讚函數 - Toggle 模式，支持點讚和取消點讚
+ * 
+ * 此函數展示了完整的前後端交互流程：
+ * 1. 防抖檢查 - 阻止短時間內的重複請求
+ * 2. UI 反饋 - 禁用按鈕並顯示加載狀態
+ * 3. Fetch 請求 - 向 /like_review/<id> 發送 POST 請求
+ * 4. 響應處理 - 根據 is_liked 狀態切換 UI
+ * 5. 錯誤處理 - 處理未登入、網絡異常等情況
+ * 
+ * @param {number} reviewId - 要點讚的評論 ID
+ * @returns {Promise<void>}
+ */
+async function likeReview(reviewId) {
+    // ===== 步驟 1：防抖檢查 =====
+    // 只檢查是否有正在進行的請求，不檢查防抖狀態（允許快速切換）
+    if (likeRequestInProgress[reviewId]) {
+        console.log(`[likeReview] Review ${reviewId} has request in progress, ignoring click.`);
+        return;
+    }
+    
+    // 設置請求進行中標記（防止並發請求）
+    likeRequestInProgress[reviewId] = true;
+    
+    // ===== 步驟 2：獲取 DOM 元素並顯示加載狀態 =====
+    const likeBtn = document.querySelector(`.like-btn[data-review-id="${reviewId}"]`);
+    const likeCountSpan = document.getElementById(`like-count-${reviewId}`);
+    
+    // 保存當前狀態（用於樂觀更新）
+    const currentIsLiked = likeBtn ? likeBtn.classList.contains('liked') : false;
+    const currentLikes = likeCountSpan ? parseInt(likeCountSpan.textContent) || 0 : 0;
+    
+    // 樂觀更新：立即切換 UI 狀態（如果後端失敗，會在 catch 中恢復）
+    if (likeBtn && likeCountSpan) {
+        const likeIcon = likeBtn.querySelector('.like-icon');
+        const newIsLiked = !currentIsLiked;
+        const newLikes = newIsLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1);
+        
+        // 立即更新 UI
+        if (newIsLiked) {
+            likeBtn.classList.add('liked');
+            if (likeIcon) likeIcon.textContent = '❤️';
+            likeBtn.title = 'Click to unlike';
+        } else {
+            likeBtn.classList.remove('liked');
+            if (likeIcon) likeIcon.textContent = '🤍';
+            likeBtn.title = 'Click to like';
+        }
+        likeCountSpan.textContent = newLikes;
+    }
+    
+    if (likeBtn) {
+        likeBtn.disabled = true;
+        likeBtn.classList.add('loading');
+    }
+    
+    try {
+        // ===== 步驟 3：發送 Fetch 請求 =====
+        const response = await fetch(`/like_review/${reviewId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        });
+        
+        const data = await response.json();
+        
+        // ===== 步驟 4：處理未登入情況 =====
+        if (response.status === 401 && data.need_login) {
+            // 恢復樂觀更新的狀態
+            if (likeBtn && likeCountSpan) {
+                const likeIcon = likeBtn.querySelector('.like-icon');
+                if (currentIsLiked) {
+                    likeBtn.classList.add('liked');
+                    if (likeIcon) likeIcon.textContent = '❤️';
+                    likeBtn.title = 'Click to unlike';
+                } else {
+                    likeBtn.classList.remove('liked');
+                    if (likeIcon) likeIcon.textContent = '🤍';
+                    likeBtn.title = 'Click to like';
+                }
+                likeCountSpan.textContent = currentLikes;
+            }
+            // 彈窗提示並跳轉登入頁面
+            const shouldLogin = confirm('Please login to like reviews. Go to login page?');
+            if (shouldLogin) {
+                window.location.href = '/login';
+            }
+            return;
+        }
+        
+        // ===== 步驟 5：處理成功響應 - Toggle 邏輯 =====
+        if (response.ok && data.status === 'success') {
+            const isLiked = data.is_liked;
+            const action = data.action;
+            const isAlreadyLiked = action === 'already_liked';
+            
+            if (isAlreadyLiked) {
+                console.log(`[likeReview] Review ${reviewId} already liked (concurrent request handled).`);
+            } else {
+                console.log(`[likeReview] Success! Review ${reviewId} ${action}. New likes: ${data.new_likes}`);
+            }
+            
+            // 更新按鈕狀態和圖標（強制更新，確保狀態正確）
+            if (likeBtn) {
+                const likeIcon = likeBtn.querySelector('.like-icon');
+                
+                // 強制移除所有狀態類，然後重新添加正確的狀態
+                likeBtn.classList.remove('liked');
+                
+                if (isLiked) {
+                    // 點讚成功：顯示紅心
+                    likeBtn.classList.add('liked');
+                    if (likeIcon) likeIcon.textContent = '❤️';
+                    likeBtn.title = 'Click to unlike';
+                } else {
+                    // 取消點讚：顯示白心（確保 removed）
+                    if (likeIcon) likeIcon.textContent = '🤍';
+                    likeBtn.title = 'Click to like';
+                }
+                
+                // 強制觸發瀏覽器重繪，確保狀態更新
+                void likeBtn.offsetHeight;
+                
+                // 只有非 already_liked 的情況才播放動畫
+                if (!isAlreadyLiked) {
+                    requestAnimationFrame(() => {
+                        const animClass = isLiked ? 'liked-animation' : 'unliked-animation';
+                        likeBtn.classList.add(animClass);
+                        setTimeout(() => {
+                            likeBtn.classList.remove(animClass);
+                        }, 400);
+                    });
+                }
+            }
+            
+            // 更新點讚數字
+            if (likeCountSpan) {
+                likeCountSpan.textContent = data.new_likes;
+                // 只有非 already_liked 的情況才播放動畫
+                if (!isAlreadyLiked) {
+                    requestAnimationFrame(() => {
+                        const countClass = isLiked ? 'like-count-updated' : 'like-count-downdated';
+                        likeCountSpan.classList.add(countClass);
+                        setTimeout(() => {
+                            likeCountSpan.classList.remove(countClass);
+                        }, 300);
+                    });
+                }
+            }
+            
+            // 同步更新 ReviewsManager 本地數據
+            if (typeof ReviewsManager !== 'undefined' && ReviewsManager._reviews) {
+                const review = ReviewsManager._reviews.find(r => r.id === reviewId);
+                if (review) {
+                    review.likes = data.new_likes;
+                    review.is_liked = isLiked;
+                }
+            }
+            
+        } else {
+            // 其他錯誤：恢復樂觀更新的狀態
+            console.error(`[likeReview] Error: ${data.message || 'Unknown error'}`);
+            if (likeBtn && likeCountSpan) {
+                const likeIcon = likeBtn.querySelector('.like-icon');
+                if (currentIsLiked) {
+                    likeBtn.classList.add('liked');
+                    if (likeIcon) likeIcon.textContent = '❤️';
+                    likeBtn.title = 'Click to unlike';
+                } else {
+                    likeBtn.classList.remove('liked');
+                    if (likeIcon) likeIcon.textContent = '🤍';
+                    likeBtn.title = 'Click to like';
+                }
+                likeCountSpan.textContent = currentLikes;
+            }
+            alert(data.message || 'Failed to process like. Please try again.');
+        }
+        
+    } catch (error) {
+        console.error('[likeReview] Network error:', error);
+        
+        // 恢復樂觀更新的狀態（網絡錯誤）
+        if (likeBtn && likeCountSpan) {
+            const likeIcon = likeBtn.querySelector('.like-icon');
+            if (currentIsLiked) {
+                likeBtn.classList.add('liked');
+                if (likeIcon) likeIcon.textContent = '❤️';
+                likeBtn.title = 'Click to unlike';
+            } else {
+                likeBtn.classList.remove('liked');
+                if (likeIcon) likeIcon.textContent = '🤍';
+                likeBtn.title = 'Click to like';
+            }
+            likeCountSpan.textContent = currentLikes;
+        }
+        
+        alert('Network error. Please check your connection and try again.');
+        
+    } finally {
+        // ===== 步驟 6：清理狀態 =====
+        // 立即清除請求進行中標記，允許下一次操作（但保留短暫防抖）
+        likeRequestInProgress[reviewId] = false;
+        
+        if (likeBtn) {
+            likeBtn.disabled = false;
+            likeBtn.classList.remove('loading');
+        }
+        
+        // 短暫防抖：防止極短時間內的重複點擊（300ms）
+        likeDebounceState[reviewId] = true;
+        setTimeout(() => {
+            likeDebounceState[reviewId] = false;
+        }, DEBOUNCE_COOLDOWN_MS);
+    }
+}
+
+// 將 likeReview 函數暴露到全局作用域
+window.likeReview = likeReview;
+
 // ==================== 初始评论数据 ====================
 // 现在评论完全来自数据库，前端不再内置任何静态示例评论。
 // 后端通过 window.INITIAL_REVIEWS_FROM_DB 注入；未注入时默认为空列表。
@@ -139,7 +387,15 @@ const ReviewsManager = {
   },
 
   // 检查用户是否已点赞
+  // 優先使用後端返回的 is_liked 字段（刷新頁面後仍有效）
+  // 如果沒有 is_liked，則回退到檢查 likedBy 數組
   isLiked: function(review) {
+    // 優先使用後端返回的 is_liked 字段（基於 session）
+    if (review.hasOwnProperty('is_liked')) {
+      return review.is_liked === true;
+    }
+    
+    // 回退：檢查 likedBy 數組（用於動態添加的評論）
     const userId = this.getUserIdentifier();
     return review.likedBy && review.likedBy.indexOf(userId) > -1;
   },
@@ -165,6 +421,8 @@ const ReviewsManager = {
   },
 
   // 渲染单个评论（B站风格）
+  // 點讚按鈕使用 onclick="likeReview(id)" 觸發 AJAX 請求
+  // 每個按鈕都有唯一的 id="like-btn-{reviewId}" 和 data-review-id 屬性
   renderReview: function(review) {
     const isLiked = this.isLiked(review);
     const heartIcon = isLiked ? '❤️' : '🤍';
@@ -189,6 +447,12 @@ const ReviewsManager = {
       repliesHtml += '</div>';
     }
 
+    // 點讚按鈕說明：
+    // - id="like-btn-${review.id}" : 唯一標識符，便於 JavaScript 定位
+    // - class="like-btn" : 用於 CSS 樣式和 JavaScript 選擇器
+    // - data-review-id="${review.id}" : 存儲評論 ID，供 JavaScript 讀取
+    // - onclick="likeReview(${review.id})" : 觸發 AJAX 點讚函數
+    // - <span id="like-count-${review.id}"> : 點讚數字容器，用於動態更新
     return `
       <div class="bili-comment-item" data-review-id="${review.id}">
         <div class="comment-avatar">
@@ -199,10 +463,20 @@ const ReviewsManager = {
           <div class="comment-text">${this.escapeHtml(review.text)}</div>
           <div class="comment-info">
             <span class="comment-date">${this.formatDate(review.date)}</span>
-            <button class="comment-like-btn ${isLiked ? 'liked' : ''}" data-review-id="${review.id}">
+            
+            <!-- AJAX 點讚按鈕 - Toggle 模式：點讚/取消點讚 -->
+            <button 
+              type="button"
+              id="like-btn-${review.id}"
+              class="comment-like-btn like-btn ${isLiked ? 'liked' : ''}" 
+              data-review-id="${review.id}"
+              onclick="likeReview(${review.id})"
+              title="${isLiked ? 'Click to unlike' : 'Click to like'}"
+            >
               <span class="like-icon">${heartIcon}</span>
-              <span class="like-count">${review.likes}</span>
+              <span class="like-count" id="like-count-${review.id}">${review.likes}</span>
             </button>
+            
             <button class="comment-reply-btn" data-review-id="${review.id}">Reply</button>
           </div>
           <div class="comment-reply-form" id="reply-form-${review.id}" style="display: none;">
@@ -285,6 +559,11 @@ const ReviewsManager = {
     // 底部栏提交功能（点击按钮或按 Enter 时发送，Shift+Enter 换行）
     if (stickySubmit && stickyInput) {
       const sendStickyComment = () => {
+        // 检查登录状态
+        if (typeof UserMenu !== 'undefined' && !UserMenu.requireLogin()) {
+          return; // 未登录，已跳转到登录页面
+        }
+        
         const text = stickyInput.value.trim();
         if (!text) {
           alert('Please enter your comment');
@@ -443,6 +722,11 @@ const ReviewsManager = {
 
   // 处理回复（发送到后端并更新本地数据）
   handleReply: function(reviewId) {
+    // 检查登录状态
+    if (typeof UserMenu !== 'undefined' && !UserMenu.requireLogin()) {
+      return; // 未登录，已跳转到登录页面
+    }
+    
     const form = document.getElementById(`reply-form-${reviewId}`);
     if (!form) return;
 
@@ -503,6 +787,11 @@ const ReviewsManager = {
     
     if (submitBtn && textInput) {
       const sendMainComment = () => {
+        // 检查登录状态
+        if (typeof UserMenu !== 'undefined' && !UserMenu.requireLogin()) {
+          return; // 未登录，已跳转到登录页面
+        }
+        
         const text = textInput.value.trim();
         if (!text) {
           alert('Please enter your comment');

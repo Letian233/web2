@@ -88,6 +88,19 @@ class Review(Base):
     parent_id = Column(Integer, ForeignKey("reviews.id"), nullable=True)
 
 
+class ReviewLike(Base):
+    """
+    ORM 映射到 review_likes 表，用於追蹤用戶對評論的點讚狀態。
+    複合主鍵 (user_id, review_id) 確保每個用戶對每個評論只能點讚一次。
+    """
+
+    __tablename__ = "review_likes"
+
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    review_id = Column(Integer, ForeignKey("reviews.id", ondelete="CASCADE"), primary_key=True)
+    created_at = Column(DateTime)
+
+
 class Order(Base):
     """
     ORM 映射到已存在的 orders 表（不自动建表）。
@@ -132,6 +145,22 @@ class Address(Base):
     state = Column(String(100), nullable=False)
     zip_code = Column(String(20), nullable=False)
     is_default = Column(Boolean, default=False)
+
+
+class AboutContent(Base):
+    """
+    ORM 映射到已存在的 about_content 表（不自动建表）。
+    用于存储 About 页面的各个区块内容。
+    """
+
+    __tablename__ = "about_content"
+
+    id = Column(Integer, primary_key=True)
+    section_name = Column(String(50), unique=True, nullable=False)  # 区块标识，如 'History', 'Chef', 'Vision'
+    title = Column(String(100), nullable=False)  # 推文标题
+    content = Column(Text, nullable=False)  # 推文内容
+    image_url = Column(String(200), nullable=True)  # 图片路径
+    updated_at = Column(DateTime)
 
 
 def init_db() -> None:

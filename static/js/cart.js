@@ -115,17 +115,29 @@ const Cart = {
     }, 0);
   },
 
-  // 更新购物车 UI（更新导航栏的购物车计数器）
+  // 更新购物车 UI（更新导航栏的购物车计数器和悬浮按钮）
   updateCartUI: function() {
     const cartBadge = document.getElementById('cart-badge');
+    const cartBadgeFixed = document.getElementById('cartBadgeFixed');
+    const totalQuantity = this.getTotalQuantity();
+    
+    // 更新导航栏角标
     if (cartBadge) {
-      const totalQuantity = this.getTotalQuantity();
       cartBadge.textContent = totalQuantity;
-      // 如果数量为 0，隐藏角标
       if (totalQuantity === 0) {
         cartBadge.style.display = 'none';
       } else {
         cartBadge.style.display = 'inline-block';
+      }
+    }
+    
+    // 更新悬浮按钮角标（menu 页面）
+    if (cartBadgeFixed) {
+      cartBadgeFixed.textContent = totalQuantity;
+      if (totalQuantity === 0) {
+        cartBadgeFixed.style.display = 'none';
+      } else {
+        cartBadgeFixed.style.display = 'flex';
       }
     }
   },
@@ -397,6 +409,12 @@ function findItemIdByName(itemName) {
 // ==================== 处理订单按钮点击 ====================
 function handleOrderClick(event) {
   event.preventDefault();
+  
+  // 检查登录状态
+  if (typeof UserMenu !== 'undefined' && !UserMenu.requireLogin()) {
+    return; // 未登录，已跳转到登录页面
+  }
+  
   const button = event.currentTarget;
   const itemName = button.getAttribute('data-pizza-type');
   

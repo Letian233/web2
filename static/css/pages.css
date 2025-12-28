@@ -1,5 +1,47 @@
 /* Page-specific styles */
 
+/* Browse by Mood Section Styles */
+.mood-item-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.mood-item-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.mood-item {
+  text-align: center;
+  cursor: pointer;
+}
+
+.mood-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 10px;
+  border: 3px solid #9c5959;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mood-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mood-label {
+  margin: 0;
+  font-size: 14px;
+  color: #693434;
+  font-weight: 600;
+}
+
 /* About Page Styles */
 .about-page article {
   width: 100% !important;
@@ -48,6 +90,66 @@
   height: 150px;
   object-fit: cover;
   border: 3px solid #9c5959;
+}
+
+/* About 页面推文更新按钮样式 - 在标题右侧 */
+.content-header-wrapper {
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.content-update-btn-container {
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.content-update-btn-container .btn-outline-secondary {
+  color: #f5f0e0;
+  border-color: #9c5959;
+  background-color: #9c5959;
+  padding: 8px 18px;
+  font-weight: 500;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.content-update-btn-container .btn-outline-secondary:hover {
+  background-color: #9c5959;
+  color: #f5f0e0;
+  border-color: #9c5959;
+}
+
+.content-update-btn-container .btn-outline-secondary span {
+  display: inline-block;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .content-header-wrapper {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  .content-header-wrapper h2 {
+    width: 100%;
+  }
+  
+  .content-update-btn-container {
+    width: 100%;
+  }
+  
+  .content-update-btn-container .btn-outline-secondary {
+    width: 100%;
+    padding: 10px 20px;
+  }
+}
+
+/* 内容容器样式 */
+#aboutContentContainer {
+  min-height: 200px;
 }
 
 .about-page .chef-card h4 {
@@ -115,6 +217,74 @@
   margin-top: 15px;
   margin-bottom: 15px;
   color: #693434;
+}
+
+/* 自定义通知提示样式 - 主题风格 */
+.custom-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Lobster13Regular', cursive;
+  font-size: 1.1rem;
+  color: #f5f0e0;
+  background-color: #9C5959;
+  border: 2px solid #693434;
+  min-width: 250px;
+  max-width: 400px;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.custom-notification.show {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.custom-notification-success {
+  background-color: #9C5959;
+  border-color: #693434;
+  color: #f5f0e0;
+}
+
+.custom-notification-error {
+  background-color: #eb5a5f;
+  border-color: #c93d42;
+  color: #fff;
+}
+
+.custom-notification-info {
+  background-color: #693434;
+  border-color: #9C5959;
+  color: #f5f0e0;
+}
+
+.notification-message {
+  display: block;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .custom-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    min-width: auto;
+    transform: translateY(-100px);
+  }
+  
+  .custom-notification.show {
+    transform: translateY(0);
+  }
 }
 
 /* Reviews Page Styles */
@@ -1093,4 +1263,848 @@
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(105, 52, 52, 0.2);
+}
+
+/* ==================== Menu Filter Bar Styles ==================== */
+.menu-filter-bar {
+  background-color: #f5f0e0;
+  border: 1px solid rgba(105, 52, 52, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* 頂部：搜索框 + 漢堡按鈕 */
+.filter-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.filter-header .search-input-wrapper {
+  flex: 1;
+}
+
+/* 漢堡過濾按鈕 */
+.filter-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background-color: #9C5959;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #f5f0e0;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.filter-toggle-btn:hover {
+  background-color: #693434;
+}
+
+.filter-toggle-btn.active {
+  background-color: #693434;
+}
+
+/* 漢堡圖標 */
+.filter-hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20px;
+  height: 14px;
+}
+
+.filter-hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #f5f0e0;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+/* 漢堡動畫 - 變成 X */
+.filter-toggle-btn.active .filter-hamburger span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.filter-toggle-btn.active .filter-hamburger span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.filter-toggle-btn.active .filter-hamburger span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.filter-toggle-text {
+  font-family: Century, sans-serif;
+}
+
+/* 可折疊過濾面板 */
+.filter-panel {
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 1rem;
+}
+
+.filter-panel.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+
+.filter-panel-content {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(105, 52, 52, 0.15);
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.filter-row:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
+.filter-controls {
+  /* 由 filter-panel-content 處理樣式 */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+/* 過濾組 */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 140px;
+}
+
+.filter-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #9C5959;
+  font-family: Century, sans-serif;
+}
+
+/* 下拉選單樣式 */
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(105, 52, 52, 0.3);
+  border-radius: 4px;
+  background-color: #ebe5d5;
+  color: #693434;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%239C5959'%3e%3cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+  padding-right: 2rem;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #9C5959;
+  box-shadow: 0 0 0 2px rgba(156, 89, 89, 0.2);
+}
+
+.filter-select:hover {
+  border-color: #9C5959;
+}
+
+/* 價格輸入組 */
+.price-range-group {
+  min-width: 200px;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.price-input {
+  width: 80px;
+  padding: 0.5rem;
+  border: 1px solid rgba(105, 52, 52, 0.3);
+  border-radius: 4px;
+  background-color: #ebe5d5;
+  color: #693434;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.price-input:focus {
+  outline: none;
+  border-color: #9C5959;
+  box-shadow: 0 0 0 2px rgba(156, 89, 89, 0.2);
+}
+
+.price-input::placeholder {
+  color: rgba(105, 52, 52, 0.5);
+}
+
+.price-separator {
+  color: #9C5959;
+  font-weight: bold;
+}
+
+/* 過濾按鈕 */
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  min-height: auto;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.filter-btn-reset {
+  background-color: #9C5959;
+  border: 1px solid #9C5959;
+  color: #f5f0e0;
+}
+
+.filter-btn-reset:hover {
+  background-color: #9C5959;
+  color: #f5f0e0;
+}
+
+/* 過濾狀態顯示 */
+.filter-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(156, 89, 89, 0.1);
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+#filterStatusText {
+  color: #693434;
+}
+
+.clear-filters-btn {
+  background: none;
+  border: none;
+  color: #9C5959;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.clear-filters-btn:hover {
+  color: #693434;
+}
+
+/* 無結果提示 */
+.menu-no-results {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #693434;
+}
+
+.menu-no-results h3 {
+  font-family: 'Lobster13Regular', cursive;
+  color: #9C5959;
+  margin-bottom: 0.5rem;
+}
+
+.menu-no-results p {
+  margin-bottom: 1rem;
+  color: #693434;
+}
+
+/* 菜品類別標籤 */
+.menu-item-category {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(156, 89, 89, 0.15);
+  color: #9C5959;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 3px;
+  font-family: Century, sans-serif;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .price-range-group {
+    width: 100%;
+  }
+  
+  .price-inputs {
+    width: 100%;
+  }
+  
+  .price-input {
+    flex: 1;
+    width: auto;
+  }
+  
+  .filter-buttons {
+    margin-left: 0;
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .filter-btn {
+    flex: 1;
+  }
+  
+  .filter-status {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}
+
+/* ===========================================================================
+   AJAX 點讚按鈕樣式 - 配合 likeReview() 函數使用
+   ===========================================================================
+   
+   此樣式展示了以下 UX 最佳實踐：
+   1. 視覺反饋 - 加載中、成功、錯誤狀態的不同樣式
+   2. 動畫效果 - 平滑的過渡和彈跳動畫
+   3. 防抖視覺提示 - 禁用狀態時的視覺變化
+   4. 無障礙設計 - cursor 和 opacity 變化
+=========================================================================== */
+
+/* 點讚按鈕基礎樣式 */
+.like-btn {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* 點讚按鈕加載中狀態 */
+.like-btn.loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 點讚按鈕加載中動畫 */
+.like-btn.loading .like-icon {
+  animation: likeLoadingPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes likeLoadingPulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 點讚成功動畫 - 優化為更平滑的動畫 */
+.like-btn.liked-animation {
+  animation: likeBounce 0.4s ease-out;
+  /* 動畫期間禁用懸停效果，避免衝突 */
+  pointer-events: none;
+}
+
+@keyframes likeBounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.15);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 點讚數字更新動畫 - 減少幅度，更平滑 */
+.like-count-updated {
+  animation: likeCountPop 0.25s ease-out;
+  color: #9C5959 !important;
+  display: inline-block; /* 確保 transform 生效 */
+}
+
+@keyframes likeCountPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 取消點讚數字更新動畫 - 更平滑，不抖動 */
+.like-count-downdated {
+  animation: likeCountDown 0.3s ease-out;
+  color: #693434 !important;
+  display: inline-block;
+}
+
+@keyframes likeCountDown {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 點讚按鈕懸停效果 - 排除動畫狀態 */
+.like-btn:not(.loading):not(.liked-animation):hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+.like-btn:not(.loading):not(.liked-animation):hover .like-icon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* 已點讚狀態 */
+.like-btn.liked .like-icon {
+  filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.4));
+}
+
+/* 取消點讚動畫 - 平滑淡出，不抖動 */
+.like-btn.unliked-animation {
+  animation: unlikeSmooth 0.3s ease-out;
+}
+
+@keyframes unlikeSmooth {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 已點過讚的提示動畫（保留，但不再使用，因為現在支持 toggle） */
+.like-btn.already-liked {
+  animation: alreadyLikedShake 0.5s ease;
+}
+
+@keyframes alreadyLikedShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+.like-btn.already-liked .like-icon {
+  opacity: 0.7;
+}
+
+/* ===========================================================================
+   購物車按鈕懸浮樣式 - 與頭像按鈕一致（僅在 menu 頁面顯示）
+   =========================================================================== */
+
+/* 購物車按鈕固定定位 - 位於頭像下方 */
+.cart-button-fixed {
+  position: fixed;
+  top: 70px; /* 頭像下方（20px top + 40px 頭像高度 + 10px 間距） */
+  right: 20px;
+  z-index: 999;
+}
+
+.cart-fixed-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #9C5959;
+  border: 2px solid #9c5959;
+  color: #f5f0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(105, 52, 52, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0;
+}
+
+.cart-fixed-btn:hover {
+  background-color: #693434;
+  border-color: #693434;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(105, 52, 52, 0.4);
+}
+
+.cart-fixed-btn:active {
+  transform: scale(1);
+}
+
+.cart-fixed-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: #f5f0e0;
+  fill: none;
+}
+
+.cart-badge-fixed {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #693434;
+  color: #f5f0e0;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  border: 2px solid #f5f0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  min-width: 18px;
+}
+
+/* 響應式調整 */
+@media (max-width: 991px) {
+  .cart-button-fixed {
+    top: 60px; /* 移動端頭像位置調整 */
+    right: 10px;
+  }
+  
+  .cart-fixed-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .cart-fixed-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .cart-badge-fixed {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+    min-width: 16px;
+  }
+}
+
+/* ===========================================================================
+   推薦區域樣式 - 「猜你喜歡」
+   =========================================================================== */
+
+.recommendation-section {
+  background: linear-gradient(135deg, #f5f0e0 0%, #ebe5d5 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(156, 89, 89, 0.15);
+  box-shadow: 0 4px 12px rgba(105, 52, 52, 0.1);
+}
+
+.recommendation-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.recommendation-title {
+  font-family: 'Lobster13Regular', cursive;
+  color: #693434;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.recommendation-icon {
+  font-size: 1.5rem;
+}
+
+.recommendation-subtitle {
+  color: #9C5959;
+  font-size: 0.9rem;
+  margin: 0;
+  font-style: italic;
+}
+
+.recommendation-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.recommendation-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(105, 52, 52, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(105, 52, 52, 0.15);
+}
+
+.recommendation-card-image {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+}
+
+.recommendation-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.recommendation-card:hover .recommendation-card-image img {
+  transform: scale(1.05);
+}
+
+.recommendation-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #9C5959, #693434);
+  color: #f5f0e0;
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(105, 52, 52, 0.3);
+}
+
+.recommendation-card-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.recommendation-card-title {
+  font-family: 'Lobster13Regular', cursive;
+  color: #693434;
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.recommendation-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.recommendation-card-price {
+  color: #9C5959;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.recommendation-card-rating {
+  font-size: 0.75rem;
+  color: #f0ad4e;
+}
+
+.recommendation-card-desc {
+  color: #666;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0 0 auto 0;
+  flex-grow: 1;
+}
+
+.recommendation-order-btn {
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem !important;
+  font-size: 0.85rem !important;
+  min-height: auto !important;
+  text-align: center;
+  width: 100%;
+}
+
+/* 響應式設計 */
+@media (max-width: 991px) {
+  .recommendation-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575px) {
+  .recommendation-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .recommendation-section {
+    padding: 1rem;
+  }
+  
+  .recommendation-title {
+    font-size: 1.5rem;
+  }
+  
+  .recommendation-card-image {
+    height: 180px;
+  }
+}
+
+/* ===========================================================================
+   購物車按鈕懸浮樣式 - 與頭像按鈕一致（僅在 menu 頁面顯示）
+   =========================================================================== */
+
+/* 購物車按鈕固定定位 - 與頭像並排放置 */
+.cart-button-fixed {
+  position: fixed;
+  top: 20px; /* 與頭像同一水平線 */
+  right: 70px; /* 頭像左側（20px right + 40px 頭像寬度 + 10px 間距） */
+  z-index: 999;
+  margin: 0;
+  padding: 0;
+}
+
+.cart-fixed-btn {
+  width: 40px; /* 與頭像按鈕寬度一致 */
+  height: 40px; /* 與頭像按鈕高度一致 */
+  border-radius: 50%;
+  background-color: #9C5959;
+  border: 2px solid #9c5959; /* 與頭像邊框一致 */
+  color: #f5f0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(105, 52, 52, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0;
+  margin: 0; /* 確保沒有額外的 margin */
+}
+
+.cart-fixed-btn:hover {
+  background-color: #693434;
+  border-color: #693434;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(105, 52, 52, 0.4);
+}
+
+.cart-fixed-btn:active {
+  transform: scale(1);
+}
+
+.cart-fixed-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: #f5f0e0;
+  fill: none;
+}
+
+.cart-badge-fixed {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #693434;
+  color: #f5f0e0;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  border: 2px solid #f5f0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  min-width: 18px;
+}
+
+/* 響應式調整 */
+@media (max-width: 991px) {
+  .cart-button-fixed {
+    top: 10px; /* 與移動端頭像同一水平線 */
+    right: 56px; /* 移動端頭像左側（10px right + 36px 頭像寬度 + 10px 間距） */
+  }
+  
+  .cart-fixed-btn {
+    width: 36px; /* 移動端頭像也是 36px */
+    height: 36px;
+  }
+  
+  .cart-fixed-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .cart-badge-fixed {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+    min-width: 16px;
+  }
 }

@@ -59,8 +59,8 @@ async function loadUserProfile() {
     const currentUser = window.CURRENT_USER;
     if (currentUser) {
       document.getElementById('profileUsername').value = currentUser.username || '';
-      document.getElementById('profileEmail').value = currentUser.email || '';
-      document.getElementById('profilePhone').value = currentUser.phone || '';
+    document.getElementById('profileEmail').value = currentUser.email || '';
+    document.getElementById('profilePhone').value = currentUser.phone || '';
       updateAvatarDisplay(currentUser.avatar_url, currentUser.username);
     }
   }
@@ -119,7 +119,7 @@ async function uploadAvatar(file) {
     // 显示成功提示
     if (typeof Toast !== 'undefined') {
       Toast.show('Avatar uploaded successfully!');
-    } else {
+      } else {
       alert('Avatar uploaded successfully!');
     }
   } catch (error) {
@@ -218,65 +218,65 @@ function renderOrderHistory() {
     }
   });
 
-    // 绑定 View Items 按钮事件
-    document.querySelectorAll('.view-items-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const orderIndex = this.getAttribute('data-order-index');
-        const accordionItem = document.getElementById(`accordion-${orderIndex}`);
-        
-        if (!accordionItem) return;
-        
-        // 关闭所有其他 accordion
-        document.querySelectorAll('.accordion-item').forEach(item => {
-          if (item.id !== `accordion-${orderIndex}`) {
-            item.style.display = 'none';
-            const header = item.querySelector('.accordion-header');
-            const content = item.querySelector('.accordion-content');
-            if (header) header.classList.remove('active');
-            if (content) content.classList.remove('active');
-          }
-        });
-
-        // 切换当前 accordion
-        if (accordionItem.style.display === 'none') {
-          accordionItem.style.display = 'block';
-          const header = accordionItem.querySelector('.accordion-header');
-          const content = accordionItem.querySelector('.accordion-content');
-          if (header) header.classList.add('active');
-          if (content) content.classList.add('active');
-        } else {
-          accordionItem.style.display = 'none';
-          const header = accordionItem.querySelector('.accordion-header');
-          const content = accordionItem.querySelector('.accordion-content');
+  // 绑定 View Items 按钮事件
+  document.querySelectorAll('.view-items-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const orderIndex = this.getAttribute('data-order-index');
+      const accordionItem = document.getElementById(`accordion-${orderIndex}`);
+      
+      if (!accordionItem) return;
+      
+      // 关闭所有其他 accordion
+      document.querySelectorAll('.accordion-item').forEach(item => {
+        if (item.id !== `accordion-${orderIndex}`) {
+          item.style.display = 'none';
+          const header = item.querySelector('.accordion-header');
+          const content = item.querySelector('.accordion-content');
           if (header) header.classList.remove('active');
           if (content) content.classList.remove('active');
         }
       });
-    });
 
-    // 绑定 Accordion 头部点击事件
-    document.querySelectorAll('.accordion-header').forEach(header => {
-      header.addEventListener('click', function() {
-        const accordionIndex = this.getAttribute('data-accordion-index');
-        const accordionItem = document.getElementById(`accordion-${accordionIndex}`);
-        if (!accordionItem) return;
-        
+      // 切换当前 accordion
+      if (accordionItem.style.display === 'none') {
+        accordionItem.style.display = 'block';
+        const header = accordionItem.querySelector('.accordion-header');
         const content = accordionItem.querySelector('.accordion-content');
-        if (!content) return;
-        
-        if (content.classList.contains('active')) {
-          content.classList.remove('active');
-          this.classList.remove('active');
-        } else {
-          // 关闭所有其他
-          document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active'));
-          document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
-          
-          content.classList.add('active');
-          this.classList.add('active');
-        }
-      });
+        if (header) header.classList.add('active');
+        if (content) content.classList.add('active');
+      } else {
+        accordionItem.style.display = 'none';
+        const header = accordionItem.querySelector('.accordion-header');
+        const content = accordionItem.querySelector('.accordion-content');
+        if (header) header.classList.remove('active');
+        if (content) content.classList.remove('active');
+      }
     });
+  });
+
+  // 绑定 Accordion 头部点击事件
+  document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', function() {
+      const accordionIndex = this.getAttribute('data-accordion-index');
+      const accordionItem = document.getElementById(`accordion-${accordionIndex}`);
+      if (!accordionItem) return;
+      
+      const content = accordionItem.querySelector('.accordion-content');
+      if (!content) return;
+      
+      if (content.classList.contains('active')) {
+        content.classList.remove('active');
+        this.classList.remove('active');
+      } else {
+        // 关闭所有其他
+        document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
+        
+        content.classList.add('active');
+        this.classList.add('active');
+      }
+    });
+  });
 
   // 更新分页控件
   updateOrderPagination(totalPages);
@@ -790,13 +790,13 @@ document.addEventListener('DOMContentLoaded', function() {
           if (typeof UserMenu !== 'undefined' && UserMenu.render) {
             UserMenu.render();
           }
-
-          // 显示成功提示
-          if (typeof Toast !== 'undefined') {
-            Toast.show('Profile updated successfully!');
-          } else {
-            alert('Profile updated successfully!');
-          }
+        
+        // 显示成功提示
+        if (typeof Toast !== 'undefined') {
+          Toast.show('Profile updated successfully!');
+        } else {
+          alert('Profile updated successfully!');
+        }
         } catch (error) {
           console.error('Error updating profile:', error);
           alert('Failed to update profile: ' + error.message);

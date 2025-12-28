@@ -76,6 +76,17 @@ if (typeof(Storage) === "undefined") {
       this.render();
     },
 
+    // 检查登录状态，如果未登录则跳转到登录页面
+    requireLogin: function() {
+      const currentUser = this.getCurrentUser();
+      if (!this.isLoggedIn(currentUser)) {
+        // 未登录，跳转到登录页面
+        window.location.href = '/login';
+        return false;
+      }
+      return true;
+    },
+
     // 渲染用户菜单
     render: function() {
       const container = document.getElementById('userMenuContainer');
@@ -109,6 +120,10 @@ if (typeof(Storage) === "undefined") {
                 <li class="user-dropdown-header">Signed in as <strong>${currentUser.username || 'User'}</strong></li>
                 <li><a class="user-dropdown-item" href="/profile" id="profileLink">Profile</a></li>
                 <li><a class="user-dropdown-item" href="/menu" id="orderHistoryLink">Order History</a></li>
+                ${currentUser.is_admin ? `
+                <li><hr class="user-dropdown-divider"></li>
+                <li><a class="user-dropdown-item" href="/admin" id="adminPanelLink">Admin Panel</a></li>
+                ` : ''}
                 <li><hr class="user-dropdown-divider"></li>
                 <li><button class="user-dropdown-item logout" id="logoutBtn" type="button">Logout</button></li>
               </ul>
@@ -180,10 +195,19 @@ if (typeof(Storage) === "undefined") {
       button.addEventListener('click', handleOrderClick);
     });
 
-    // 绑定查看购物车按钮
+    // 绑定查看购物车按钮（侧边栏）
     const viewCartBtn = document.getElementById('viewCartBtn');
     if (viewCartBtn) {
       viewCartBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        Cart.showModal();
+      });
+    }
+
+    // 绑定悬浮购物车按钮（menu 页面）
+    const viewCartBtnFixed = document.getElementById('viewCartBtnFixed');
+    if (viewCartBtnFixed) {
+      viewCartBtnFixed.addEventListener('click', function(e) {
         e.preventDefault();
         Cart.showModal();
       });
@@ -212,6 +236,11 @@ if (typeof(Storage) === "undefined") {
     const checkoutBtn = document.getElementById('checkoutBtn');
     if (checkoutBtn) {
       checkoutBtn.addEventListener('click', function() {
+        // 检查登录状态
+        if (!UserMenu.requireLogin()) {
+          return; // 未登录，已跳转到登录页面
+        }
+        
         const cartItems = Cart.get();
         if (cartItems.length === 0) {
           Toast.show('Your cart is empty');

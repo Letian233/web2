@@ -1,0 +1,119 @@
+{% extends 'admin/master.html' %}
+
+{% block head %}
+    {{ super() }}
+    <!-- 使用 CDN 加载 Bootstrap 3 CSS（解决 PythonAnywhere 样式丢失问题） -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- 使用 CDN 加载 jQuery（Flask-Admin 需要） -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 使用 CDN 加载 Bootstrap 3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
+    <!-- 禁用导航栏 hover 效果 -->
+    <style>
+        /* 禁用所有导航链接的 hover 效果 */
+        .nav a:hover,
+        .nav a:focus,
+        .navbar-nav a:hover,
+        .navbar-nav a:focus,
+        .nav-sidebar > li > a:hover,
+        .nav-sidebar > li > a:focus,
+        .sidebar-menu a:hover,
+        .sidebar-menu a:focus {
+            background-color: transparent !important;
+            color: inherit !important;
+        }
+        .panel {
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .panel-heading {
+            padding: 10px 15px;
+            border-bottom: 1px solid transparent;
+            color: #fff;
+        }
+        .panel-body {
+            padding: 15px;
+        }
+        .panel-primary .panel-heading {
+            background-color: #337ab7;
+            border-color: #337ab7;
+        }
+        .panel-success .panel-heading {
+            background-color: #004e1a;
+            border-color: #005700;
+        }
+        .panel-info .panel-heading {
+            background-color: #5bc0de;
+            border-color: #5bc0de;
+        }
+        .panel-warning .panel-heading {
+            background-color: #f0ad4e;
+            border-color: #f0ad4e;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1 class="page-header">Admin Dashboard</h1>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <p class="lead">Welcome to Restaurant Admin Panel</p>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Total Users</h3>
+                </div>
+                <div class="panel-body">
+                    <h2 style="margin: 0;">{{ stats.total_users }}</h2>
+                    <p style="margin-top: 10px; color: #666;">Registered Users</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Total Menu Items</h3>
+                </div>
+                <div class="panel-body">
+                    <h2 style="margin: 0;">{{ stats.total_menu_items }}</h2>
+                    <p style="margin-top: 10px; color: #666;">Menu Items</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Total Orders</h3>
+                </div>
+                <div class="panel-body">
+                    <h2 style="margin: 0;">{{ stats.total_orders }}</h2>
+                    <p style="margin-top: 10px; color: #666;">Completed Orders</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Total Reviews</h3>
+                </div>
+                <div class="panel-body">
+                    <h2 style="margin: 0;">{{ stats.total_reviews }}</h2>
+                    <p style="margin-top: 10px; color: #666;">User Reviews</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

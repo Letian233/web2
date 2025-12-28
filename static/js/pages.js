@@ -121,9 +121,60 @@
     if (newsletterForm) {
       newsletterForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        alert('Thank you for subscribing!');
+        
+        // 获取邮箱输入框
+        const emailInput = newsletterForm.querySelector('.newsletter-email-input');
+        const email = emailInput ? emailInput.value : '';
+        
+        // 显示自定义主题提示
+        showCustomNotification('Thank you for subscribing!', 'success');
+        
+        // 清空输入框
+        if (emailInput) {
+          emailInput.value = '';
+        }
+        
         return false;
       });
+    }
+    
+    /**
+     * 显示自定义主题样式的通知提示
+     * @param {string} message - 提示消息
+     * @param {string} type - 提示类型：'success', 'error', 'info'
+     */
+    function showCustomNotification(message, type = 'success') {
+      // 创建提示容器
+      const notification = document.createElement('div');
+      notification.className = 'custom-notification custom-notification-' + type;
+      notification.innerHTML = '<span class="notification-message">' + escapeHtml(message) + '</span>';
+      
+      // 添加到页面
+      document.body.appendChild(notification);
+      
+      // 触发动画
+      setTimeout(function() {
+        notification.classList.add('show');
+      }, 10);
+      
+      // 3秒后自动消失
+      setTimeout(function() {
+        notification.classList.remove('show');
+        setTimeout(function() {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+    
+    /**
+     * HTML 转义函数，防止 XSS
+     */
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
   });
 })();
