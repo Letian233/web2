@@ -18,7 +18,7 @@
   // Use <html data-*> so it is available while scripts run in <head>.
   (function initTemplateDataNow() {
     const root = document.documentElement; // <html>
-    const fallbackBody = document.body; // may be null while parsing <head>
+    const fallbackBody = document.body;
 
     const getAttr = (name) =>
       (root && root.getAttribute && root.getAttribute(name)) ||
@@ -29,7 +29,6 @@
     const currentUserRaw = getAttr('data-current-user');
     const initialReviewsRaw = getAttr('data-initial-reviews');
 
-    // DEBUG: Log raw data
     console.log('[pages.js] currentUserRaw:', currentUserRaw);
 
     const menuItems = safeJsonParse(menuItemsRaw, 'menu items');
@@ -60,8 +59,6 @@
   document.addEventListener('DOMContentLoaded', function() {
     const carouselElement = document.querySelector('#heroCarousel');
     if (carouselElement) {
-      // Bootstrap 5 should auto-initialize with data-bs-ride="carousel"
-      // But we can manually initialize if needed
       if (typeof bootstrap !== 'undefined') {
         const carousel = new bootstrap.Carousel(carouselElement, {
           interval: 5000,
@@ -122,14 +119,14 @@
       newsletterForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // 获取邮箱输入框
+        // Get email input field
         const emailInput = newsletterForm.querySelector('.newsletter-email-input');
         const email = emailInput ? emailInput.value : '';
         
-        // 显示自定义主题提示
+        // Show custom themed notification
         showCustomNotification('Thank you for subscribing!', 'success');
         
-        // 清空输入框
+        // Clear input field
         if (emailInput) {
           emailInput.value = '';
         }
@@ -139,25 +136,25 @@
     }
     
     /**
-     * 显示自定义主题样式的通知提示
-     * @param {string} message - 提示消息
-     * @param {string} type - 提示类型：'success', 'error', 'info'
+     * Show custom themed notification
+     * @param {string} message
+     * @param {string} type
      */
     function showCustomNotification(message, type = 'success') {
-      // 创建提示容器
+      // Create notification container
       const notification = document.createElement('div');
       notification.className = 'custom-notification custom-notification-' + type;
       notification.innerHTML = '<span class="notification-message">' + escapeHtml(message) + '</span>';
       
-      // 添加到页面
+      // Add to page
       document.body.appendChild(notification);
       
-      // 触发动画
+      // Trigger animation
       setTimeout(function() {
         notification.classList.add('show');
       }, 10);
       
-      // 3秒后自动消失
+      // Auto dismiss after 3 seconds
       setTimeout(function() {
         notification.classList.remove('show');
         setTimeout(function() {
@@ -169,7 +166,7 @@
     }
     
     /**
-     * HTML 转义函数，防止 XSS
+     * HTML escape function to prevent XSS
      */
     function escapeHtml(text) {
       const div = document.createElement('div');

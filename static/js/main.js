@@ -1,26 +1,26 @@
-// ==================== 入口文件 ====================
-// 依赖：data.js, cart.js, menu.js
-// 负责初始化和绑定全局事件监听器
+// ==================== Entry File ====================
+// Dependencies: data.js, cart.js, menu.js
+// Responsible for initialization and binding global event listeners
 
-// 检查浏览器是否支持 localStorage
+// Check if browser supports localStorage
 if (typeof(Storage) === "undefined") {
   document.write("Sorry, your browser does not support Web Storage.");
 } else {
-  // ==================== 用户菜单管理 ====================
+  // ==================== User Menu Management ====================
   const UserMenu = {
-    // 判断用户对象是否代表已登录（后端可能返回 {id: null, username: null, ...}）
+    // Check if user object represents logged in user (backend may return {id: null, username: null, ...})
     isLoggedIn: function(user) {
       return user && (user.id || user.username);
     },
 
-    // 获取当前用户
+    // Get current user
     getCurrentUser: function() {
-      // 1）优先使用 window.CURRENT_USER（由 pages.js 从 <html data-current-user> 设置）
+      // Priority: use window.CURRENT_USER (set by pages.js from <html data-current-user>)
       if (window.CURRENT_USER !== undefined) {
         return window.CURRENT_USER;
       }
 
-      // 2）从 <html data-current-user="..."> 读取（pages.js 可能还没执行）
+      // Read from <html data-current-user="..."> (pages.js may not have executed yet)
       try {
         const html = document.documentElement;
         if (html && html.getAttribute) {
@@ -35,7 +35,7 @@ if (typeof(Storage) === "undefined") {
         console.error('Failed to parse html data-current-user:', e);
       }
 
-      // 3）从 <body data-current-user="..."> 读取（兼容旧模板）
+      // Read from <body data-current-user="..."> (compatibility with old templates)
       try {
         const body = document.body;
         if (body && body.dataset && body.dataset.currentUser) {
@@ -47,7 +47,7 @@ if (typeof(Storage) === "undefined") {
         console.error('Failed to parse body data-current-user:', e);
       }
 
-      // 4）最后兼容旧的 localStorage 模拟登录数据
+      // Finally, compatibility with old localStorage simulated login data
       try {
         const userData = localStorage.getItem('currentUser');
         if (userData) {
@@ -63,42 +63,42 @@ if (typeof(Storage) === "undefined") {
       return null;
     },
 
-    // 设置当前用户
+    // Set current user
     setCurrentUser: function(userData) {
       window.CURRENT_USER = userData;
       this.render();
     },
 
-    // 清除当前用户（登出）
+    // Clear current user (logout)
     clearCurrentUser: function() {
       window.CURRENT_USER = null;
       localStorage.removeItem('currentUser');
       this.render();
     },
 
-    // 检查登录状态，如果未登录则跳转到登录页面
+    // Check login status, redirect to login page if not logged in
     requireLogin: function() {
       const currentUser = this.getCurrentUser();
       if (!this.isLoggedIn(currentUser)) {
-        // 未登录，跳转到登录页面
+        // Not logged in, redirect to login page
         window.location.href = '/login';
         return false;
       }
       return true;
     },
 
-    // 渲染用户菜单
+    // Render user menu
     render: function() {
       const container = document.getElementById('userMenuContainer');
       if (!container) return;
 
-      // 使用 requestAnimationFrame 来避免闪烁
+      // Use requestAnimationFrame to avoid flickering
       requestAnimationFrame(() => {
         const currentUser = this.getCurrentUser();
 
-        // 检查是否真正登录（后端可能返回 {id: null, username: null, ...}）
+        // Check if truly logged in (backend may return {id: null, username: null, ...})
         if (this.isLoggedIn(currentUser)) {
-          // 已登录：显示头像下拉菜单
+          // Logged in: show avatar dropdown menu
           container.innerHTML = `
             <div class="dropdown user-dropdown-wrapper">
               <button 
@@ -130,7 +130,7 @@ if (typeof(Storage) === "undefined") {
             </div>
           `;
 
-          // 绑定登出按钮
+          // Bind logout button
           const logoutBtn = document.getElementById('logoutBtn');
           if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
@@ -138,13 +138,13 @@ if (typeof(Storage) === "undefined") {
             });
           }
 
-          // Profile 链接使用标准 href="/profile"，这里无需额外处理
+          // Profile link uses standard href="/profile", no additional handling needed here
 
-          // 绑定 Order History 链接（打开购物车模态框并切换到历史订单标签）
+          // Bind Order History link (open cart modal and switch to order history tab)
           const orderHistoryLink = document.getElementById('orderHistoryLink');
           if (orderHistoryLink) {
             orderHistoryLink.addEventListener('click', (e) => {
-              // 如果当前在 /menu 页面，打开购物车并切换到历史订单
+              // If currently on /menu page, open cart and switch to order history
               if (window.location.pathname === '/menu') {
                 e.preventDefault();
                 Cart.showModal();
@@ -155,7 +155,7 @@ if (typeof(Storage) === "undefined") {
             });
           }
         } else {
-          // 未登录：显示登录和注册按钮
+          // Not logged in: show login and register buttons
           container.innerHTML = `
             <div class="user-auth-buttons">
               <a class="button user-login-btn" href="/login">Login</a>
@@ -166,18 +166,18 @@ if (typeof(Storage) === "undefined") {
       });
     },
 
-    // 初始化
+    // Initialize
     init: function() {
       this.render();
     },
 
-    // 登出
+    // Logout
     logout: function() {
-      // 调用后端登出接口，清理服务器端 session
+      // Call backend logout API, clear server-side session
       fetch('/logout', { method: 'GET', credentials: 'same-origin' })
         .finally(() => {
           this.clearCurrentUser();
-          // 刷新到首页，确保导航和用户信息更新
+          // Refresh to homepage to ensure navigation and user info are updated
           window.location.href = '/';
         });
     }
@@ -186,16 +186,192 @@ if (typeof(Storage) === "undefined") {
   // Expose for other scripts (profile.js)
   window.UserMenu = UserMenu;
 
-  // ==================== 初始化 ====================
+  // ==================== Global Keyboard Shortcuts ====================
+  function initHotkeys() {
+    const currentUser = (window.UserMenu && typeof UserMenu.getCurrentUser === 'function')
+      ? UserMenu.getCurrentUser()
+      : null;
+    const isAdmin = !!(currentUser && currentUser.is_admin);
+
+    const routes = {
+      h: '/',
+      m: '/menu',
+      r: '/reviews',
+      a: '/about',
+      p: '/profile',
+      c: '/cart'
+    };
+    if (isAdmin) {
+      routes.d = '/admin';
+    }
+    let gPressedAt = 0;
+    const gTimeout = 800; // ms
+
+    const isTyping = (el) => {
+      if (!el) return false;
+      const tag = el.tagName && el.tagName.toLowerCase();
+      const editable = el.getAttribute && el.getAttribute('contenteditable');
+      return ['input', 'textarea', 'select'].includes(tag) || editable === 'true';
+    };
+
+    const buildHotkeyUI = () => {
+      let modal = document.getElementById('hotkey-modal');
+      let backdrop = document.getElementById('hotkey-backdrop');
+      if (modal && backdrop) return { modal, backdrop };
+
+      backdrop = document.createElement('div');
+      backdrop.id = 'hotkey-backdrop';
+      backdrop.className = 'hotkey-backdrop';
+      backdrop.setAttribute('aria-hidden', 'true');
+
+      modal = document.createElement('div');
+      modal.id = 'hotkey-modal';
+      modal.className = 'hotkey-modal';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('aria-labelledby', 'hotkey-title');
+      modal.setAttribute('aria-hidden', 'true');
+      modal.setAttribute('tabindex', '-1');
+      const adminItem = isAdmin ? `<li><kbd>g</kbd> <kbd>d</kbd> Go to Admin</li>` : '';
+      modal.innerHTML = `
+        <div class="hotkey-modal-header">
+          <h2 id="hotkey-title">Keyboard Shortcuts</h2>
+          <button type="button" class="hotkey-close" aria-label="Close">×</button>
+        </div>
+        <div class="hotkey-modal-body">
+          <ul class="hotkey-list">
+            <li><kbd>?</kbd> Toggle shortcuts help</li>
+            <li><kbd>Esc</kbd> Close shortcuts help</li>
+            <li><kbd>/</kbd> Focus search</li>
+            <li><kbd>n</kbd> Focus review input</li>
+            <li><kbd>g</kbd> <kbd>h</kbd> Go to Home</li>
+            <li><kbd>g</kbd> <kbd>m</kbd> Go to Menu</li>
+            <li><kbd>g</kbd> <kbd>r</kbd> Go to Reviews</li>
+            <li><kbd>g</kbd> <kbd>a</kbd> Go to About</li>
+            <li><kbd>g</kbd> <kbd>p</kbd> Go to Profile</li>
+            <li><kbd>g</kbd> <kbd>c</kbd> Open Cart</li>
+            ${adminItem}
+          </ul>
+        </div>
+      `;
+
+      document.body.appendChild(backdrop);
+      document.body.appendChild(modal);
+      return { modal, backdrop };
+    };
+
+    const focusSearch = () => {
+      const el = document.querySelector('#search-input') || document.querySelector('#searchInput');
+      if (el) {
+        el.focus();
+        if (el.select) el.select();
+      }
+    };
+
+    const focusReview = () => {
+      const el = document.querySelector('#review-text');
+      if (el) {
+        el.focus();
+        if (el.scrollIntoView) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    };
+
+    const { modal, backdrop } = buildHotkeyUI();
+    const closeBtn = modal.querySelector('.hotkey-close');
+
+    const openModal = () => {
+      modal.classList.add('show');
+      backdrop.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      backdrop.setAttribute('aria-hidden', 'false');
+      modal.focus();
+    };
+
+    const closeModal = () => {
+      modal.classList.remove('show');
+      backdrop.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      backdrop.setAttribute('aria-hidden', 'true');
+    };
+
+    closeBtn?.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (e) => {
+      const target = e.target;
+      const typing = isTyping(target);
+      const hasModifier = e.ctrlKey || e.metaKey || e.altKey;
+
+      // Toggle help: ? or Shift+/
+      if (!typing && (e.key === '?' || (e.key === '/' && e.shiftKey))) {
+        e.preventDefault();
+        if (modal.classList.contains('show')) {
+          closeModal();
+        } else {
+          openModal();
+        }
+        return;
+      }
+
+      // Esc to close
+      if (e.key === 'Escape') {
+        if (modal.classList.contains('show')) {
+          e.preventDefault();
+          closeModal();
+        }
+        return;
+      }
+
+      // Ignore other shortcuts while typing
+      if (typing) return;
+
+      // "/" to focus search
+      if (e.key === '/' && !e.shiftKey && !hasModifier) {
+        e.preventDefault();
+        focusSearch();
+        return;
+      }
+
+      // "n" to focus review input box
+      if (e.key === 'n' && !hasModifier && !e.shiftKey) {
+        e.preventDefault();
+        focusReview();
+        return;
+      }
+
+      const now = Date.now();
+      // g prefix
+      if (e.key === 'g' && !hasModifier && !e.shiftKey) {
+        gPressedAt = now;
+        return;
+      }
+
+      // g + [h/m/r/a/p/c]
+      if (gPressedAt && now - gPressedAt <= gTimeout && routes[e.key]) {
+        gPressedAt = 0;
+        e.preventDefault();
+        window.location.href = routes[e.key];
+        return;
+      }
+
+      if (gPressedAt && now - gPressedAt > gTimeout) {
+        gPressedAt = 0;
+      }
+    });
+  }
+
+  // ==================== Initialization ====================
   document.addEventListener('DOMContentLoaded', function() {
-    // 为所有 "Order Now" 按钮绑定点击事件
-    const orderButtons = document.querySelectorAll('.button[data-pizza-type]');
+    // Bind click events for all "Order Now" buttons (including recommended section)
+    const orderButtons = document.querySelectorAll('[data-pizza-type]');
     
     orderButtons.forEach(function(button) {
       button.addEventListener('click', handleOrderClick);
     });
 
-    // 绑定查看购物车按钮（侧边栏）
+    // Bind view cart button (sidebar)
     const viewCartBtn = document.getElementById('viewCartBtn');
     if (viewCartBtn) {
       viewCartBtn.addEventListener('click', function(e) {
@@ -204,7 +380,7 @@ if (typeof(Storage) === "undefined") {
       });
     }
 
-    // 绑定悬浮购物车按钮（menu 页面）
+    // Bind floating cart button (menu page)
     const viewCartBtnFixed = document.getElementById('viewCartBtnFixed');
     if (viewCartBtnFixed) {
       viewCartBtnFixed.addEventListener('click', function(e) {
@@ -213,7 +389,7 @@ if (typeof(Storage) === "undefined") {
       });
     }
 
-    // 绑定关闭模态框按钮
+    // Bind close modal button
     const cartModalClose = document.getElementById('cartModalClose');
     if (cartModalClose) {
       cartModalClose.addEventListener('click', function() {
@@ -221,7 +397,7 @@ if (typeof(Storage) === "undefined") {
       });
     }
 
-    // 点击遮罩层关闭模态框
+    // Click overlay to close modal
     const cartModal = document.getElementById('cartModal');
     if (cartModal) {
       const overlay = cartModal.querySelector('.cart-modal-overlay');
@@ -232,13 +408,13 @@ if (typeof(Storage) === "undefined") {
       }
     }
 
-    // 绑定结账按钮
+    // Bind checkout button
     const checkoutBtn = document.getElementById('checkoutBtn');
     if (checkoutBtn) {
       checkoutBtn.addEventListener('click', function() {
-        // 检查登录状态
+        // Check login status
         if (!UserMenu.requireLogin()) {
-          return; // 未登录，已跳转到登录页面
+          return; // Not logged in, already redirected to login page
         }
         
         const cartItems = Cart.get();
@@ -247,7 +423,7 @@ if (typeof(Storage) === "undefined") {
           return;
         }
 
-        // 构造发送给后端的订单数据
+        // Construct order data to send to backend
         const payload = {
           items: cartItems.map(item => ({
             id: item.id,
@@ -269,13 +445,13 @@ if (typeof(Storage) === "undefined") {
               return;
             }
 
-            // 下单成功：清空购物车、本地存储，并提示成功
+            // Order successful: clear cart, local storage, and show success message
             localStorage.removeItem('cart');
             Cart.updateCartUI();
             Cart.renderCartModal();
             Toast.show('Order placed successfully!');
 
-            // 自动切换到订单历史标签并刷新历史订单
+            // Automatically switch to order history tab and refresh order history
             Cart.switchTab('history');
           })
           .catch(() => {
@@ -284,7 +460,7 @@ if (typeof(Storage) === "undefined") {
       });
     }
 
-    // 绑定标签页切换按钮
+    // Bind tab switch buttons
     const tabCurrent = document.getElementById('tabCurrent');
     const tabHistory = document.getElementById('tabHistory');
     
@@ -300,18 +476,21 @@ if (typeof(Storage) === "undefined") {
       });
     }
 
-    // 初始化购物车 UI
+    // Initialize cart UI
     Cart.updateCartUI();
 
-    // 初始化用户菜单
+    // Initialize user menu
     UserMenu.init();
 
-    // 初始化菜单控制器（如果在 menu 页面）
+    // Initialize menu controller (if on menu page)
     if (document.querySelector('.menu-page') || document.getElementById('menu-container')) {
       if (typeof MenuController !== 'undefined') {
         MenuController.init();
       }
     }
+
+    // Initialize global shortcuts
+    initHotkeys();
   });
 }
 

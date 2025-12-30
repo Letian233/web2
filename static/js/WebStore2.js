@@ -1,268 +1,45 @@
 // Check if the browser supports localStorage
 if (typeof(Storage) !== "undefined") {
 
-  // ==================== 菜单数据库（模拟后端数据） ====================
-  // 扩展为数组格式，包含详细信息
-  const MENU_DATABASE = [
-    {
-      id: 1,
-      name: 'Pizza',
-      price: 25,
-      image: '../images/pizza1.jpg',
-      description: 'Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.',
-      category: 'Main Course',
-      rating: 3.5
-    },
-    {
-      id: 2,
-      name: 'Black Forest Cake',
-      price: 20,
-      image: '../images/black_cake.jpg',
-      description: 'Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.',
-      category: 'Dessert',
-      rating: 4.0
-    },
-    {
-      id: 3,
-      name: 'Boeuf Bourguignon',
-      price: 45,
-      image: '../images/beef-stew-15.png',
-      description: 'Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.',
-      category: 'Main Course',
-      rating: 5.0
-    },
-    {
-      id: 4,
-      name: 'French Snails',
-      price: 30,
-      image: '../images/snails.jpg',
-      description: 'Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.',
-      category: 'Appetizer',
-      rating: 2.5
-    },
-    {
-      id: 5,
-      name: 'Seafood Pasta',
-      price: 28,
-      image: '../images/pizza1.jpg',
-      description: 'Fresh seafood with traditional pasta, served with a white wine cream sauce. A delightful combination of ocean flavors and Italian tradition.',
-      category: 'Main Course',
-      rating: 4.5
-    },
-    {
-      id: 6,
-      name: 'Mediterranean Salad',
-      price: 15,
-      image: '../images/black_cake.jpg',
-      description: 'A mix of green leaves, cherry tomatoes, olives, and feta cheese. Fresh, healthy, and bursting with Mediterranean flavors.',
-      category: 'Salad',
-      rating: 4.0
-    },
-    {
-      id: 7,
-      name: 'Pan-Seared Salmon',
-      price: 32,
-      image: '../images/beef-stew-15.png',
-      description: 'Premium Norwegian salmon with a side of lemon butter sauce and seasonal vegetables. Perfectly cooked to maintain its tenderness.',
-      category: 'Main Course',
-      rating: 4.5
-    },
-    {
-      id: 8,
-      name: 'Mushroom Risotto',
-      price: 24,
-      image: '../images/snails.jpg',
-      description: 'A rich and creamy mushroom risotto infused with Parmesan cheese and fresh herbs. A comforting Italian classic.',
-      category: 'Main Course',
-      rating: 4.0
-    },
-    {
-      id: 9,
-      name: 'Chocolate Lava Cake',
-      price: 18,
-      image: '../images/pizza1.jpg',
-      description: 'Warm chocolate cake with a molten center, served with vanilla ice cream. A decadent dessert that melts in your mouth.',
-      category: 'Dessert',
-      rating: 5.0
-    },
-    {
-      id: 10,
-      name: 'Caesar Salad',
-      price: 14,
-      image: '../images/black_cake.jpg',
-      description: 'Classic Caesar salad with crisp romaine lettuce, parmesan cheese, croutons, and our signature Caesar dressing.',
-      category: 'Salad',
-      rating: 4.0
-    },
-    {
-      id: 11,
-      name: 'Grilled Chicken Breast',
-      price: 22,
-      image: '../images/beef-stew-15.png',
-      description: 'Tender grilled chicken breast marinated in herbs and spices, served with roasted vegetables and a side of mashed potatoes.',
-      category: 'Main Course',
-      rating: 4.5
-    },
-    {
-      id: 12,
-      name: 'Tiramisu',
-      price: 16,
-      image: '../images/pizza1.jpg',
-      description: 'Classic Italian dessert made with layers of coffee-soaked ladyfingers, mascarpone cheese, and cocoa powder.',
-      category: 'Dessert',
-      rating: 5.0
-    },
-    {
-      id: 13,
-      name: 'Beef Ribs',
-      price: 38,
-      image: '../images/beef-stew-15.png',
-      description: 'Slow-roasted beef ribs with our signature barbecue sauce, served with coleslaw and cornbread. A hearty meal that satisfies.',
-      category: 'Main Course',
-      rating: 4.5
-    },
-    {
-      id: 14,
-      name: 'Caprese Salad',
-      price: 13,
-      image: '../images/black_cake.jpg',
-      description: 'Fresh mozzarella, ripe tomatoes, and basil leaves drizzled with extra virgin olive oil and balsamic glaze.',
-      category: 'Salad',
-      rating: 4.5
-    },
-    {
-      id: 15,
-      name: 'Lobster Bisque',
-      price: 26,
-      image: '../images/snails.jpg',
-      description: 'Rich and creamy lobster soup with a hint of brandy, garnished with fresh herbs and a dollop of crème fraîche.',
-      category: 'Soup',
-      rating: 4.5
-    },
-    {
-      id: 16,
-      name: 'Margherita Pizza',
-      price: 18,
-      image: '../images/pizza1.jpg',
-      description: 'Traditional Italian pizza with fresh mozzarella, tomato sauce, and basil leaves. Simple, classic, and delicious.',
-      category: 'Main Course',
-      rating: 4.5
-    },
-    {
-      id: 17,
-      name: 'Chocolate Mousse',
-      price: 15,
-      image: '../images/black_cake.jpg',
-      description: 'Silky smooth dark chocolate mousse topped with whipped cream and chocolate shavings. A decadent treat for chocolate lovers.',
-      category: 'Dessert',
-      rating: 4.5
-    },
-    {
-      id: 18,
-      name: 'Fish and Chips',
-      price: 20,
-      image: '../images/beef-stew-15.png',
-      description: 'Beer-battered cod served with crispy golden fries, mushy peas, and tartar sauce. A British classic done right.',
-      category: 'Main Course',
-      rating: 4.0
-    },
-    {
-      id: 19,
-      name: 'Greek Salad',
-      price: 16,
-      image: '../images/black_cake.jpg',
-      description: 'Fresh cucumbers, tomatoes, red onions, Kalamata olives, and feta cheese with a lemon-oregano vinaigrette.',
-      category: 'Salad',
-      rating: 4.5
-    },
-    {
-      id: 20,
-      name: 'Apple Pie',
-      price: 12,
-      image: '../images/pizza1.jpg',
-      description: 'Homemade apple pie with a flaky crust, filled with cinnamon-spiced apples and served warm with vanilla ice cream.',
-      category: 'Dessert',
-      rating: 4.5
-    }
-  ];
-
-  // 保留 menuDatabase 对象格式以兼容现有购物车代码
+  // ==================== Menu Database (compatibility object for existing cart code) ====================
+  // Keep menuDatabase object format for compatibility with existing cart code
+  // Note: Menu data is now provided by backend via window.MENU_ITEMS_FROM_DB (set by pages.js)
   const menuDatabase = {};
-  MENU_DATABASE.forEach(item => {
-    menuDatabase[item.id] = {
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      image: item.image
-    };
+  
+  // Populate menuDatabase from backend data when available
+  function updateMenuDatabase() {
+    const menuData = window.MENU_ITEMS_FROM_DB || [];
+    menuData.forEach(item => {
+      menuDatabase[item.id] = {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        image: item.image_url || item.image || '../images/blank.png'
+      };
+    });
+  }
+  
+  // Initialize menuDatabase when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    updateMenuDatabase();
   });
 
-  // ==================== 模拟历史订单数据（体现多对多关系） ====================
-  // 订单与菜品是多对多关系：一个订单可以包含多个菜品，一个菜品可以出现在多个订单中
-  const MOCK_ORDER_HISTORY = [
-    {
-      orderId: 'ORD-001',
-      date: '2024-01-15',
-      total: 50.00,
-      items: [
-        { id: 1, name: 'Pizza', price: 25, quantity: 1 },
-        { id: 2, name: 'Black Forest Cake', price: 20, quantity: 1 }
-      ]
-    },
-    {
-      orderId: 'ORD-002',
-      date: '2024-01-16',
-      total: 75.00,
-      items: [
-        { id: 1, name: 'Pizza', price: 25, quantity: 2 },
-        { id: 3, name: 'Boeuf Bourguignon', price: 45, quantity: 1 }
-      ]
-    },
-    {
-      orderId: 'ORD-003',
-      date: '2024-01-17',
-      total: 100.00,
-      items: [
-        { id: 1, name: 'Pizza', price: 25, quantity: 1 },
-        { id: 4, name: 'French Snails', price: 30, quantity: 2 },
-        { id: 2, name: 'Black Forest Cake', price: 20, quantity: 1 }
-      ]
-    },
-    {
-      orderId: 'ORD-004',
-      date: '2024-01-18',
-      total: 45.00,
-      items: [
-        { id: 3, name: 'Boeuf Bourguignon', price: 45, quantity: 1 }
-      ]
-    },
-    {
-      orderId: 'ORD-005',
-      date: '2024-01-19',
-      total: 70.00,
-      items: [
-        { id: 1, name: 'Pizza', price: 25, quantity: 2 },
-        { id: 2, name: 'Black Forest Cake', price: 20, quantity: 1 }
-      ]
-    }
-  ];
-
-  // ==================== 购物车对象 ====================
+  // ==================== Shopping Cart Object ====================
   const Cart = {
-    // 从 localStorage 读取购物车数据
+    // Read cart data from localStorage
     get: function() {
       const cartData = localStorage.getItem('cart');
       return cartData ? JSON.parse(cartData) : [];
     },
 
-    // 保存购物车数据到 localStorage
+    // Save cart data to localStorage
     save: function(cartItems) {
       localStorage.setItem('cart', JSON.stringify(cartItems));
-      // 保存后更新 UI
+      // Update UI after saving
       this.updateCartUI();
     },
 
-    // 添加商品到购物车（如果已存在则增加数量）
+    // Add item to cart (increment quantity if already exists)
     add: function(itemId) {
       const cartItems = this.get();
       const menuItem = menuDatabase[itemId];
@@ -272,14 +49,14 @@ if (typeof(Storage) !== "undefined") {
         return false;
       }
 
-      // 查找购物车中是否已存在该商品
+      // Check if item already exists in cart
       const existingItem = cartItems.find(item => item.id === itemId);
       
       if (existingItem) {
-        // 如果已存在，增加数量
+        // If exists, increment quantity
         existingItem.quantity += 1;
       } else {
-        // 如果不存在，添加新商品
+        // If not exists, add new item
         cartItems.push({
           id: menuItem.id,
           name: menuItem.name,
@@ -293,7 +70,7 @@ if (typeof(Storage) !== "undefined") {
       return true;
     },
 
-    // 计算购物车总价
+    // Calculate total cart price
     getTotal: function() {
       const cartItems = this.get();
       return cartItems.reduce((total, item) => {
@@ -301,7 +78,7 @@ if (typeof(Storage) !== "undefined") {
       }, 0);
     },
 
-    // 获取购物车商品总数
+    // Get total quantity of items in cart
     getTotalQuantity: function() {
       const cartItems = this.get();
       return cartItems.reduce((total, item) => {
@@ -309,13 +86,13 @@ if (typeof(Storage) !== "undefined") {
       }, 0);
     },
 
-    // 更新购物车 UI（更新导航栏的购物车计数器）
+    // Update cart UI (update cart counter in navigation bar)
     updateCartUI: function() {
       const cartBadge = document.getElementById('cart-badge');
       if (cartBadge) {
         const totalQuantity = this.getTotalQuantity();
         cartBadge.textContent = totalQuantity;
-        // 如果数量为 0，隐藏角标
+        // Hide badge if quantity is 0
         if (totalQuantity === 0) {
           cartBadge.style.display = 'none';
         } else {
@@ -324,7 +101,7 @@ if (typeof(Storage) !== "undefined") {
       }
     },
 
-    // 更新商品数量
+    // Update item quantity
     updateQuantity: function(itemId, change) {
       const cartItems = this.get();
       const item = cartItems.find(item => item.id === itemId);
@@ -333,7 +110,7 @@ if (typeof(Storage) !== "undefined") {
 
       item.quantity += change;
       
-      // 如果数量小于等于 0，移除该商品
+      // If quantity is less than or equal to 0, remove the item
       if (item.quantity <= 0) {
         const index = cartItems.findIndex(item => item.id === itemId);
         if (index > -1) {
@@ -345,7 +122,7 @@ if (typeof(Storage) !== "undefined") {
       return true;
     },
 
-    // 渲染购物车模态框
+    // Render cart modal
     renderCartModal: function() {
       const cartItems = this.get();
       const cartItemsList = document.getElementById('cartItemsList');
@@ -357,16 +134,16 @@ if (typeof(Storage) !== "undefined") {
         return;
       }
 
-      // 清空列表
+      // Clear list
       cartItemsList.innerHTML = '';
 
       if (cartItems.length === 0) {
-        // 购物车为空
+        // Cart is empty
         cartItemsList.style.display = 'none';
         cartEmptyMessage.style.display = 'block';
         cartTotalPrice.textContent = '0.00';
       } else {
-        // 显示商品列表
+        // Show item list
         cartItemsList.style.display = 'flex';
         cartEmptyMessage.style.display = 'none';
 
@@ -391,7 +168,7 @@ if (typeof(Storage) !== "undefined") {
           cartItemsList.appendChild(cartItem);
         });
 
-        // 绑定数量调整按钮事件
+        // Bind quantity adjustment button events
         const quantityButtons = cartItemsList.querySelectorAll('.quantity-btn');
         quantityButtons.forEach(btn => {
           btn.addEventListener('click', (e) => {
@@ -400,38 +177,38 @@ if (typeof(Storage) !== "undefined") {
             const change = action === 'increase' ? 1 : -1;
             
             this.updateQuantity(itemId, change);
-            this.renderCartModal(); // 重新渲染
+            this.renderCartModal(); // Re-render
           });
         });
       }
 
-      // 更新总价
+      // Update total price
       const total = this.getTotal();
       cartTotalPrice.textContent = total.toFixed(2);
     },
 
-    // 显示购物车模态框
+    // Show cart modal
     showModal: function() {
       const cartModal = document.getElementById('cartModal');
       if (cartModal) {
         this.renderCartModal();
         cartModal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // 防止背景滚动
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
       }
     },
 
-    // 隐藏购物车模态框
+    // Hide cart modal
     hideModal: function() {
       const cartModal = document.getElementById('cartModal');
       if (cartModal) {
         cartModal.classList.remove('active');
-        document.body.style.overflow = ''; // 恢复滚动
+        document.body.style.overflow = ''; // Restore scrolling
       }
     },
 
-    // 切换标签页
+    // Switch tab
     switchTab: function(tabName) {
-      // 更新标签按钮状态
+      // Update tab button states
       const tabButtons = document.querySelectorAll('.cart-tab-btn');
       tabButtons.forEach(btn => {
         if (btn.getAttribute('data-tab') === tabName) {
@@ -441,24 +218,24 @@ if (typeof(Storage) !== "undefined") {
         }
       });
 
-      // 更新内容区域显示
+      // Update content area display
       const currentTab = document.getElementById('currentOrderTab');
       const historyTab = document.getElementById('orderHistoryTab');
 
       if (tabName === 'current') {
         if (currentTab) currentTab.classList.add('active');
         if (historyTab) historyTab.classList.remove('active');
-        // 重新渲染当前购物车
+        // Re-render current cart
         this.renderCartModal();
       } else if (tabName === 'history') {
         if (currentTab) currentTab.classList.remove('active');
         if (historyTab) historyTab.classList.add('active');
-        // 渲染历史订单
+        // Render order history
         this.renderHistory();
       }
     },
 
-    // 渲染历史订单列表
+    // Render order history list
     renderHistory: function() {
       const orderHistoryList = document.getElementById('orderHistoryList');
       const orderHistoryEmpty = document.getElementById('orderHistoryEmpty');
@@ -468,10 +245,31 @@ if (typeof(Storage) !== "undefined") {
         return;
       }
 
-      // 清空列表
+      // Clear list
       orderHistoryList.innerHTML = '';
 
-      if (MOCK_ORDER_HISTORY.length === 0) {
+      // Order history is now fetched from backend API
+      // This function should be called after fetching order history from /api/orders
+      // For now, show empty state
+      orderHistoryList.style.display = 'none';
+      orderHistoryEmpty.style.display = 'block';
+      return;
+    },
+
+    // Render order history items (called after fetching from backend)
+    renderHistoryItems: function(orders) {
+      const orderHistoryList = document.getElementById('orderHistoryList');
+      const orderHistoryEmpty = document.getElementById('orderHistoryEmpty');
+
+      if (!orderHistoryList || !orderHistoryEmpty) {
+        console.error('Order history elements not found');
+        return;
+      }
+
+      // Clear list
+      orderHistoryList.innerHTML = '';
+
+      if (!orders || orders.length === 0) {
         orderHistoryList.style.display = 'none';
         orderHistoryEmpty.style.display = 'block';
         return;
@@ -480,8 +278,8 @@ if (typeof(Storage) !== "undefined") {
       orderHistoryList.style.display = 'flex';
       orderHistoryEmpty.style.display = 'none';
 
-      // 渲染每个订单
-      MOCK_ORDER_HISTORY.forEach(order => {
+      // Render each order
+      orders.forEach(order => {
         const orderItem = document.createElement('div');
         orderItem.className = 'order-history-item';
         orderItem.innerHTML = `
@@ -509,14 +307,14 @@ if (typeof(Storage) !== "undefined") {
         `;
         orderHistoryList.appendChild(orderItem);
 
-        // 绑定展开/收起事件
+        // Bind expand/collapse events
         const header = orderItem.querySelector('.order-history-header');
         const details = orderItem.querySelector('.order-history-details');
         
         header.addEventListener('click', function() {
           const isActive = header.classList.contains('active');
           
-          // 关闭所有其他订单详情
+          // Close all other order details
           document.querySelectorAll('.order-history-header').forEach(h => {
             if (h !== header) {
               h.classList.remove('active');
@@ -528,7 +326,7 @@ if (typeof(Storage) !== "undefined") {
             }
           });
 
-          // 切换当前订单详情
+          // Toggle current order details
           if (isActive) {
             header.classList.remove('active');
             details.classList.remove('active');
@@ -541,16 +339,16 @@ if (typeof(Storage) !== "undefined") {
     }
   };
 
-  // ==================== Toast 通知系统 ====================
+  // ==================== Toast Notification System ====================
   const Toast = {
     show: function(message, duration = 3000) {
-      // 移除已存在的 toast
+      // Remove existing toast
       const existingToast = document.getElementById('toast-notification');
       if (existingToast) {
         existingToast.remove();
       }
 
-      // 创建 toast 元素
+      // Create toast element
       const toast = document.createElement('div');
       toast.id = 'toast-notification';
       toast.textContent = message;
@@ -573,13 +371,13 @@ if (typeof(Storage) !== "undefined") {
 
       document.body.appendChild(toast);
 
-      // 触发动画
+      // Trigger animation
       setTimeout(() => {
         toast.style.opacity = '1';
         toast.style.transform = 'translateX(0)';
       }, 10);
 
-      // 自动消失
+      // Auto dismiss
       setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateX(100px)';
@@ -592,7 +390,7 @@ if (typeof(Storage) !== "undefined") {
     }
   };
 
-  // ==================== 根据菜品名称查找 ID ====================
+  // ==================== Find ID by item name ====================
   function findItemIdByName(itemName) {
     for (const id in menuDatabase) {
       if (menuDatabase[id].name === itemName) {
@@ -602,7 +400,7 @@ if (typeof(Storage) !== "undefined") {
     return null;
   }
 
-  // ==================== 处理订单按钮点击 ====================
+  // ==================== Handle order button click ====================
   function handleOrderClick(event) {
     event.preventDefault();
     const button = event.currentTarget;
@@ -620,7 +418,7 @@ if (typeof(Storage) !== "undefined") {
       return;
     }
 
-    // 添加到购物车
+    // Add to cart
     const success = Cart.add(itemId);
     if (success) {
       Toast.show('Added to cart!');
@@ -629,37 +427,37 @@ if (typeof(Storage) !== "undefined") {
     }
   }
 
-  // ==================== 用户菜单管理 ====================
+  // ==================== User Menu Management ====================
   const UserMenu = {
-    // 获取当前用户
+    // Get current user
     getCurrentUser: function() {
       const userData = localStorage.getItem('currentUser');
       return userData ? JSON.parse(userData) : null;
     },
 
-    // 设置当前用户
+    // Set current user
     setCurrentUser: function(userData) {
       localStorage.setItem('currentUser', JSON.stringify(userData));
       this.render();
     },
 
-    // 清除当前用户（登出）
+    // Clear current user (logout)
     clearCurrentUser: function() {
       localStorage.removeItem('currentUser');
       this.render();
     },
 
-    // 渲染用户菜单
+    // Render user menu
     render: function() {
       const container = document.getElementById('userMenuContainer');
       if (!container) return;
 
-      // 使用 requestAnimationFrame 来避免闪烁
+      // Use requestAnimationFrame to avoid flickering
       requestAnimationFrame(() => {
         const currentUser = this.getCurrentUser();
 
         if (currentUser) {
-        // 已登录：显示头像下拉菜单
+        // Logged in: show avatar dropdown menu
         container.innerHTML = `
           <div class="dropdown" style="position: relative;">
             <button 
@@ -687,7 +485,7 @@ if (typeof(Storage) !== "undefined") {
           </div>
         `;
 
-        // 绑定登出按钮
+        // Bind logout button
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
           logoutBtn.addEventListener('click', () => {
@@ -695,25 +493,25 @@ if (typeof(Storage) !== "undefined") {
           });
         }
 
-        // 绑定 Profile 链接（跳转到个人设置页）
+        // Bind Profile link (navigate to profile page)
         const profileLink = document.getElementById('profileLink');
         if (profileLink) {
           profileLink.addEventListener('click', (e) => {
-            // 如果当前在 profile.html，阻止跳转
+            // If currently on profile.html, prevent navigation
             if (window.location.pathname.includes('profile.html')) {
               e.preventDefault();
               return;
             }
-            // 跳转到个人设置页面
+            // Navigate to profile page
             window.location.href = 'profile.html';
           });
         }
 
-        // 绑定 Order History 链接（打开购物车模态框并切换到历史订单标签）
+        // Bind Order History link (open cart modal and switch to order history tab)
         const orderHistoryLink = document.getElementById('orderHistoryLink');
         if (orderHistoryLink) {
           orderHistoryLink.addEventListener('click', (e) => {
-            // 如果当前在 menu.html，打开购物车并切换到历史订单
+            // If currently on menu.html, open cart and switch to order history
             if (window.location.pathname.includes('menu.html')) {
               e.preventDefault();
               Cart.showModal();
@@ -724,7 +522,7 @@ if (typeof(Storage) !== "undefined") {
           });
         }
       } else {
-        // 未登录：显示登录和注册按钮
+        // Not logged in: show login and register buttons
         container.innerHTML = `
           <div class="user-auth-buttons">
             <a class="button user-login-btn" href="login.html">Login</a>
@@ -735,16 +533,16 @@ if (typeof(Storage) !== "undefined") {
       });
     },
 
-    // 初始化
+    // Initialize
     init: function() {
       this.render();
     },
 
-    // 登出
+    // Logout
     logout: function() {
       this.clearCurrentUser();
       Toast.show('Logged out successfully!');
-      // 刷新页面或跳转到首页
+      // Refresh page or navigate to homepage
       setTimeout(() => {
         if (window.location.pathname.includes('menu.html')) {
           window.location.reload();
@@ -755,16 +553,16 @@ if (typeof(Storage) !== "undefined") {
     }
   };
 
-  // ==================== 初始化 ====================
+  // ==================== Initialization ====================
   document.addEventListener('DOMContentLoaded', function() {
-    // 为所有 "Order Now" 按钮绑定点击事件
+    // Bind click events for all "Order Now" buttons
     const orderButtons = document.querySelectorAll('.button[data-pizza-type]');
     
     orderButtons.forEach(function(button) {
       button.addEventListener('click', handleOrderClick);
     });
 
-    // 绑定查看购物车按钮
+    // Bind view cart button
     const viewCartBtn = document.getElementById('viewCartBtn');
     if (viewCartBtn) {
       viewCartBtn.addEventListener('click', function(e) {
@@ -773,7 +571,7 @@ if (typeof(Storage) !== "undefined") {
       });
     }
 
-    // 绑定关闭模态框按钮
+    // Bind close modal button
     const cartModalClose = document.getElementById('cartModalClose');
     if (cartModalClose) {
       cartModalClose.addEventListener('click', function() {
@@ -781,7 +579,7 @@ if (typeof(Storage) !== "undefined") {
       });
     }
 
-    // 点击遮罩层关闭模态框
+    // Click overlay to close modal
     const cartModal = document.getElementById('cartModal');
     if (cartModal) {
       const overlay = cartModal.querySelector('.cart-modal-overlay');
@@ -792,7 +590,7 @@ if (typeof(Storage) !== "undefined") {
       }
     }
 
-    // 绑定结账按钮
+    // Bind checkout button
     const checkoutBtn = document.getElementById('checkoutBtn');
     if (checkoutBtn) {
       checkoutBtn.addEventListener('click', function() {
@@ -801,13 +599,13 @@ if (typeof(Storage) !== "undefined") {
           Toast.show('Your cart is empty');
           return;
         }
-        // 这里可以添加结账逻辑
+        // Checkout logic can be added here
         Toast.show('Checkout functionality coming soon!');
-        // 可以在这里添加跳转到结账页面的逻辑
+        // Logic to navigate to checkout page can be added here
       });
     }
 
-    // 绑定标签页切换按钮
+    // Bind tab switch buttons
     const tabCurrent = document.getElementById('tabCurrent');
     const tabHistory = document.getElementById('tabHistory');
     
@@ -823,13 +621,13 @@ if (typeof(Storage) !== "undefined") {
       });
     }
 
-    // 初始化购物车 UI
+    // Initialize cart UI
     Cart.updateCartUI();
 
-    // 初始化用户菜单
+    // Initialize user menu
     UserMenu.init();
 
-    // 初始化菜单控制器（如果在 menu 页面）
+    // Initialize menu controller (if on menu page)
     if (document.querySelector('.menu-page') || document.getElementById('menu-container')) {
       if (typeof MenuController !== 'undefined') {
         MenuController.init();
@@ -837,14 +635,14 @@ if (typeof(Storage) !== "undefined") {
     }
   });
 
-  // ==================== 菜单控制器 ====================
+  // ==================== Menu Controller ====================
   const MenuController = {
     currentPage: 1,
     itemsPerPage: 4,
     searchKeyword: '',
     filteredData: [],
 
-    // 初始化
+    // Initialize
     init: function() {
       const searchInput = document.getElementById('searchInput');
       const searchBtn = document.getElementById('searchBtn');
@@ -854,7 +652,7 @@ if (typeof(Storage) !== "undefined") {
       if (searchInput) {
         searchInput.addEventListener('input', (e) => {
           this.searchKeyword = e.target.value.trim().toLowerCase();
-          this.currentPage = 1; // 搜索时重置到第一页
+          this.currentPage = 1; // Reset to first page when searching
           this.renderMenu();
         });
 
@@ -891,24 +689,28 @@ if (typeof(Storage) !== "undefined") {
         });
       }
 
-      // 初始渲染
+      // Initial render
       this.renderMenu();
     },
 
-    // 过滤数据
+    // Filter data
     filterData: function() {
+      // Menu data is now provided by backend via window.MENU_ITEMS_FROM_DB
+      // This function should use backend API instead of local MENU_DATABASE
+      const menuData = window.MENU_ITEMS_FROM_DB || [];
+      
       if (!this.searchKeyword) {
-        this.filteredData = MENU_DATABASE;
+        this.filteredData = menuData;
       } else {
-        this.filteredData = MENU_DATABASE.filter(item => {
+        this.filteredData = menuData.filter(item => {
           return item.name.toLowerCase().includes(this.searchKeyword) ||
-                 item.description.toLowerCase().includes(this.searchKeyword) ||
-                 item.category.toLowerCase().includes(this.searchKeyword);
+                 (item.description && item.description.toLowerCase().includes(this.searchKeyword)) ||
+                 (item.category && item.category.toLowerCase().includes(this.searchKeyword));
         });
       }
     },
 
-    // 渲染星级评分
+    // Render star rating
     renderStars: function(rating) {
       let starsHtml = '';
       const fullStars = Math.floor(rating);
@@ -927,7 +729,7 @@ if (typeof(Storage) !== "undefined") {
       return starsHtml;
     },
 
-    // 渲染菜单
+    // Render menu
     renderMenu: function() {
       this.filterData();
       const container = document.getElementById('menu-container');
@@ -938,9 +740,11 @@ if (typeof(Storage) !== "undefined") {
       const endIndex = startIndex + this.itemsPerPage;
       const currentItems = this.filteredData.slice(startIndex, endIndex);
 
-      // 生成 HTML
+      // Generate HTML
       let menuHtml = '';
       currentItems.forEach(item => {
+        const imageUrl = item.image_url || item.image || '../images/blank.png';
+        const rating = item.rating || 0;
         menuHtml += `
           <div class="menu-item">
             <div class="menu-header">
@@ -948,14 +752,14 @@ if (typeof(Storage) !== "undefined") {
               <a class="button" href="" data-pizza-type="${item.name}">Order Now</a>
             </div>
             <div class="star mb-2">
-              ${this.renderStars(item.rating)}
+              ${this.renderStars(rating)}
             </div>
             <div class="row align-items-start">
               <div class="col-12 col-md-4 mb-3 mb-md-0">
-                <img src="${item.image}" class="img-fluid item-image" alt="${item.name}">
+                <img src="${imageUrl}" class="img-fluid item-image" alt="${item.name}">
               </div>
               <div class="col-12 col-md-8">
-                <p>${item.description}</p>
+                <p>${item.description || ''}</p>
               </div>
             </div>
             <div class="border3 mt-3"></div>
@@ -965,7 +769,7 @@ if (typeof(Storage) !== "undefined") {
 
       container.innerHTML = menuHtml;
 
-      // 更新分页信息
+      // Update pagination info
       const pageInfo = document.getElementById('pageInfo');
       if (pageInfo) {
         if (this.filteredData.length === 0) {
@@ -975,7 +779,7 @@ if (typeof(Storage) !== "undefined") {
         }
       }
 
-      // 更新分页按钮状态
+      // Update pagination button states
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
       
@@ -991,7 +795,7 @@ if (typeof(Storage) !== "undefined") {
         nextBtn.style.cursor = (this.currentPage >= totalPages || this.filteredData.length === 0) ? 'not-allowed' : 'pointer';
       }
 
-      // 重新绑定 Order Now 按钮事件
+      // Re-bind Order Now button events
       container.querySelectorAll('.button[data-pizza-type]').forEach(button => {
         button.addEventListener('click', handleOrderClick);
       });

@@ -50,3 +50,33 @@ INSERT INTO about_content (section_name, title, content, image_url, image_alt) V
     'images/Tiramisu.jpg',
     'A group photograph of the Savour & Sage team, gathered in the restaurant’s dining room, with chefs in their white coats and front of house staff in their branded aprons, all smiling and posing together with fresh ingredients laid out on a nearby table.'
 );
+
+-- 第5条：Awards板块（荣誉奖项，增强权威性）
+INSERT INTO about_content (section_name, title, content, image_url, image_alt) VALUES 
+(
+    'Our Accolades', 
+    'Recognitions That Celebrate Our Passion for Culinary Excellence', 
+    'Over the years, Savour & Sage has been honored to receive a range of awards that reflect our commitment to exceptional food, hospitality, and sustainability. In 2012, we earned the Michelin Bib Gourmand—an honor that recognizes restaurants offering "exceptionally good food at moderate prices"—a distinction we’ve held every year since. The Guardian named us "London’s Best Local Restaurant" three consecutive years (2018-2020), praising our "unwavering dedication to local ingredients and warm, familial service." In 2022, we were awarded the Sustainable Restaurant Association’s 3-Star Sustainability Rating, in recognition of our composting programs, rooftop garden, and zero-waste initiatives. We’ve also been featured in global publications like *Food & Wine* and *Condé Nast Traveler*, which called our tasting menu "a love letter to British countryside cuisine." These awards are not just trophies—they’re a testament to our team’s hard work, our partners’ dedication, and the support of our loyal guests. We don’t cook for awards, but we’re grateful for the recognition that allows us to share our story with more people who value heart-driven, sustainable dining.', 
+    'images/star_full.png',
+    'A display of Savour & Sage’s awards and accolades, including framed Michelin Bib Gourmand certificates, newspaper clippings, and sustainability rating plaques, arranged on a wooden shelf.'
+);
+
+-- 第6条：Rooftop Garden板块（屋顶花园，体现可持续理念）
+INSERT INTO about_content (section_name, title, content, image_url, image_alt) VALUES 
+(
+    'Our Rooftop Garden', 
+    'Growing Fresh Flavors Above the Bustle of Soho', 
+    'Tucked above our Soho dining room, our 500-square-foot rooftop garden is more than a green space—it’s the heart of our farm-to-table promise. Installed in 2015, the garden is tended by our kitchen team, who grow over 20 varieties of herbs (basil, rosemary, lemon thyme), heirloom tomatoes, edible flowers (pansies, nasturtiums), and even small batches of strawberries and peaches in raised beds. We source soil from a local organic composting cooperative, and rainwater collection barrels feed the plants—minimizing our environmental footprint while ensuring we have the freshest ingredients possible. On warm evenings, the garden doubles as an intimate seating area for small groups, where guests can sip wine and nibble on canapés made with ingredients picked that morning. It’s a quiet escape from the busy streets below, and a tangible reminder of our commitment to connecting our food to the land—even in the middle of London.', 
+    'images/gras.jpg',
+    'A sunlit view of Savour & Sage’s rooftop garden, with raised beds filled with vibrant herbs and vegetables, wooden seating, and string lights draped above, overlooking Soho’s rooftops.'
+);
+
+-- 第7条：Guest Testimonials板块（客人评价，传递真实体验）
+INSERT INTO about_content (section_name, title, content, image_url, image_alt) VALUES 
+(
+    'Guest Stories', 
+    'What Our Diners Have to Say About Savour & Sage', 
+    'For us, the best reviews aren’t in magazines—they’re the stories our guests share. "I’ve been coming here since 2007, when I had my first date with my now-husband," says Clara, a local teacher. "Now we bring our two kids for Sunday brunch, and they still remember the first time they tried Eleanor’s chocolate fondant." A tourist from New York wrote, "I stumbled upon Savour & Sage by accident, and it turned out to be the highlight of my London trip—James helped me pick a wine that paired perfectly with the beef stew, and the staff made me feel like I was dining with old friends." Another regular, Thomas, notes: "What sets this place apart is the consistency—every dish tastes like it was made with care, and the team always remembers the little things, like my allergy to nuts." These stories are why we do what we do: dining isn’t just about food—it’s about the moments we share, and we’re honored to be part of so many of our guests’ favorite memories.', 
+    'images/pizza1.jpg',
+    'A candid photo of guests laughing and enjoying a meal at Savour & Sage, with plates of pizza, pasta, and glasses of wine on the table, and sunlight streaming through the windows.'
+);

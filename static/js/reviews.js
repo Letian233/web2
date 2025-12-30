@@ -1,70 +1,40 @@
-// ==================== Bilibili 风格评论系统 ====================
-
-// ===========================================================================
-// AJAX 點讚功能 - 使用 Fetch API 實現異步請求
-// ===========================================================================
-// 
-// 此模組展示了以下關鍵技術點：
-// 1. Fetch API - 現代 JavaScript 異步 HTTP 請求標準
-// 2. 防抖處理 (Debouncing) - 防止用戶瘋狂點擊導致的重複請求
-// 3. DOM 動態更新 - 無需頁面刷新即可更新 UI
-// 4. 錯誤處理 - 網絡異常和服務器錯誤的優雅處理
-// 5. Toggle 模式 - 點讚/取消點讚切換
-// 6. 身份驗證 - 未登入用戶提示登入
-//
-// 時間複雜度：O(1) - 單次 DOM 查詢和更新
-// 空間複雜度：O(n) - n 為追蹤的按鈕數量
-// ===========================================================================
-
-// 防抖狀態追蹤器 - 記錄每個評論的點讚按鈕是否處於冷卻期
+// Track whether each review's like button is in cooldown period
 const likeDebounceState = {};
 
-// 正在處理的請求追蹤器 - 防止並發請求
+// Request tracker in progress - prevent concurrent requests
 const likeRequestInProgress = {};
 
-// 防抖冷卻時間（毫秒）- 防止用戶在此時間內重複點擊
-// 注意：此時間應該足夠短，以允許用戶快速切換點讚/取消點讚
 const DEBOUNCE_COOLDOWN_MS = 300;
 
 /**
- * AJAX 點讚函數 - Toggle 模式，支持點讚和取消點讚
- * 
- * 此函數展示了完整的前後端交互流程：
- * 1. 防抖檢查 - 阻止短時間內的重複請求
- * 2. UI 反饋 - 禁用按鈕並顯示加載狀態
- * 3. Fetch 請求 - 向 /like_review/<id> 發送 POST 請求
- * 4. 響應處理 - 根據 is_liked 狀態切換 UI
- * 5. 錯誤處理 - 處理未登入、網絡異常等情況
- * 
  * @param {number} reviewId - 要點讚的評論 ID
  * @returns {Promise<void>}
  */
 async function likeReview(reviewId) {
-    // ===== 步驟 1：防抖檢查 =====
-    // 只檢查是否有正在進行的請求，不檢查防抖狀態（允許快速切換）
+    // Only check if there's a request in progress, don't check debounce state (allow rapid toggling)
     if (likeRequestInProgress[reviewId]) {
         console.log(`[likeReview] Review ${reviewId} has request in progress, ignoring click.`);
         return;
     }
     
-    // 設置請求進行中標記（防止並發請求）
+    // Set request in progress flag (prevent concurrent requests)
     likeRequestInProgress[reviewId] = true;
     
-    // ===== 步驟 2：獲取 DOM 元素並顯示加載狀態 =====
+    // Get DOM elements and show loading state
     const likeBtn = document.querySelector(`.like-btn[data-review-id="${reviewId}"]`);
     const likeCountSpan = document.getElementById(`like-count-${reviewId}`);
     
-    // 保存當前狀態（用於樂觀更新）
+    // Save current state (for optimistic update)
     const currentIsLiked = likeBtn ? likeBtn.classList.contains('liked') : false;
     const currentLikes = likeCountSpan ? parseInt(likeCountSpan.textContent) || 0 : 0;
     
-    // 樂觀更新：立即切換 UI 狀態（如果後端失敗，會在 catch 中恢復）
+    // Optimistic update: immediately toggle UI state (will revert in catch if backend fails)
     if (likeBtn && likeCountSpan) {
         const likeIcon = likeBtn.querySelector('.like-icon');
         const newIsLiked = !currentIsLiked;
         const newLikes = newIsLiked ? currentLikes + 1 : Math.max(0, currentLikes - 1);
         
-        // 立即更新 UI
+        // Immediately update UI
         if (newIsLiked) {
             likeBtn.classList.add('liked');
             if (likeIcon) likeIcon.textContent = '❤️';
@@ -83,7 +53,7 @@ async function likeReview(reviewId) {
     }
     
     try {
-        // ===== 步驟 3：發送 Fetch 請求 =====
+        // Send Fetch request
         const response = await fetch(`/like_review/${reviewId}`, {
             method: 'POST',
             headers: {
@@ -95,9 +65,9 @@ async function likeReview(reviewId) {
         
         const data = await response.json();
         
-        // ===== 步驟 4：處理未登入情況 =====
+        // Handle not logged in case
         if (response.status === 401 && data.need_login) {
-            // 恢復樂觀更新的狀態
+            // Revert optimistic update state
             if (likeBtn && likeCountSpan) {
                 const likeIcon = likeBtn.querySelector('.like-icon');
                 if (currentIsLiked) {
@@ -111,7 +81,7 @@ async function likeReview(reviewId) {
                 }
                 likeCountSpan.textContent = currentLikes;
             }
-            // 彈窗提示並跳轉登入頁面
+            // Show alert and redirect to login page
             const shouldLogin = confirm('Please login to like reviews. Go to login page?');
             if (shouldLogin) {
                 window.location.href = '/login';
@@ -119,7 +89,7 @@ async function likeReview(reviewId) {
             return;
         }
         
-        // ===== 步驟 5：處理成功響應 - Toggle 邏輯 =====
+        // Handle successful response - Toggle logic
         if (response.ok && data.status === 'success') {
             const isLiked = data.is_liked;
             const action = data.action;
@@ -131,28 +101,28 @@ async function likeReview(reviewId) {
                 console.log(`[likeReview] Success! Review ${reviewId} ${action}. New likes: ${data.new_likes}`);
             }
             
-            // 更新按鈕狀態和圖標（強制更新，確保狀態正確）
+            // Update button state and icon (force update to ensure correct state)
             if (likeBtn) {
                 const likeIcon = likeBtn.querySelector('.like-icon');
                 
-                // 強制移除所有狀態類，然後重新添加正確的狀態
+                // Force remove all state classes, then re-add correct state
                 likeBtn.classList.remove('liked');
                 
                 if (isLiked) {
-                    // 點讚成功：顯示紅心
+                    // Like successful: show red heart
                     likeBtn.classList.add('liked');
                     if (likeIcon) likeIcon.textContent = '❤️';
                     likeBtn.title = 'Click to unlike';
                 } else {
-                    // 取消點讚：顯示白心（確保 removed）
+                    // Unlike: show white heart (ensure removed)
                     if (likeIcon) likeIcon.textContent = '🤍';
                     likeBtn.title = 'Click to like';
                 }
                 
-                // 強制觸發瀏覽器重繪，確保狀態更新
+                // Force browser repaint to ensure state update
                 void likeBtn.offsetHeight;
                 
-                // 只有非 already_liked 的情況才播放動畫
+                // Only play animation if not already_liked
                 if (!isAlreadyLiked) {
                     requestAnimationFrame(() => {
                         const animClass = isLiked ? 'liked-animation' : 'unliked-animation';
@@ -164,10 +134,10 @@ async function likeReview(reviewId) {
                 }
             }
             
-            // 更新點讚數字
+            // Update like count
             if (likeCountSpan) {
                 likeCountSpan.textContent = data.new_likes;
-                // 只有非 already_liked 的情況才播放動畫
+                // Only play animation if not already_liked
                 if (!isAlreadyLiked) {
                     requestAnimationFrame(() => {
                         const countClass = isLiked ? 'like-count-updated' : 'like-count-downdated';
@@ -179,7 +149,7 @@ async function likeReview(reviewId) {
                 }
             }
             
-            // 同步更新 ReviewsManager 本地數據
+            // Sync update ReviewsManager local data
             if (typeof ReviewsManager !== 'undefined' && ReviewsManager._reviews) {
                 const review = ReviewsManager._reviews.find(r => r.id === reviewId);
                 if (review) {
@@ -189,7 +159,7 @@ async function likeReview(reviewId) {
             }
             
         } else {
-            // 其他錯誤：恢復樂觀更新的狀態
+            // Other errors: revert optimistic update state
             console.error(`[likeReview] Error: ${data.message || 'Unknown error'}`);
             if (likeBtn && likeCountSpan) {
                 const likeIcon = likeBtn.querySelector('.like-icon');
@@ -210,7 +180,7 @@ async function likeReview(reviewId) {
     } catch (error) {
         console.error('[likeReview] Network error:', error);
         
-        // 恢復樂觀更新的狀態（網絡錯誤）
+        // Revert optimistic update state (network error)
         if (likeBtn && likeCountSpan) {
             const likeIcon = likeBtn.querySelector('.like-icon');
             if (currentIsLiked) {
@@ -228,8 +198,8 @@ async function likeReview(reviewId) {
         alert('Network error. Please check your connection and try again.');
         
     } finally {
-        // ===== 步驟 6：清理狀態 =====
-        // 立即清除請求進行中標記，允許下一次操作（但保留短暫防抖）
+        // Cleanup state
+        // Immediately clear request in progress flag, allow next operation (but keep brief debounce)
         likeRequestInProgress[reviewId] = false;
         
         if (likeBtn) {
@@ -237,7 +207,7 @@ async function likeReview(reviewId) {
             likeBtn.classList.remove('loading');
         }
         
-        // 短暫防抖：防止極短時間內的重複點擊（300ms）
+        // Brief debounce: prevent rapid repeated clicks (300ms)
         likeDebounceState[reviewId] = true;
         setTimeout(() => {
             likeDebounceState[reviewId] = false;
@@ -245,26 +215,105 @@ async function likeReview(reviewId) {
     }
 }
 
-// 將 likeReview 函數暴露到全局作用域
+// Expose likeReview function to global scope
 window.likeReview = likeReview;
 
-// ==================== 初始评论数据 ====================
-// 现在评论完全来自数据库，前端不再内置任何静态示例评论。
-// 后端通过 window.INITIAL_REVIEWS_FROM_DB 注入；未注入时默认为空列表。
-// 注意：不要在这里直接读取 window.INITIAL_REVIEWS_FROM_DB（脚本加载顺序可能导致为 undefined），
-// 真正的初始化逻辑放在 getReviews() 里面，运行时再读取。
+/**
+ * Delete a review. Only the author can delete their own reviews.
+ * @param {number} reviewId - The ID of the review to delete
+ */
+async function deleteReview(reviewId) {
+    // Save the review data in case we need to restore it
+    const reviews = ReviewsManager.getReviews();
+    const reviewToDelete = reviews.find(r => r.id === reviewId);
+    
+    // Optimistic UI update: immediately remove from DOM with fade animation
+    const reviewElement = document.querySelector(`[data-review-id="${reviewId}"]`);
+    if (reviewElement) {
+        reviewElement.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        reviewElement.style.opacity = '0';
+        reviewElement.style.transform = 'translateX(-20px)';
+        setTimeout(() => {
+            if (reviewElement.parentNode) {
+                reviewElement.remove();
+            }
+        }, 200);
+    }
+
+    // Remove from memory immediately
+    ReviewsManager.removeReview(reviewId);
+
+    try {
+        const response = await fetch(`/api/reviews/${reviewId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.ok) {
+            // Show success message
+            if (window.Toast) {
+                window.Toast.show('Review deleted successfully');
+            }
+        } else {
+            // Handle errors - restore UI if deletion failed
+            if (response.status === 401) {
+                alert('Please log in to delete reviews.');
+                window.location.href = '/login';
+                // Restore the review
+                if (reviewToDelete) {
+                    const reviews = ReviewsManager.getReviews();
+                    reviews.push(reviewToDelete);
+                    reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    ReviewsManager.saveReviews(reviews);
+                    ReviewsManager.renderReviews();
+                }
+            } else {
+                // Restore the review on error
+                if (reviewToDelete) {
+                    const reviews = ReviewsManager.getReviews();
+                    reviews.push(reviewToDelete);
+                    reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    ReviewsManager.saveReviews(reviews);
+                }
+                ReviewsManager.renderReviews();
+                alert(data.error || 'Failed to delete review. Please try again.');
+            }
+        }
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        // Restore the review on network error
+        if (reviewToDelete) {
+            const reviews = ReviewsManager.getReviews();
+            reviews.push(reviewToDelete);
+            reviews.sort((a, b) => new Date(b.date) - new Date(a.date));
+            ReviewsManager.saveReviews(reviews);
+        }
+        ReviewsManager.renderReviews();
+        alert('An error occurred while deleting the review. Please try again.');
+    }
+}
+
+// Expose deleteReview function to global scope
+window.deleteReview = deleteReview;
+
 const INITIAL_REVIEWS = [];
 
-// ==================== 评论管理器 ====================
+// ==================== Review Manager ====================
 const ReviewsManager = {
-  // 获取唯一ID
+  // Get unique ID
   getNextId: function() {
     const reviews = this.getReviews();
     if (reviews.length === 0) return 1;
     return Math.max(...reviews.map(r => r.id)) + 1;
   },
 
-  // 获取回复的唯一ID
+  // Get unique ID for reply
   getNextReplyId: function() {
     const reviews = this.getReviews();
     let maxReplyId = 0;
@@ -277,7 +326,7 @@ const ReviewsManager = {
     return maxReplyId + 1;
   },
 
-  // 获取用户唯一标识
+  // Get user unique identifier
   getUserIdentifier: function() {
     let userId = localStorage.getItem('reviewUserId');
     if (!userId) {
@@ -287,9 +336,9 @@ const ReviewsManager = {
     return userId;
   },
 
-  // 获取当前用户名（用于显示头像）
+  // Get current username (for displaying avatar)
   getCurrentUserName: function() {
-    // 优先使用后端登录用户（Flask session 注入的 CURRENT_USER）
+    // Prioritize backend logged-in user (CURRENT_USER injected by Flask session)
     if (window.CURRENT_USER && window.CURRENT_USER.username) {
       return window.CURRENT_USER.username;
     }
@@ -305,10 +354,10 @@ const ReviewsManager = {
     return 'U';
   },
 
-  // 获取评论（优先使用内存中的缓存，初始值来自后端注入的 INITIAL_REVIEWS_FROM_DB）
+  // Get reviews (prioritize in-memory cache, initial value from backend-injected INITIAL_REVIEWS_FROM_DB)
   getReviews: function() {
     if (!this._reviews) {
-      // 运行时读取 window.INITIAL_REVIEWS_FROM_DB，避免脚本加载顺序问题
+      // Read window.INITIAL_REVIEWS_FROM_DB at runtime to avoid script loading order issues
       const source = window.INITIAL_REVIEWS_FROM_DB || INITIAL_REVIEWS;
       const base = Array.isArray(source) ? source.slice() : [];
       base.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -317,17 +366,18 @@ const ReviewsManager = {
     return this._reviews;
   },
 
-  // 保存评论到内存缓存
+  // Save reviews to memory cache
   saveReviews: function(reviews) {
     this._reviews = reviews;
   },
 
-  // 将后端返回的新主评论添加到本地列表
+  // Add new main review returned from backend to local list
   addReview: function(serverReview) {
     const reviews = this.getReviews();
     const newReview = {
       id: serverReview.id,
       author: serverReview.author,
+      avatar_url: serverReview.avatar_url || "",  // Author avatar
       text: serverReview.text,
       date: serverReview.date,
       likes: serverReview.likes || 0,
@@ -339,7 +389,14 @@ const ReviewsManager = {
     return newReview;
   },
 
-  // 切换点赞状态
+  // Remove a review from memory (including all its replies)
+  removeReview: function(reviewId) {
+    const reviews = this.getReviews();
+    const filtered = reviews.filter(review => review.id !== reviewId);
+    this.saveReviews(filtered);
+  },
+
+  // Toggle like state
   toggleLike: function(reviewId) {
     const reviews = this.getReviews();
     const review = reviews.find(r => r.id === reviewId);
@@ -364,7 +421,7 @@ const ReviewsManager = {
     return { likes: review.likes, delta };
   },
 
-  // 将后端返回的新回复插入到本地父评论的 replies 中
+  // Insert new reply returned from backend into local parent review's replies
   addReply: function(parentId, serverReply) {
     const reviews = this.getReviews();
     const review = reviews.find(r => r.id === parentId);
@@ -377,6 +434,7 @@ const ReviewsManager = {
     const replyObj = {
       id: serverReply.id,
       author: serverReply.author,
+      avatar_url: serverReply.avatar_url || "",  // Reply author avatar
       text: serverReply.text,
       date: serverReply.date
     };
@@ -386,21 +444,21 @@ const ReviewsManager = {
     return replyObj;
   },
 
-  // 检查用户是否已点赞
-  // 優先使用後端返回的 is_liked 字段（刷新頁面後仍有效）
-  // 如果沒有 is_liked，則回退到檢查 likedBy 數組
+  // Check if user has liked
+  // Prioritize backend-returned is_liked field (still valid after page refresh)
+  // If no is_liked, fallback to checking likedBy array
   isLiked: function(review) {
-    // 優先使用後端返回的 is_liked 字段（基於 session）
+    // Prioritize backend-returned is_liked field (based on session)
     if (review.hasOwnProperty('is_liked')) {
       return review.is_liked === true;
     }
     
-    // 回退：檢查 likedBy 數組（用於動態添加的評論）
+    // Fallback: check likedBy array (for dynamically added reviews)
     const userId = this.getUserIdentifier();
     return review.likedBy && review.likedBy.indexOf(userId) > -1;
   },
 
-  // 格式化日期
+  // Format date
   formatDate: function(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -415,28 +473,42 @@ const ReviewsManager = {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   },
 
-  // 获取头像首字母
+  // Get avatar initial letter
   getAvatarLetter: function(name) {
     return name ? name.charAt(0).toUpperCase() : 'U';
   },
 
-  // 渲染单个评论（B站风格）
-  // 點讚按鈕使用 onclick="likeReview(id)" 觸發 AJAX 請求
-  // 每個按鈕都有唯一的 id="like-btn-{reviewId}" 和 data-review-id 屬性
+  // Render avatar (show image if avatar_url exists, otherwise show initial letter)
+  renderAvatar: function(author, avatarUrl) {
+    const letter = this.getAvatarLetter(author);
+    if (avatarUrl && avatarUrl.trim()) {
+      return `<img src="${this.escapeHtml(avatarUrl)}" alt="${this.escapeHtml(author)}" class="avatar-img">`;
+    }
+    return letter;
+  },
+
+  // Render single review
+  // Like button uses onclick="likeReview(id)" to trigger AJAX request
+  // Each button has unique id="like-btn-{reviewId}" and data-review-id attribute
   renderReview: function(review) {
     const isLiked = this.isLiked(review);
     const heartIcon = isLiked ? '❤️' : '🤍';
-    const avatarLetter = this.getAvatarLetter(review.author);
+    const avatarContent = this.renderAvatar(review.author, review.avatar_url);
 
-    // 渲染子评论
+    // Check if current user is the author of this review
+    const currentUser = window.CURRENT_USER;
+    const isCurrentUser = currentUser && currentUser.username === review.author;
+    const deleteButton = isCurrentUser ? `<button class="comment-delete-btn" data-review-id="${review.id}" onclick="deleteReview(${review.id})" title="Delete this review">🗑️</button>` : '';
+
+    // Render child comments
     let repliesHtml = '';
     if (review.replies && review.replies.length > 0) {
       repliesHtml = '<div class="comment-replies">';
       review.replies.forEach(reply => {
-        const replyAvatar = this.getAvatarLetter(reply.author);
+        const replyAvatarContent = this.renderAvatar(reply.author, reply.avatar_url);
         repliesHtml += `
           <div class="comment-reply-item">
-            <div class="reply-avatar">${replyAvatar}</div>
+            <div class="reply-avatar">${replyAvatarContent}</div>
             <div class="reply-content">
               <span class="reply-author">${this.escapeHtml(reply.author)}</span>
               <span class="reply-text">: ${this.escapeHtml(reply.text)}</span>
@@ -447,16 +519,10 @@ const ReviewsManager = {
       repliesHtml += '</div>';
     }
 
-    // 點讚按鈕說明：
-    // - id="like-btn-${review.id}" : 唯一標識符，便於 JavaScript 定位
-    // - class="like-btn" : 用於 CSS 樣式和 JavaScript 選擇器
-    // - data-review-id="${review.id}" : 存儲評論 ID，供 JavaScript 讀取
-    // - onclick="likeReview(${review.id})" : 觸發 AJAX 點讚函數
-    // - <span id="like-count-${review.id}"> : 點讚數字容器，用於動態更新
     return `
       <div class="bili-comment-item" data-review-id="${review.id}">
         <div class="comment-avatar">
-          <div class="avatar-circle">${avatarLetter}</div>
+          <div class="avatar-circle">${avatarContent}</div>
         </div>
         <div class="comment-content">
           <div class="comment-author">${this.escapeHtml(review.author)}</div>
@@ -464,7 +530,7 @@ const ReviewsManager = {
           <div class="comment-info">
             <span class="comment-date">${this.formatDate(review.date)}</span>
             
-            <!-- AJAX 點讚按鈕 - Toggle 模式：點讚/取消點讚 -->
+            <!-- AJAX like button - Toggle mode: like/unlike -->
             <button 
               type="button"
               id="like-btn-${review.id}"
@@ -478,9 +544,17 @@ const ReviewsManager = {
             </button>
             
             <button class="comment-reply-btn" data-review-id="${review.id}">Reply</button>
+            ${deleteButton}
           </div>
           <div class="comment-reply-form" id="reply-form-${review.id}" style="display: none;">
-            <textarea class="reply-textarea" placeholder="Write your reply..." rows="1" style="height: 100%;"></textarea>
+            <label for="reply-textarea-${review.id}" class="visually-hidden">Reply</label>
+            <textarea 
+              id="reply-textarea-${review.id}"
+              class="reply-textarea" 
+              placeholder="Write your reply..." 
+              rows="1" 
+              style="height: 100%;"
+            ></textarea>
             <div class="reply-form-actions">
               <button type="button" class="reply-submit-btn" data-review-id="${review.id}">Submit</button>
               <button type="button" class="reply-cancel-btn" data-review-id="${review.id}">Cancel</button>
@@ -492,7 +566,7 @@ const ReviewsManager = {
     `;
   },
 
-  // 渲染所有评论
+  // Render all reviews
   renderReviews: function() {
     const container = document.getElementById('reviews-list');
     if (!container) return;
@@ -509,11 +583,11 @@ const ReviewsManager = {
     });
     container.innerHTML = html;
 
-    // 绑定事件
+    // Bind events
     this.bindEvents();
   },
 
-  // 更新当前用户头像
+  // Update current user avatar
   updateUserAvatar: function() {
     const avatar = document.getElementById('currentUserAvatar');
     if (avatar) {
@@ -527,7 +601,7 @@ const ReviewsManager = {
     }
   },
 
-  // 初始化智能吸底评论栏（固定在浏览器窗口底部）
+  // Initialize smart sticky comment bar (fixed at bottom of browser window)
   initStickyBar: function() {
     const staticForm = document.getElementById('static-review-form');
     const stickyBar = document.getElementById('sticky-bottom-bar');
@@ -536,32 +610,32 @@ const ReviewsManager = {
 
     if (!staticForm || !stickyBar) return;
 
-    // 监听静态表单在浏览器视口中的可见性
+    // Monitor static form visibility in browser viewport
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // 静态表单可见，隐藏底部栏
+          // Static form visible, hide bottom bar
           stickyBar.classList.remove('visible');
           stickyBar.setAttribute('aria-hidden', 'true');
         } else {
-          // 静态表单不可见（离开视口），显示底部栏
+          // Static form not visible (left viewport), show bottom bar
           stickyBar.classList.add('visible');
           stickyBar.setAttribute('aria-hidden', 'false');
         }
       });
     }, {
-      root: null, // 使用浏览器视口作为根容器
-      threshold: 0 // 当静态表单完全离开视口时触发
+      root: null, // Use browser viewport as root container
+      threshold: 0 // Trigger when static form completely leaves viewport
     });
 
     observer.observe(staticForm);
 
-    // 底部栏提交功能（点击按钮或按 Enter 时发送，Shift+Enter 换行）
+    // Bottom bar submit function (send on button click or Enter, Shift+Enter for new line)
     if (stickySubmit && stickyInput) {
       const sendStickyComment = () => {
-        // 检查登录状态
+        // Check login status
         if (typeof UserMenu !== 'undefined' && !UserMenu.requireLogin()) {
-          return; // 未登录，已跳转到登录页面
+          return; // Not logged in, already redirected to login page
         }
         
         const text = stickyInput.value.trim();
@@ -582,7 +656,7 @@ const ReviewsManager = {
               alert(result.data.error || 'Failed to submit comment');
               return;
             }
-            // 用后端数据添加到本地列表
+            // Add to local list using backend data
             ReviewsManager.addReview(result.data);
         stickyInput.value = '';
         const mainInput = document.getElementById('review-text');
@@ -605,9 +679,9 @@ const ReviewsManager = {
     }
   },
 
-  // 绑定事件监听器
+  // Bind event listeners
   bindEvents: function() {
-    // 点赞按钮
+    // Like button
     document.querySelectorAll('.comment-like-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -616,7 +690,7 @@ const ReviewsManager = {
       });
     });
 
-    // 回复按钮
+    // Reply button
     document.querySelectorAll('.comment-reply-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -625,7 +699,7 @@ const ReviewsManager = {
       });
     });
 
-    // 提交回复按钮（点击发送回复）
+    // Submit reply button (click to send reply)
     document.querySelectorAll('.reply-submit-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -634,7 +708,7 @@ const ReviewsManager = {
       });
     });
 
-    // 取消回复按钮
+    // Cancel reply button
     document.querySelectorAll('.reply-cancel-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -643,7 +717,7 @@ const ReviewsManager = {
       });
     });
 
-    // 在回复输入框中按 Enter 直接发送，Shift+Enter 换行
+    // Press Enter in reply input to send directly, Shift+Enter for new line
     document.querySelectorAll('.comment-reply-form .reply-textarea').forEach(textarea => {
       textarea.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -659,7 +733,7 @@ const ReviewsManager = {
     });
   },
 
-  // 处理点赞
+  // Handle like
   handleLike: function(reviewId) {
     const result = this.toggleLike(reviewId);
     const newLikes = result.likes;
@@ -682,23 +756,22 @@ const ReviewsManager = {
       }
       likeCount.textContent = newLikes;
 
-      // 将点赞变更同步到后端（仅聚合计数）
+      // Sync like changes to backend using new API
       if (delta !== 0) {
         try {
-          fetch(`/api/reviews/${reviewId}/like`, {
+          fetch(`/like_review/${reviewId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'same-origin',
-            body: JSON.stringify({ delta })
+            credentials: 'same-origin'
           }).catch(() => {});
         } catch (e) {
-          // 忽略网络错误
+          // Ignore network errors
         }
       }
     }
   },
 
-  // 显示回复表单
+  // Show reply form
   showReplyForm: function(reviewId) {
     document.querySelectorAll('.comment-reply-form').forEach(form => {
       form.style.display = 'none';
@@ -711,7 +784,7 @@ const ReviewsManager = {
     }
   },
 
-  // 隐藏回复表单
+  // Hide reply form
   hideReplyForm: function(reviewId) {
     const form = document.getElementById(`reply-form-${reviewId}`);
     if (form) {
@@ -720,11 +793,11 @@ const ReviewsManager = {
     }
   },
 
-  // 处理回复（发送到后端并更新本地数据）
+  // Handle reply (send to backend and update local data)
   handleReply: function(reviewId) {
-    // 检查登录状态
+    // Check login status
     if (typeof UserMenu !== 'undefined' && !UserMenu.requireLogin()) {
-      return; // 未登录，已跳转到登录页面
+      return; // Not logged in, already redirected to login page
     }
     
     const form = document.getElementById(`reply-form-${reviewId}`);
@@ -738,10 +811,10 @@ const ReviewsManager = {
       return;
     }
 
-    // 先乐观地关闭表单
+    // Optimistically close form first
     this.hideReplyForm(reviewId);
 
-    // 调用后端创建回复（复用 /api/reviews，传 parentId）
+    // Call backend to create reply (reuse /api/reviews, pass parentId)
     fetch('/api/reviews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -754,7 +827,7 @@ const ReviewsManager = {
           alert(result.data.error || 'Failed to submit reply');
           return;
         }
-        // 使用后端返回的数据更新本地 replies 列表
+        // Update local replies list using backend-returned data
         this.addReply(reviewId, result.data);
     this.renderReviews();
       })
@@ -763,33 +836,33 @@ const ReviewsManager = {
       });
   },
 
-  // HTML 转义
+  // HTML escape
   escapeHtml: function(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   },
 
-  // 初始化
+  // Initialize
   init: function() {
-    // 更新用户头像
+    // Update user avatar
     this.updateUserAvatar();
 
-    // 渲染评论
+    // Render reviews
     this.renderReviews();
 
-    // 初始化容器内智能吸底快速回复栏
+    // Initialize smart sticky quick reply bar in container
     this.initStickyBar();
 
-    // 绑定提交评论按钮（点击按钮或按 Enter 发送，Shift+Enter 换行）
+    // Bind submit comment button (click button or press Enter to send, Shift+Enter for new line)
     const submitBtn = document.getElementById('submitReviewBtn');
     const textInput = document.getElementById('review-text');
     
     if (submitBtn && textInput) {
       const sendMainComment = () => {
-        // 检查登录状态
+        // Check login status
         if (typeof UserMenu !== 'undefined' && !UserMenu.requireLogin()) {
-          return; // 未登录，已跳转到登录页面
+          return; // Not logged in, already redirected to login page
         }
         
         const text = textInput.value.trim();
@@ -809,7 +882,7 @@ const ReviewsManager = {
               alert(result.data.error || 'Failed to submit comment');
               return;
             }
-            // 用后端返回的数据添加到本地列表
+            // Add to local list using backend-returned data
             ReviewsManager.addReview(result.data);
         textInput.value = '';
         const stickyInput = document.getElementById('sticky-review-text');
@@ -823,10 +896,10 @@ const ReviewsManager = {
           });
       };
 
-      // 点击按钮发送
+      // Click button to send
       submitBtn.addEventListener('click', sendMainComment);
 
-      // 按 Enter 直接发送，Shift + Enter 换行
+      // Press Enter to send directly, Shift + Enter for new line
       textInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
@@ -837,7 +910,7 @@ const ReviewsManager = {
   }
 };
 
-// ==================== 初始化 ====================
+// ==================== Initialization ====================
 document.addEventListener('DOMContentLoaded', function() {
   ReviewsManager.init();
 });

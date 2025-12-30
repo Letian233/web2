@@ -1,19 +1,19 @@
-// ==================== Profile 页面功能 ====================
+// ==================== Profile Page Functions ====================
 
-// ==================== Tab 切换逻辑 ====================
+// ==================== Tab Switching Logic ====================
 function switchTab(tabName) {
-  // 隐藏所有 tab 内容
+  // Hide all tab content
   document.querySelectorAll('.tab-content-panel').forEach(panel => {
     panel.classList.remove('active');
   });
 
-  // 显示选中的 tab
+  // Show selected tab
   const targetTab = document.getElementById(tabName + 'Tab');
   if (targetTab) {
     targetTab.classList.add('active');
   }
 
-  // 更新侧边栏链接状态
+  // Update sidebar link states
   document.querySelectorAll('.sidebar-link').forEach(link => {
     link.classList.remove('active');
     if (link.getAttribute('data-tab') === tabName) {
@@ -21,7 +21,7 @@ function switchTab(tabName) {
     }
   });
 
-  // 根据 tab 加载数据
+  // Load data based on tab
   if (tabName === 'orders') {
     loadOrderHistory();
   } else if (tabName === 'addresses') {
@@ -31,7 +31,7 @@ function switchTab(tabName) {
   }
 }
 
-// ==================== 加载用户资料 ====================
+// ==================== Load User Profile ====================
 async function loadUserProfile() {
   try {
     const response = await fetch('/api/me', {
@@ -50,12 +50,12 @@ async function loadUserProfile() {
       document.getElementById('profileEmail').value = user.email || '';
       document.getElementById('profilePhone').value = user.phone || '';
       
-      // 更新头像显示
+      // Update avatar display
       updateAvatarDisplay(user.avatar_url, user.username);
     }
   } catch (error) {
     console.error('Error loading profile:', error);
-    // 使用 window.CURRENT_USER 作为后备
+    // Use window.CURRENT_USER as fallback
     const currentUser = window.CURRENT_USER;
     if (currentUser) {
       document.getElementById('profileUsername').value = currentUser.username || '';
@@ -66,26 +66,26 @@ async function loadUserProfile() {
   }
 }
 
-// ==================== 更新头像显示 ====================
+// ==================== Update Avatar Display ====================
 function updateAvatarDisplay(avatarUrl, username) {
   const avatarDisplay = document.getElementById('profileAvatarDisplay');
   if (!avatarDisplay) return;
 
-  // 确保容器有正确的类名
+  // Ensure container has correct class name
   avatarDisplay.className = 'profile-avatar-display';
 
   if (avatarUrl) {
-    // 有头像：显示图片，完整填充圆形
+    // Has avatar: show image, fully fill circle
     avatarDisplay.innerHTML = `<img src="${avatarUrl}" alt="Avatar" class="profile-avatar-large">`;
   } else {
-    // 无头像：显示首字母占位符
+    // No avatar: show initial placeholder
     const initial = username ? username.charAt(0).toUpperCase() : 'U';
     avatarDisplay.textContent = initial;
     avatarDisplay.classList.add('profile-avatar-placeholder-large');
   }
 }
 
-// ==================== 上传头像 ====================
+// ==================== Upload Avatar ====================
 async function uploadAvatar(file) {
   const formData = new FormData();
   formData.append('avatar', file);
@@ -104,19 +104,19 @@ async function uploadAvatar(file) {
 
     const data = await response.json();
     
-    // 更新显示
+    // Update display
     const currentUser = window.CURRENT_USER || {};
     currentUser.avatar_url = data.avatar_url;
     window.CURRENT_USER = currentUser;
     
     updateAvatarDisplay(data.avatar_url, currentUser.username);
     
-    // 更新用户菜单
+    // Update user menu
     if (typeof UserMenu !== 'undefined' && UserMenu.render) {
       UserMenu.render();
     }
 
-    // 显示成功提示
+    // Show success message
     if (typeof Toast !== 'undefined') {
       Toast.show('Avatar uploaded successfully!');
       } else {
@@ -128,7 +128,7 @@ async function uploadAvatar(file) {
   }
 }
 
-// ==================== 加载订单历史 ====================
+// ==================== Load Order History ====================
 async function loadOrderHistory() {
   try {
     const response = await fetch('/api/orders', {
@@ -140,7 +140,7 @@ async function loadOrderHistory() {
     }
 
     allOrders = await response.json();
-    currentOrderPage = 1; // 重置到第一页
+    currentOrderPage = 1; // Reset to first page
 
     renderOrderHistory();
   } catch (error) {
@@ -150,7 +150,7 @@ async function loadOrderHistory() {
   }
 }
 
-// ==================== 渲染订单历史 ====================
+// ==================== Render Order History ====================
 function renderOrderHistory() {
   const tbody = document.getElementById('orderHistoryTableBody');
   const accordion = document.getElementById('orderItemsAccordion');
@@ -168,17 +168,17 @@ function renderOrderHistory() {
     return;
   }
 
-  // 计算分页
+  // Calculate pagination
   const totalPages = Math.ceil(allOrders.length / ordersPerPage);
   const startIndex = (currentOrderPage - 1) * ordersPerPage;
   const endIndex = startIndex + ordersPerPage;
   const currentPageOrders = allOrders.slice(startIndex, endIndex);
 
   currentPageOrders.forEach((order, pageIndex) => {
-    // 计算全局索引（用于 accordion ID）
+    // Calculate global index (for accordion ID)
     const globalIndex = startIndex + pageIndex;
     
-    // 创建表格行
+    // Create table row
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${order.orderId}</td>
@@ -189,7 +189,7 @@ function renderOrderHistory() {
     `;
     tbody.appendChild(row);
 
-    // 创建 Accordion 项
+    // Create Accordion item
     if (accordion) {
       const accordionItem = document.createElement('div');
       accordionItem.className = 'accordion-item';
@@ -218,7 +218,7 @@ function renderOrderHistory() {
     }
   });
 
-  // 绑定 View Items 按钮事件
+  // Bind View Items button events
   document.querySelectorAll('.view-items-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       const orderIndex = this.getAttribute('data-order-index');
@@ -226,7 +226,7 @@ function renderOrderHistory() {
       
       if (!accordionItem) return;
       
-      // 关闭所有其他 accordion
+      // Close all other accordions
       document.querySelectorAll('.accordion-item').forEach(item => {
         if (item.id !== `accordion-${orderIndex}`) {
           item.style.display = 'none';
@@ -237,7 +237,7 @@ function renderOrderHistory() {
         }
       });
 
-      // 切换当前 accordion
+      // Toggle current accordion
       if (accordionItem.style.display === 'none') {
         accordionItem.style.display = 'block';
         const header = accordionItem.querySelector('.accordion-header');
@@ -254,7 +254,7 @@ function renderOrderHistory() {
     });
   });
 
-  // 绑定 Accordion 头部点击事件
+  // Bind Accordion header click events
   document.querySelectorAll('.accordion-header').forEach(header => {
     header.addEventListener('click', function() {
       const accordionIndex = this.getAttribute('data-accordion-index');
@@ -268,7 +268,7 @@ function renderOrderHistory() {
         content.classList.remove('active');
         this.classList.remove('active');
       } else {
-        // 关闭所有其他
+        // Close all others
         document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
         
@@ -278,11 +278,11 @@ function renderOrderHistory() {
     });
   });
 
-  // 更新分页控件
+  // Update pagination controls
   updateOrderPagination(totalPages);
 }
 
-// ==================== 更新订单分页控件 ====================
+// ==================== Update Order Pagination Controls ====================
 function updateOrderPagination(totalPages) {
   const pagination = document.getElementById('orderPagination');
   const prevBtn = document.getElementById('prevOrderPageBtn');
@@ -298,20 +298,20 @@ function updateOrderPagination(totalPages) {
 
   pagination.style.display = 'flex';
 
-  // 更新按钮状态
+  // Update button states
   prevBtn.disabled = currentOrderPage === 1;
   nextBtn.disabled = currentOrderPage === totalPages;
 
-  // 更新分页信息
+  // Update pagination info
   infoSpan.textContent = `Page ${currentOrderPage} of ${totalPages}`;
 }
 
-// ==================== 订单上一页 ====================
+// ==================== Order Previous Page ====================
 function goToPreviousOrderPage() {
   if (currentOrderPage > 1) {
     currentOrderPage--;
     renderOrderHistory();
-    // 滚动到顶部
+    // Scroll to top
     const tbody = document.getElementById('orderHistoryTableBody');
     if (tbody) {
       tbody.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -319,13 +319,13 @@ function goToPreviousOrderPage() {
   }
 }
 
-// ==================== 订单下一页 ====================
+// ==================== Order Next Page ====================
 function goToNextOrderPage() {
   const totalPages = Math.ceil(allOrders.length / ordersPerPage);
   if (currentOrderPage < totalPages) {
     currentOrderPage++;
     renderOrderHistory();
-    // 滚动到顶部
+    // Scroll to top
     const tbody = document.getElementById('orderHistoryTableBody');
     if (tbody) {
       tbody.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -333,17 +333,17 @@ function goToNextOrderPage() {
   }
 }
 
-// ==================== 地址分页状态 ====================
+// ==================== Address Pagination State ====================
 let allAddresses = [];
 let currentAddressPage = 1;
 const addressesPerPage = 4;
 
-// ==================== 订单分页状态 ====================
+// ==================== Order Pagination State ====================
 let allOrders = [];
 let currentOrderPage = 1;
 const ordersPerPage = 4;
 
-// ==================== 加载地址 ====================
+// ==================== Load Addresses ====================
 async function loadAddresses() {
   try {
     const response = await fetch('/api/addresses', {
@@ -357,7 +357,7 @@ async function loadAddresses() {
     const data = await response.json();
     allAddresses = data.addresses || [];
     
-    // 如果当前页没有地址了，调整到合适的页码
+    // If current page has no addresses, adjust to appropriate page number
     const totalPages = Math.ceil(allAddresses.length / addressesPerPage);
     if (currentAddressPage > totalPages && totalPages > 0) {
       currentAddressPage = totalPages;
@@ -375,7 +375,7 @@ async function loadAddresses() {
   }
 }
 
-// ==================== 渲染地址 ====================
+// ==================== Render Addresses ====================
 function renderAddresses() {
   const container = document.getElementById('addressCardsContainer');
   const pagination = document.getElementById('addressPagination');
@@ -389,21 +389,21 @@ function renderAddresses() {
     return;
   }
 
-  // 计算分页
+  // Calculate pagination
   const totalPages = Math.ceil(allAddresses.length / addressesPerPage);
   const startIndex = (currentAddressPage - 1) * addressesPerPage;
   const endIndex = startIndex + addressesPerPage;
   const currentPageAddresses = allAddresses.slice(startIndex, endIndex);
 
-  // 渲染当前页的地址
+  // Render addresses for current page
   currentPageAddresses.forEach(address => {
     const card = document.createElement('div');
     card.className = `address-card ${address.is_default ? 'default' : ''}`;
     
-    // 确保 address.id 被正确转换为字符串
+    // Ensure address.id is correctly converted to string
     const addressId = String(address.id || '');
     
-    // 构建按钮HTML
+    // Build button HTML
     let setDefaultBtnHtml = '';
     if (!address.is_default) {
       setDefaultBtnHtml = `<button class="button set-default-btn" data-address-id="${addressId}" style="font-size: 12px; padding: 6px 12px;">Set as Default</button>`;
@@ -429,7 +429,7 @@ function renderAddresses() {
     container.appendChild(card);
   });
 
-  // 绑定按钮事件
+  // Bind button events
   container.querySelectorAll('.edit-address-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const addressId = btn.getAttribute('data-address-id');
@@ -459,11 +459,11 @@ function renderAddresses() {
     });
   });
 
-  // 更新分页控件
+  // Update pagination controls
   updatePagination(totalPages);
 }
 
-// ==================== 更新分页控件 ====================
+// ==================== Update Pagination Controls ====================
 function updatePagination(totalPages) {
   const pagination = document.getElementById('addressPagination');
   const prevBtn = document.getElementById('prevPageBtn');
@@ -479,20 +479,20 @@ function updatePagination(totalPages) {
 
   pagination.style.display = 'flex';
 
-  // 更新按钮状态
+  // Update button states
   prevBtn.disabled = currentAddressPage === 1;
   nextBtn.disabled = currentAddressPage === totalPages;
 
-  // 更新分页信息
+  // Update pagination info
   infoSpan.textContent = `Page ${currentAddressPage} of ${totalPages}`;
 }
 
-// ==================== 上一页 ====================
+// ==================== Previous Page ====================
 function goToPreviousPage() {
   if (currentAddressPage > 1) {
     currentAddressPage--;
     renderAddresses();
-    // 滚动到顶部
+    // Scroll to top
     const container = document.getElementById('addressCardsContainer');
     if (container) {
       container.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -500,13 +500,13 @@ function goToPreviousPage() {
   }
 }
 
-// ==================== 下一页 ====================
+// ==================== Next Page ====================
 function goToNextPage() {
   const totalPages = Math.ceil(allAddresses.length / addressesPerPage);
   if (currentAddressPage < totalPages) {
     currentAddressPage++;
     renderAddresses();
-    // 滚动到顶部
+    // Scroll to top
     const container = document.getElementById('addressCardsContainer');
     if (container) {
       container.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -514,7 +514,7 @@ function goToNextPage() {
   }
 }
 
-// ==================== 地址管理函数 ====================
+// ==================== Address Management Functions ====================
 async function saveAddress(addressData, addressId = null) {
   const url = addressId ? `/api/addresses/${addressId}` : '/api/addresses';
   const method = addressId ? 'PUT' : 'POST';
@@ -543,10 +543,10 @@ async function saveAddress(addressData, addressId = null) {
       throw new Error(error.error || 'Failed to save address');
     }
 
-    // 重新加载地址列表
+    // Reload address list
     await loadAddresses();
 
-    // 关闭模态框
+    // Close modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
     if (modal) {
       modal.hide();
@@ -578,7 +578,7 @@ async function deleteAddress(addressId) {
       throw new Error('Failed to delete address');
     }
 
-    // 删除后重新加载地址
+    // Reload addresses after deletion
     await loadAddresses();
 
     if (typeof Toast !== 'undefined') {
@@ -620,7 +620,7 @@ async function setDefaultAddress(addressId) {
     const result = await response.json().catch(() => ({}));
     console.log('Success response:', result);
 
-    // 重新加载地址列表以更新显示
+    // Reload address list to update display
     await loadAddresses();
 
     if (typeof Toast !== 'undefined') {
@@ -651,7 +651,7 @@ async function editAddress(addressId) {
       throw new Error('Address not found');
     }
 
-    // 填充表单
+    // Populate form
     document.getElementById('addressId').value = address.id;
     document.getElementById('addressTitle').value = address.title;
     document.getElementById('addressRecipient').value = address.recipient_name;
@@ -662,13 +662,13 @@ async function editAddress(addressId) {
     document.getElementById('addressZip').value = address.zip_code;
     document.getElementById('addressDefault').checked = address.is_default;
 
-    // 更新模态框标题
+    // Update modal title
     const modalTitle = document.getElementById('addressModalLabel');
     if (modalTitle) {
       modalTitle.textContent = 'Edit Address';
     }
 
-    // 显示模态框
+    // Show modal
     const modalElement = document.getElementById('addressModal');
     if (modalElement) {
       const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
@@ -680,22 +680,22 @@ async function editAddress(addressId) {
   }
 }
 
-// ==================== 初始化 ====================
+// ==================== Initialization ====================
 document.addEventListener('DOMContentLoaded', function() {
-  // 检查用户是否登录（优先使用 window.CURRENT_USER，由 pages.js 从模板设置）
+  // Check if user is logged in (prioritize window.CURRENT_USER, set by pages.js from template)
   const currentUser = window.CURRENT_USER;
   if (!currentUser || (!currentUser.username && !currentUser.id)) {
-    // 未登录，跳转到登录页
+    // Not logged in, redirect to login page
     window.location.href = '/login';
     return;
   }
 
-  // 使用 requestAnimationFrame 延迟执行，避免与 UserMenu.render() 冲突
+  // Use requestAnimationFrame to delay execution, avoid conflict with UserMenu.render()
   requestAnimationFrame(function() {
-    // 加载用户资料
+    // Load user profile
     loadUserProfile();
 
-    // 绑定侧边栏链接点击事件
+    // Bind sidebar link click events
     document.querySelectorAll('.sidebar-link').forEach(link => {
       link.addEventListener('click', function(e) {
         e.preventDefault();
@@ -706,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
 
-    // 绑定登出链接
+    // Bind logout link
     const logoutLink = document.getElementById('logoutSidebarLink');
     if (logoutLink) {
       logoutLink.addEventListener('click', function(e) {
@@ -720,7 +720,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // 绑定头像上传
+    // Bind avatar upload
     const changeAvatarBtn = document.getElementById('changeAvatarBtn');
     const avatarFileInput = document.getElementById('avatarFileInput');
     
@@ -732,24 +732,24 @@ document.addEventListener('DOMContentLoaded', function() {
       avatarFileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-          // 验证文件类型
+          // Validate file type
           if (!file.type.startsWith('image/')) {
             alert('Please select an image file');
             return;
           }
-          // 验证文件大小（5MB限制）
+          // Validate file size (5MB limit)
           if (file.size > 5 * 1024 * 1024) {
             alert('File size must be less than 5MB');
             return;
           }
           uploadAvatar(file);
-          // 重置input
+          // Reset input
           e.target.value = '';
         }
       });
     }
 
-    // 绑定表单提交
+    // Bind form submission
     const profileForm = document.getElementById('profileForm');
     if (profileForm) {
       profileForm.addEventListener('submit', async function(e) {
@@ -783,15 +783,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
           const data = await response.json();
           
-          // 更新 window.CURRENT_USER
+          // Update window.CURRENT_USER
           window.CURRENT_USER = data.user;
           
-          // 更新用户菜单
+          // Update user menu
           if (typeof UserMenu !== 'undefined' && UserMenu.render) {
             UserMenu.render();
           }
         
-        // 显示成功提示
+        // Show success message
         if (typeof Toast !== 'undefined') {
           Toast.show('Profile updated successfully!');
         } else {
@@ -804,24 +804,24 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // 绑定添加地址按钮
+    // Bind add address button
     const addAddressBtn = document.getElementById('addAddressBtn');
     if (addAddressBtn) {
       addAddressBtn.addEventListener('click', function() {
-        // 清空表单
+        // Clear form
         const addressForm = document.getElementById('addressForm');
         if (addressForm) {
           addressForm.reset();
         }
         document.getElementById('addressId').value = '';
         
-        // 更新模态框标题
+        // Update modal title
         const modalTitle = document.getElementById('addressModalLabel');
         if (modalTitle) {
           modalTitle.textContent = 'Add New Address';
         }
         
-        // 显示模态框
+        // Show modal
         const modalElement = document.getElementById('addressModal');
         if (modalElement) {
           const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
@@ -830,7 +830,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // 绑定地址表单提交
+    // Bind address form submission
     const addressForm = document.getElementById('addressForm');
     if (addressForm) {
       addressForm.addEventListener('submit', function(e) {
@@ -852,7 +852,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // 绑定地址分页按钮
+    // Bind address pagination buttons
     const prevPageBtn = document.getElementById('prevPageBtn');
     const nextPageBtn = document.getElementById('nextPageBtn');
     if (prevPageBtn) {
@@ -862,7 +862,7 @@ document.addEventListener('DOMContentLoaded', function() {
       nextPageBtn.addEventListener('click', goToNextPage);
     }
 
-    // 绑定订单分页按钮
+    // Bind order pagination buttons
     const prevOrderPageBtn = document.getElementById('prevOrderPageBtn');
     const nextOrderPageBtn = document.getElementById('nextOrderPageBtn');
     if (prevOrderPageBtn) {

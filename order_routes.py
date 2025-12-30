@@ -2,12 +2,12 @@ from datetime import datetime
 
 from flask import jsonify, request, session
 
-from auth import SessionLocal, Order, OrderItem, MenuItem
+from auth import db_session, Order, OrderItem, MenuItem
 
 
 def serialize_order(order, items):
     """
-    将订单和其明细转换为前端需要的结构：
+    Convert order and its items to structure needed by frontend:
     {
       orderId: "ORD-001",
       date: "2024-01-15",
@@ -34,21 +34,23 @@ def serialize_order(order, items):
 
 def init_order_routes(app) -> None:
     """
-    注册下单和订单历史相关的 API 路由。
+    Register order placement and order history related API routes.
     """
 
     @app.route("/api/orders", methods=["GET"])
     def api_get_orders():
         """
-        获取当前登录用户的历史订单列表。
+        Get order history list for current logged-in user.
         """
         user_id = session.get("user_id")
         if not user_id:
-            return jsonify({"error": "You must be logged in to view orders."}), 401
+            return jsonify(
+                {"error": "You must be logged in to view orders."}
+            ), 401
 
-        db = SessionLocal()
+        db = db_session()
         try:
-            # 先查出该用户的所有订单
+            # First query all orders for this user
             orders = (
                 db.query(Order)
                 .filter(Order.user_id == user_id)
@@ -60,7 +62,7 @@ def init_order_routes(app) -> None:
 
             order_ids = [o.id for o in orders]
 
-            # 查询所有对应的 order_items + 菜品名称
+            # Query all corresponding order_items + menu item names
             rows = (
                 db.query(
                     OrderItem.order_id,
@@ -74,7 +76,7 @@ def init_order_routes(app) -> None:
                 .all()
             )
 
-            # 组装为 order_id -> [items]
+            # Assemble as order_id -> [items]
             items_by_order = {}
             for row in rows:
                 items_by_order.setdefault(row.order_id, []).append(row)
@@ -91,8 +93,8 @@ def init_order_routes(app) -> None:
     @app.route("/api/orders", methods=["POST"])
     def api_create_order():
         """
-        根据当前购物车创建新订单。
-        请求体示例：
+        Create new order based on current shopping cart.
+        Request body example:
         {
           "items": [
             { "id": 1, "quantity": 2 },
@@ -102,19 +104,26 @@ def init_order_routes(app) -> None:
         """
         user_id = session.get("user_id")
         if not user_id:
-            return jsonify({"error": "You must be logged in to place an order."}), 401
+            return jsonify(
+                {"error": "You must be logged in to place an order."}
+            ), 401
 
         data = request.get_json(silent=True) or {}
         items = data.get("items") or []
 
-        # 简单校验
+        # Simple validation
         if not isinstance(items, list) or len(items) == 0:
             return jsonify({"error": "Cart is empty."}), 400
 
-        db = SessionLocal()
+        db = db_session()
         try:
-            # 从数据库中取出所有涉及到的菜品，保证价格以服务器为准
-            menu_ids = [int(i.get("id")) for i in items if i.get("id") is not None]
+            # Get all involved menu items from database
+            # to ensure prices are server-side accurate
+            menu_ids = [
+                int(i.get("id"))
+                for i in items
+                if i.get("id") is not None
+            ]
             menu_map = {
                 m.id: m
                 for m in db.query(MenuItem)
@@ -152,7 +161,7 @@ def init_order_routes(app) -> None:
             if not order_items:
                 return jsonify({"error": "No valid items in cart."}), 400
 
-            # 创建订单
+            # Create order
             order = Order(
                 user_id=user_id,
                 date=datetime.utcnow(),
@@ -160,9 +169,9 @@ def init_order_routes(app) -> None:
                 status="Completed",
             )
             db.add(order)
-            db.flush()  # 先拿到 order.id
+            db.flush()  # Get order.id first
 
-            # 创建明细
+            # Create order items
             for oi in order_items:
                 db.add(
                     OrderItem(
@@ -175,9 +184,13 @@ def init_order_routes(app) -> None:
 
             db.commit()
 
-            # 返回新订单详情（结构与 GET /api/orders 相同单条）
+            # Return new order details
+            # (same structure as single item from GET /api/orders)
             class TmpItem:
-                def __init__(self, order_id, menu_item_id, quantity, price_at_purchase, menu_item_name):
+                def __init__(
+                    self, order_id, menu_item_id, quantity,
+                    price_at_purchase, menu_item_name
+                ):
                     self.order_id = order_id
                     self.menu_item_id = menu_item_id
                     self.quantity = quantity
@@ -198,5 +211,3 @@ def init_order_routes(app) -> None:
             return jsonify(serialize_order(order, tmp_items)), 201
         finally:
             db.close()
-
-

@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import jsonify, render_template, request, session, url_for
 from werkzeug.utils import secure_filename
 
-from auth import Address, SessionLocal, MenuItem, User
+from auth import Address, db_session, MenuItem, User
 from menu_utils import (
     filter_and_sort_menu,
     get_unique_categories,
@@ -15,18 +15,19 @@ from recommendation import get_recommendations
 
 def init_main_routes(app) -> None:
     """
-    注册站点的主要页面路由（首页 / 菜单 / 关于等），
-    并把当前登录用户信息注入到所有模板中。
+    Register main page routes for the site (homepage / menu / about etc.),
+    and inject current logged-in user info into all templates.
     """
 
-    # 将当前用户信息注入到所有模板（供导航栏头像、用户菜单使用）
+    # Inject current user info into all templates
+    # (for navbar avatar, user menu)
     @app.context_processor
     def inject_current_user():
         user_id = session.get("user_id")
         if not user_id:
             return {"current_user": None}
 
-        db = SessionLocal()
+        db = db_session()
         try:
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
@@ -57,7 +58,7 @@ def init_main_routes(app) -> None:
         if guard:
             return guard
 
-        db = SessionLocal()
+        db = db_session()
         try:
             user = db.query(User).filter(User.id == session["user_id"]).first()
             if not user:
@@ -91,7 +92,7 @@ def init_main_routes(app) -> None:
         if not username:
             return jsonify({"error": "Username is required"}), 400
 
-        db = SessionLocal()
+        db = db_session()
         try:
             user = db.query(User).filter(User.id == session["user_id"]).first()
             if not user:
@@ -157,9 +158,11 @@ def init_main_routes(app) -> None:
         save_path = os.path.join(upload_dir, stored_name)
         file.save(save_path)
 
-        avatar_url = url_for("static", filename=f"uploads/avatars/{stored_name}")
+        avatar_url = url_for(
+            "static", filename=f"uploads/avatars/{stored_name}"
+        )
 
-        db = SessionLocal()
+        db = db_session()
         try:
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
@@ -177,7 +180,7 @@ def init_main_routes(app) -> None:
         if guard:
             return guard
 
-        db = SessionLocal()
+        db = db_session()
         try:
             rows = (
                 db.query(Address)
@@ -222,15 +225,17 @@ def init_main_routes(app) -> None:
         zip_code = (payload.get("zip_code") or "").strip()
         is_default = bool(payload.get("is_default"))
 
-        if not all([title, recipient_name, phone, address_line, city, state, zip_code]):
+        if not all([
+            title, recipient_name, phone, address_line, city, state, zip_code
+        ]):
             return jsonify({"error": "All address fields are required"}), 400
 
-        db = SessionLocal()
+        db = db_session()
         try:
             if is_default:
-                db.query(Address).filter(Address.user_id == session["user_id"]).update(
-                    {"is_default": False}
-                )
+                db.query(Address).filter(
+                    Address.user_id == session["user_id"]
+                ).update({"is_default": False})
             addr = Address(
                 user_id=session["user_id"],
                 title=title,
@@ -255,11 +260,14 @@ def init_main_routes(app) -> None:
             return guard
 
         payload = request.get_json(silent=True) or {}
-        db = SessionLocal()
+        db = db_session()
         try:
             addr = (
                 db.query(Address)
-                .filter(Address.id == address_id, Address.user_id == session["user_id"])
+                .filter(
+                    Address.id == address_id,
+                    Address.user_id == session["user_id"]
+                )
                 .first()
             )
             if not addr:
@@ -278,9 +286,9 @@ def init_main_routes(app) -> None:
                     setattr(addr, field, (payload.get(key) or "").strip())
 
             if "is_default" in payload and bool(payload.get("is_default")):
-                db.query(Address).filter(Address.user_id == session["user_id"]).update(
-                    {"is_default": False}
-                )
+                db.query(Address).filter(
+                    Address.user_id == session["user_id"]
+                ).update({"is_default": False})
                 addr.is_default = True
 
             db.commit()
@@ -294,11 +302,14 @@ def init_main_routes(app) -> None:
         if guard:
             return guard
 
-        db = SessionLocal()
+        db = db_session()
         try:
             addr = (
                 db.query(Address)
-                .filter(Address.id == address_id, Address.user_id == session["user_id"])
+                .filter(
+                    Address.id == address_id,
+                    Address.user_id == session["user_id"]
+                )
                 .first()
             )
             if not addr:
@@ -312,13 +323,16 @@ def init_main_routes(app) -> None:
     @app.route("/")
     def index():
         """
-        首页：从 menu_items 表读取部分菜品，用于 Popular Categories 区域。
-        
-        新增功能：「猜你喜歡」推薦系統
-        - 如果用戶已登入且有購買記錄：顯示基於協同過濾的個性化推薦
-        - 如果用戶未登入或無購買記錄：顯示熱門菜品（冷啟動處理）
+        Homepage: read some menu items from menu_items table
+        for Popular Categories section.
+
+        New feature: "Recommended for You" recommendation system
+        - If user is logged in and has purchase history:
+          show personalized recommendations based on collaborative filtering
+        - If user is not logged in or has no purchase history:
+          show popular items (cold start handling)
         """
-        db = SessionLocal()
+        db = db_session()
         try:
             popular_items = (
                 db.query(MenuItem).order_by(MenuItem.id.asc()).limit(3).all()
@@ -326,9 +340,11 @@ def init_main_routes(app) -> None:
         finally:
             db.close()
 
-        # 獲取推薦菜品
+        # Get recommended items
         user_id = session.get("user_id")
-        recommended_items, recommendation_type = get_recommendations(user_id, limit=3)
+        recommended_items, recommendation_type = get_recommendations(
+            user_id, limit=3
+        )
 
         return render_template(
             "index.html",
@@ -340,28 +356,32 @@ def init_main_routes(app) -> None:
     @app.route("/about")
     def about():
         """
-        About 页面路由 - 从数据库获取内容并渲染。
-        
-        支持的 section_name:
-        - 'History': 历史故事部分
-        - 'Chef': 厨师介绍部分（单个）
-        - 'Chef1', 'Chef2', 'Chef3': 多个厨师介绍（可选）
-        - 'Vision': 愿景部分（可选）
+        About page route - fetch content from database and render.
+
+        Supported section_name:
+        - 'History': History story section
+        - 'Chef': Chef introduction section (single)
+        - 'Chef1', 'Chef2', 'Chef3': Multiple chef introductions (optional)
+        - 'Vision': Vision section (optional)
         """
-        from auth import SessionLocal, AboutContent
-        
-        db = SessionLocal()
+        from auth import db_session, AboutContent
+
+        db = db_session()
         try:
             import random
-            
-            # 从数据库获取所有 about_content 数据，按 id 排序
-            about_contents = db.query(AboutContent).order_by(AboutContent.id.asc()).all()
-            
-            # 将数据转换为字典，以 section_name 为键
+
+            # Get all about_content data from database, ordered by id
+            about_contents = db.query(AboutContent).order_by(
+                AboutContent.id.asc()
+            ).all()
+
+            # Convert data to dictionary, keyed by section_name
             content_dict = {}
-            chef_contents = []  # 存储所有 Chef 相关的内容（用于 Chef 区块显示）
-            all_contents_list = []  # 存储所有内容列表（排除 Chef，用于随机显示）
-            
+            # Store all Chef-related content (for Chef section display)
+            chef_contents = []
+            # Store all content list (excluding Chef, for random display)
+            all_contents_list = []
+
             for content in about_contents:
                 content_data = {
                     'id': content.id,
@@ -369,56 +389,76 @@ def init_main_routes(app) -> None:
                     'title': content.title,
                     'content': content.content,
                     'image_url': content.image_url or '',
-                    'updated_at': content.updated_at.isoformat() if content.updated_at else None
+                    'updated_at': (
+                        content.updated_at.isoformat()
+                        if content.updated_at else None
+                    )
                 }
                 content_dict[content.section_name] = content_data
-                
-                # 收集所有 Chef 相关的内容（Chef, Chef1, Chef2, Chef3 等）
-                # 不区分大小写匹配（用于 Chef 区块显示）
+
+                # Collect all Chef-related content
+                # (Chef, Chef1, Chef2, Chef3, etc.)
+                # Case-insensitive matching (for Chef section display)
                 section_lower = content.section_name.lower()
                 if section_lower.startswith('chef'):
                     chef_contents.append(content_data)
                 else:
-                    # 非 Chef 内容加入随机显示列表
+                    # Non-Chef content added to random display list
                     all_contents_list.append(content_data)
-            
-            # 随机选择一篇推文显示
+
+            # Check if article ID is specified via URL parameter
+            article_id = request.args.get('article', type=int)
             random_content = {}
-            if all_contents_list:
+
+            if article_id:
+                # Try to find article with specified ID
+                for content_data in all_contents_list:
+                    if content_data.get('id') == article_id:
+                        random_content = content_data
+                        break
+                # If not found, fall back to random selection
+                if not random_content and all_contents_list:
+                    random_content = random.choice(all_contents_list)
+            elif all_contents_list:
+                # No article ID specified,
+                # randomly select one article to display
                 random_content = random.choice(all_contents_list)
-            
-            # 获取特定区块的内容（如果存在）
+
+            # Get specific section content (if exists)
             history_content = content_dict.get('History', {})
-            chef_content = content_dict.get('Chef', {})  # 单个 Chef 区块
+            chef_content = content_dict.get('Chef', {})  # Single Chef section
             vision_content = content_dict.get('Vision', {})
-            
-            # 如果没有单个 Chef 区块，但有多个 Chef 记录，使用第一个
+
+            # If no single Chef section but multiple Chef records exist,
+            # use first one
             if not chef_content and chef_contents:
                 chef_content = chef_contents[0]
-            
+
             return render_template(
                 "about.html",
                 history_content=history_content,
                 chef_content=chef_content,
-                chef_contents=chef_contents,  # 传递所有厨师数据
+                chef_contents=chef_contents,  # Pass all chef data
                 vision_content=vision_content,
-                all_content=content_dict,  # 传递所有内容以便模板灵活使用
-                random_content=random_content,  # 随机选择的一篇推文
-                all_contents_list=all_contents_list  # 传递所有推文列表用于切换
+                # Pass all content for flexible template use
+                all_content=content_dict,
+                random_content=random_content,  # Randomly selected article
+                # Pass all article list for switching
+                all_contents_list=all_contents_list
             )
         finally:
             db.close()
 
     def _get_all_menu_items_from_db() -> list:
         """
-        從數據庫獲取所有菜單項目並轉換為 Python 字典列表。
-        
-        這是數據獲取層，不使用 SQL ORDER BY（排序在應用層完成）。
-        時間複雜度: O(n)，其中 n 為數據庫記錄數
+        Get all menu items from database and convert to Python dictionary list.
+
+        This is the data access layer,
+        does not use SQL ORDER BY (sorting done at application layer).
+        Time complexity: O(n), where n is number of database records
         """
-        db = SessionLocal()
+        db = db_session()
         try:
-            # 注意：不使用 ORDER BY，排序將在 Python 層完成
             items = db.query(MenuItem).all()
             menu_items = [
                 {
@@ -442,88 +482,108 @@ def init_main_routes(app) -> None:
     @app.route("/menu")
     def menu():
         """
-        菜单页：从数据库的 menu_items 表读取所有菜品，传给前端 JS 使用。
-        支持通过 URL 参数进行过滤和排序。
-        
-        新增功能：「猜你喜歡」推薦系統
-        - 如果用戶已登入且有購買記錄：顯示基於協同過濾的個性化推薦
-        - 如果用戶未登入或無購買記錄：顯示熱門菜品（冷啟動處理）
+        Menu page: read all menu items from menu_items table,
+        pass to frontend JS.
+        Supports filtering and sorting via URL parameters.
+
+        New feature: "Recommended for You" recommendation system
+        - If user is logged in and has purchase history:
+          show personalized recommendations based on collaborative filtering
+        - If user is not logged in or has no purchase history:
+          show popular items (cold start handling)
         """
+        from auth import ChefSpecialty
+
         menu_items = _get_all_menu_items_from_db()
-        
-        # 獲取推薦菜品
+
+        # Get recommended items
         user_id = session.get("user_id")
-        recommended_items, recommendation_type = get_recommendations(user_id, limit=3)
-        
+        recommended_items, recommendation_type = get_recommendations(
+            user_id, limit=3
+        )
+
+        # Get Chef's Specialty, ordered by updated_at descending
+        db = db_session()
+        try:
+            chef_specialties = (
+                db.query(ChefSpecialty)
+                .order_by(ChefSpecialty.updated_at.desc())
+                .limit(1)
+                .all()
+            )
+        finally:
+            db.close()
+
         return render_template(
             "menu.html",
             menu_items=menu_items,
             recommended_items=recommended_items,
-            recommendation_type=recommendation_type
+            recommendation_type=recommendation_type,
+            chef_specialties=chef_specialties
         )
 
     @app.route("/api/menu")
     def api_menu():
         """
-        菜單 API：支持過濾和排序的 RESTful 端點。
-        
-        查詢參數：
-        - category: 過濾類別（如 "Main Course", "Dessert"）
-        - min_price: 最低價格
-        - max_price: 最高價格
-        - search: 搜索關鍵詞（在名稱和描述中搜索）
-        - sort_by: 排序字段（"price" 或 "rating"）
-        - sort_order: 排序方向（"asc" 或 "desc"）
-        
-        響應格式：
+        Menu API: RESTful endpoint supporting filtering and sorting.
+
+        Query parameters:
+        - category: Filter category (e.g., "Main Course", "Dessert")
+        - min_price: Minimum price
+        - max_price: Maximum price
+        - search: Search keyword (searches in name and description)
+        - sort_by: Sort field ("price" or "rating")
+        - sort_order: Sort direction ("asc" or "desc")
+
+        Response format:
         {
             "items": [...],
-            "total": 數量,
-            "categories": 可用類別列表,
-            "price_range": {"min": 最低價, "max": 最高價},
+            "total": count,
+            "categories": available category list,
+            "price_range": {"min": min_price, "max": max_price},
             "filters_applied": {...},
             "sort_applied": {...}
         }
-        
-        時間複雜度分析（見 menu_utils.py）：
-        - 數據獲取: O(n)
-        - 過濾: O(n)
-        - 排序: O(m log m)，m 為過濾後項目數
-        - 總體: O(n + m log m)
+
+        Time complexity analysis (see menu_utils.py):
+        - Data retrieval: O(n)
+        - Filtering: O(n)
+        - Sorting: O(m log m), where m is number of filtered items
+        - Overall: O(n + m log m)
         """
-        # 獲取查詢參數
+        # Get query parameters
         category = request.args.get("category", "").strip() or None
         search_query = request.args.get("search", "").strip() or None
         sort_by = request.args.get("sort_by", "price").strip()
         sort_order = request.args.get("sort_order", "asc").strip()
-        
-        # 解析價格範圍參數
+
+        # Parse price range parameters
         min_price = None
         max_price = None
-        try:
-            min_price_str = request.args.get("min_price", "").strip()
-            if min_price_str:
+        min_price_str = request.args.get("min_price", "").strip()
+        if min_price_str:
+            try:
                 min_price = float(min_price_str)
-        except ValueError:
-            pass
-        
-        try:
-            max_price_str = request.args.get("max_price", "").strip()
-            if max_price_str:
+            except ValueError:
+                pass
+
+        max_price_str = request.args.get("max_price", "").strip()
+        if max_price_str:
+            try:
                 max_price = float(max_price_str)
-        except ValueError:
-            pass
-        
-        # 驗證排序參數
+            except ValueError:
+                pass
+
+        # Validate sort parameters
         if sort_by not in ("price", "rating"):
             sort_by = "price"
         if sort_order not in ("asc", "desc"):
             sort_order = "asc"
-        
-        # 從數據庫獲取原始數據（不使用 SQL ORDER BY）
+
+        # Get raw data from database (does not use SQL ORDER BY)
         all_items = _get_all_menu_items_from_db()
-        
-        # 使用手動實現的快速排序進行過濾和排序
+
+        # Use manually implemented quick sort for filtering and sorting
         result = filter_and_sort_menu(
             items=all_items,
             category=category,
@@ -533,14 +593,14 @@ def init_main_routes(app) -> None:
             sort_by=sort_by,
             sort_order=sort_order
         )
-        
-        # 獲取所有可用類別（用於前端過濾下拉選單）
+
+        # Get all available categories (for frontend filter dropdown)
         categories = get_unique_categories(all_items)
-        
-        # 獲取價格範圍（用於前端價格滑塊）
+
+        # Get price range (for frontend price slider)
         price_range = get_price_range(all_items)
-        
-        # 處理無搜索結果的情況
+
+        # Handle no search results case
         if result["total"] == 0:
             return jsonify({
                 "items": [],
@@ -551,7 +611,7 @@ def init_main_routes(app) -> None:
                 "filters_applied": result["filters_applied"],
                 "sort_applied": result["sort_applied"]
             })
-        
+
         return jsonify({
             "items": result["items"],
             "total": result["total"],
@@ -572,13 +632,11 @@ def init_main_routes(app) -> None:
     @app.route("/profile")
     def profile():
         """
-        个人主页：需要登录才能访问。
-        具体数据（订单历史等）通过前端调用 API 获取。
+        Profile page: requires login to access.
+        Specific data (order history, etc.) is fetched via frontend API calls.
         """
         if not session.get("user_id"):
             from flask import redirect
 
             return redirect(url_for("login"))
         return render_template("profile.html")
-
-

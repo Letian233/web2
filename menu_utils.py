@@ -1,60 +1,65 @@
 """
-菜單過濾與排序工具模組
+Menu filtering and sorting utility module
 
-此模組提供手動實現的過濾和排序功能，用於菜單數據處理。
-不使用 SQL ORDER BY 或 Python 內建的 .sort() 方法。
+This module provides manually implemented filtering and sorting
+functionality for menu data processing.
+Does not use SQL ORDER BY or Python's built-in .sort() method.
 
-時間複雜度分析：
-- 快速排序 (Quick Sort): 平均時間複雜度 O(n log n)，最壞情況 O(n²)
-  - 當樞軸 (pivot) 選擇不當（如已排序數組選首/尾元素）會導致最壞情況
-  - 本實現使用「三數取中」策略優化樞軸選擇，減少最壞情況發生概率
-  - 空間複雜度 O(log n)（遞迴調用棧）
+Time complexity analysis:
+- Quick Sort: Average time complexity O(n log n), worst case O(n²)
+  - Worst case occurs when pivot selection is poor
+    (e.g., selecting first/last element of sorted array)
+  - This implementation uses "median of three" strategy
+    to optimize pivot selection,
+    reducing worst case probability
+  - Space complexity O(log n) (recursive call stack)
 
-- 過濾操作: O(n)，需遍歷所有項目進行條件檢查
-- 總體複雜度: O(n) + O(n log n) = O(n log n)
+- Filtering operation: O(n),
+  requires traversing all items for condition checking
+- Overall complexity: O(n) + O(n log n) = O(n log n)
 """
 
 from typing import List, Dict, Any, Optional, Callable
 
-
 # ==============================================================================
-# 快速排序算法實現 (Quick Sort Implementation)
+# Quick Sort Algorithm Implementation
 # ==============================================================================
-# 
-# 算法原理：
-# 1. 選擇一個樞軸元素 (pivot)
-# 2. 將數組分為兩部分：小於樞軸的元素和大於樞軸的元素
-# 3. 遞迴地對兩個子數組進行排序
-# 4. 合併結果
 #
-# 時間複雜度：
-# - 最佳情況: O(n log n) - 每次分割都平均
-# - 平均情況: O(n log n) - 統計平均
-# - 最壞情況: O(n²) - 每次分割極度不平衡（如已排序數組）
-#
-# 空間複雜度: O(log n) - 遞迴調用棧深度
+# Algorithm principle:
+# 1. Select a pivot element
+# 2. Partition array into two parts: elements less than pivot
+#    and elements greater than pivot
+# 3. Recursively sort the two sub-arrays
+# 4. Combine results
 # ==============================================================================
 
 
-def _get_pivot_index(arr: List[Dict], low: int, high: int, key_func: Callable) -> int:
+def _get_pivot_index(
+    arr: List[Dict], low: int, high: int, key_func: Callable
+) -> int:
     """
-    使用「三數取中」策略選擇樞軸索引，以優化最壞情況性能。
-    
-    比較 arr[low], arr[mid], arr[high] 的值，返回中間值的索引。
-    這樣可以避免在已排序或逆序數組上出現 O(n²) 的最壞情況。
-    
-    時間複雜度: O(1)
+    Select pivot index using "median of three" strategy
+    to optimize worst-case performance.
+
+    Compare values of arr[low], arr[mid], arr[high],
+    return index of median value.
+    This avoids O(n²) worst case on sorted or
+    reverse-sorted arrays.
+
+    Time complexity: O(1)
     """
     mid = (low + high) // 2
-    
+
     val_low = key_func(arr[low])
     val_mid = key_func(arr[mid])
     val_high = key_func(arr[high])
-    
-    # 找出中間值對應的索引
-    if val_low <= val_mid <= val_high or val_high <= val_mid <= val_low:
+
+    # Find index corresponding to median value
+    if (val_low <= val_mid <= val_high or
+            val_high <= val_mid <= val_low):
         return mid
-    elif val_mid <= val_low <= val_high or val_high <= val_low <= val_mid:
+    elif (val_mid <= val_low <= val_high or
+          val_high <= val_low <= val_mid):
         return low
     else:
         return high
@@ -68,55 +73,56 @@ def _partition(
     reverse: bool = False
 ) -> int:
     """
-    分區函數：將數組分為兩部分。
-    
-    使用 Lomuto 分區方案：
-    1. 選擇樞軸並將其移到末尾
-    2. 維護一個索引 i，表示「小於樞軸區域」的邊界
-    3. 遍歷數組，將符合條件的元素交換到前面
-    4. 最後將樞軸放到正確位置
-    
-    時間複雜度: O(n)，其中 n = high - low + 1
-    空間複雜度: O(1)
-    
+    Partition function: divide array into two parts.
+
+    Uses Lomuto partition scheme:
+    1. Select pivot and move it to the end
+    2. Maintain an index i representing the boundary of
+       "less than pivot region"
+    3. Traverse array, swap qualifying elements to the front
+    4. Finally place pivot in correct position
+
+    Time complexity: O(n), where n = high - low + 1
+    Space complexity: O(1)
+
     Args:
-        arr: 待分區的數組
-        low: 分區起始索引
-        high: 分區結束索引
-        key_func: 提取排序鍵的函數
-        reverse: 是否降序排列
-    
+        arr: Array to partition
+        low: Partition start index
+        high: Partition end index
+        key_func: Function to extract sort key
+        reverse: Whether to sort in descending order
+
     Returns:
-        樞軸的最終位置索引
+        Final position index of pivot
     """
-    # 使用三數取中選擇樞軸
+    # Use median of three to select pivot
     pivot_idx = _get_pivot_index(arr, low, high, key_func)
-    
-    # 將樞軸移到末尾
+
+    # Move pivot to end
     arr[pivot_idx], arr[high] = arr[high], arr[pivot_idx]
     pivot_value = key_func(arr[high])
-    
-    # i 是「小於樞軸區域」的邊界
+
+    # i is the boundary of "less than pivot region"
     i = low - 1
-    
+
     for j in range(low, high):
         current_value = key_func(arr[j])
-        
-        # 根據排序方向決定比較邏輯
+
+        # Determine comparison logic based on sort direction
         if reverse:
-            # 降序：大的在前
+            # Descending: larger values first
             should_swap = current_value > pivot_value
         else:
-            # 升序：小的在前
+            # Ascending: smaller values first
             should_swap = current_value < pivot_value
-        
+
         if should_swap:
             i += 1
             arr[i], arr[j] = arr[j], arr[i]
-    
-    # 將樞軸放到正確位置
+
+    # Place pivot in correct position
     arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    
+
     return i + 1
 
 
@@ -128,27 +134,32 @@ def _quick_sort_recursive(
     reverse: bool = False
 ) -> None:
     """
-    快速排序遞迴實現（原地排序）。
-    
-    遞迴終止條件: low >= high（子數組為空或只有一個元素）
-    
-    時間複雜度: O(n log n) 平均，O(n²) 最壞
-    空間複雜度: O(log n) 遞迴棧空間
-    
+    Recursive quick sort implementation (in-place sorting).
+
+    Recursion termination condition: low >= high
+    (sub-array is empty or has one element)
+
+    Time complexity: O(n log n) average, O(n²) worst case
+    Space complexity: O(log n) recursive stack space
+
     Args:
-        arr: 待排序數組（原地修改）
-        low: 排序範圍起始索引
-        high: 排序範圍結束索引
-        key_func: 提取排序鍵的函數
-        reverse: 是否降序排列
+        arr: Array to sort (modified in-place)
+        low: Sort range start index
+        high: Sort range end index
+        key_func: Function to extract sort key
+        reverse: Whether to sort in descending order
     """
     if low < high:
-        # 分區並獲取樞軸位置
+        # Partition and get pivot position
         pivot_index = _partition(arr, low, high, key_func, reverse)
-        
-        # 遞迴排序左右兩個子數組
-        _quick_sort_recursive(arr, low, pivot_index - 1, key_func, reverse)
-        _quick_sort_recursive(arr, pivot_index + 1, high, key_func, reverse)
+
+        # Recursively sort left and right sub-arrays
+        _quick_sort_recursive(
+            arr, low, pivot_index - 1, key_func, reverse
+        )
+        _quick_sort_recursive(
+            arr, pivot_index + 1, high, key_func, reverse
+        )
 
 
 def quick_sort(
@@ -157,63 +168,70 @@ def quick_sort(
     reverse: bool = False
 ) -> List[Dict]:
     """
-    對菜單項目列表進行快速排序。
-    
-    這是快速排序的主入口函數，支持按不同字段排序。
-    
-    算法特點：
-    - 原地排序（in-place），但這裡返回新列表以保持原數據不變
-    - 不穩定排序（相等元素的相對順序可能改變）
-    - 使用「三數取中」優化樞軸選擇
-    
-    時間複雜度分析：
-    - 分割操作: O(n)
-    - 遞迴層數: 平均 O(log n)，最壞 O(n)
-    - 總體: 平均 O(n log n)，最壞 O(n²)
-    
+    Perform quick sort on menu item list.
+
+    This is the main entry function for quick sort,
+    supports sorting by different fields.
+
+    Algorithm characteristics:
+    - In-place sorting, but returns new list here
+      to keep original data unchanged
+    - Unstable sort (relative order of equal elements may change)
+    - Uses "median of three" to optimize pivot selection
+
+    Time complexity analysis:
+    - Partition operation: O(n)
+    - Recursion depth: O(log n) average, O(n) worst case
+    - Overall: O(n log n) average, O(n²) worst case
+
     Args:
-        items: 菜單項目字典列表
-        sort_by: 排序字段，支持 "price" 或 "rating"
-        reverse: 是否降序排列
-                 - 價格: False = 低到高, True = 高到低
-                 - 評分: False = 低到高, True = 高到低
-    
+        items: List of menu item dictionaries
+        sort_by: Sort field, supports "price" or "rating"
+        reverse: Whether to sort in descending order
+                 - Price: False = low to high, True = high to low
+                 - Rating: False = low to high, True = high to low
+
     Returns:
-        排序後的新列表（不修改原列表）
-    
+        New sorted list (does not modify original list)
+
     Example:
-        >>> items = [{"name": "Pizza", "price": 15.99}, {"name": "Salad", "price": 8.99}]
-        >>> sorted_items = quick_sort(items, sort_by="price", reverse=False)
-        >>> print(sorted_items[0]["name"])  # "Salad" (價格較低)
+        >>> items = [
+        ...     {"name": "Pizza", "price": 15.99},
+        ...     {"name": "Salad", "price": 8.99}
+        ... ]
+        >>> sorted_items = quick_sort(
+        ...     items, sort_by="price", reverse=False
+        ... )
+        >>> print(sorted_items[0]["name"])  # "Salad" (lower price)
     """
     if not items:
         return []
-    
-    # 複製列表以保持原數據不變
+
+    # Copy list to keep original data unchanged
     result = items.copy()
-    
-    # 定義鍵提取函數
+
+    # Define key extraction function
     def key_func(item: Dict) -> float:
         value = item.get(sort_by, 0)
-        # 處理 None 或無效值
+        # Handle None or invalid values
         try:
             return float(value) if value is not None else 0.0
         except (TypeError, ValueError):
             return 0.0
-    
-    # 執行快速排序
+
+    # Execute quick sort
     if len(result) > 1:
         _quick_sort_recursive(result, 0, len(result) - 1, key_func, reverse)
-    
+
     return result
 
 
 # ==============================================================================
-# 過濾函數實現 (Filtering Implementation)
+# Filtering Function Implementation
 # ==============================================================================
 #
-# 時間複雜度: O(n) - 需要遍歷所有項目進行條件檢查
-# 空間複雜度: O(k) - k 為符合條件的項目數量
+# Time complexity: O(n) - need to traverse all items for condition checking
+# Space complexity: O(k) - k is number of items matching conditions
 # ==============================================================================
 
 
@@ -225,72 +243,79 @@ def filter_menu_items(
     search_query: Optional[str] = None
 ) -> List[Dict]:
     """
-    根據條件過濾菜單項目。
-    
-    過濾邏輯：
-    1. 類別過濾 (category): 精確匹配（不區分大小寫）
-    2. 價格範圍 (min_price, max_price): 包含邊界值
-    3. 搜索查詢 (search_query): 在名稱和描述中進行模糊匹配
-    
-    時間複雜度: O(n) - 遍歷所有項目
-    空間複雜度: O(k) - k 為符合條件的項目數量
-    
+    Filter menu items based on conditions.
+
+    Filtering logic:
+    1. Category filter (category): Exact match (case-insensitive)
+    2. Price range (min_price, max_price): Inclusive boundaries
+    3. Search query (search_query): Fuzzy matching in name and description
+
+    Time complexity: O(n) - traverse all items
+    Space complexity: O(k) - k is number of items matching conditions
+
     Args:
-        items: 原始菜單項目列表
-        category: 過濾類別（如 "Main Course", "Dessert", "Appetizer"）
-        min_price: 最低價格（包含）
-        max_price: 最高價格（包含）
-        search_query: 搜索關鍵詞（在名稱和描述中搜索）
-    
+        items: Original menu item list
+        category: Filter category
+        (e.g., "Main Course", "Dessert", "Appetizer")
+        min_price: Minimum price (inclusive)
+        max_price: Maximum price (inclusive)
+        search_query: Search keyword (searches in name and description)
+
     Returns:
-        過濾後的項目列表
-    
+        Filtered item list
+
     Example:
-        >>> items = [{"name": "Pizza", "price": 15.99, "category": "Main Course"}, ...]
-        >>> filtered = filter_menu_items(items, category="Main Course", max_price=20.0)
+        >>> items = [
+        ...     {"name": "Pizza", "price": 15.99, "category": "Main Course"},
+        ...     ...
+        ... ]
+        >>> filtered = filter_menu_items(
+        ...     items, category="Main Course", max_price=20.0
+        ... )
     """
     if not items:
         return []
-    
+
     result = []
-    
+
     for item in items:
-        # 類別過濾
+        # Category filter
         if category:
             item_category = (item.get("category") or "").strip().lower()
             filter_category = category.strip().lower()
             if item_category != filter_category:
                 continue
-        
-        # 價格過濾
+
+        # Price filter
         try:
             item_price = float(item.get("price", 0))
         except (TypeError, ValueError):
             item_price = 0.0
-        
+
         if min_price is not None and item_price < min_price:
             continue
-        
+
         if max_price is not None and item_price > max_price:
             continue
-        
-        # 搜索查詢過濾（名稱和描述）
+
+        # Search query filter (name and description)
         if search_query:
             query_lower = search_query.strip().lower()
             item_name = (item.get("name") or "").lower()
             item_description = (item.get("description") or "").lower()
-            
-            if query_lower not in item_name and query_lower not in item_description:
+
+            if (query_lower not in item_name and
+                    query_lower not in item_description):
                 continue
-        
-        # 通過所有過濾條件
+
+        # Passed all filter conditions
         result.append(item)
-    
+
     return result
 
 
 # ==============================================================================
-# 主要入口函數：過濾 + 排序
+# Main Entry Function: Filter + Sort
 # ==============================================================================
 
 
@@ -304,34 +329,34 @@ def filter_and_sort_menu(
     sort_order: str = "asc"
 ) -> Dict[str, Any]:
     """
-    對菜單項目進行過濾和排序的主函數。
-    
-    處理流程：
-    1. 過濾 - O(n)
-    2. 排序 - O(m log m)，其中 m 為過濾後的項目數
-    
-    總時間複雜度: O(n + m log m)
-    - n: 原始項目數量
-    - m: 過濾後項目數量（m ≤ n）
-    
-    最壞情況（無過濾）: O(n log n)
-    
+    Main function for filtering and sorting menu items.
+
+    Processing flow:
+    1. Filter - O(n)
+    2. Sort - O(m log m), where m is number of filtered items
+
+    Total time complexity: O(n + m log m)
+    - n: Original item count
+    - m: Filtered item count (m ≤ n)
+
+    Worst case (no filtering): O(n log n)
+
     Args:
-        items: 原始菜單項目列表
-        category: 過濾類別
-        min_price: 最低價格
-        max_price: 最高價格
-        search_query: 搜索關鍵詞
-        sort_by: 排序字段 ("price" 或 "rating")
-        sort_order: 排序方向 ("asc" 升序, "desc" 降序)
-    
+        items: Original menu item list
+        category: Filter category
+        min_price: Minimum price
+        max_price: Maximum price
+        search_query: Search keyword
+        sort_by: Sort field ("price" or "rating")
+        sort_order: Sort direction ("asc" ascending, "desc" descending)
+
     Returns:
-        包含以下鍵的字典:
-        - "items": 過濾並排序後的項目列表
-        - "total": 結果總數
-        - "filters_applied": 應用的過濾條件
-        - "sort_applied": 應用的排序條件
-    
+        Dictionary containing the following keys:
+        - "items": Filtered and sorted item list
+        - "total": Total result count
+        - "filters_applied": Applied filter conditions
+        - "sort_applied": Applied sort conditions
+
     Example:
         >>> result = filter_and_sort_menu(
         ...     items,
@@ -343,7 +368,7 @@ def filter_and_sort_menu(
         ... )
         >>> print(f"Found {result['total']} items")
     """
-    # 步驟 1: 過濾 - O(n)
+    # Step 1: Filter - O(n)
     filtered_items = filter_menu_items(
         items,
         category=category,
@@ -351,20 +376,20 @@ def filter_and_sort_menu(
         max_price=max_price,
         search_query=search_query
     )
-    
-    # 步驟 2: 排序 - O(m log m)
-    # 確定排序方向
+
+    # Step 2: Sort - O(m log m)
+    # Determine sort direction
     reverse = sort_order.lower() == "desc"
-    
-    # 對於評分，用戶通常期望「由高到低」，所以默認 desc
-    # 對於價格，用戶通常期望「由低到高」，所以默認 asc
+
+    # For ratings, users typically expect "high to low", so default desc
+    # For prices, users typically expect "low to high", so default asc
     sorted_items = quick_sort(
         filtered_items,
         sort_by=sort_by,
         reverse=reverse
     )
-    
-    # 構建響應
+
+    # Build response
     return {
         "items": sorted_items,
         "total": len(sorted_items),
@@ -380,72 +405,73 @@ def filter_and_sort_menu(
         }
     }
 
-
 # ==============================================================================
-# 獲取所有可用的類別（用於前端過濾下拉選單）
+# Get All Available Categories (for frontend filter dropdown)
 # ==============================================================================
 
 
 def get_unique_categories(items: List[Dict]) -> List[str]:
     """
-    從菜單項目中提取所有唯一的類別。
-    
-    時間複雜度: O(n)
-    空間複雜度: O(c)，其中 c 為唯一類別數量
-    
+    Extract all unique categories from menu items.
+
+    Time complexity: O(n)
+    Space complexity: O(c), where c is number of unique categories
+
     Args:
-        items: 菜單項目列表
-    
+        items: Menu item list
+
     Returns:
-        按字母排序的唯一類別列表
+        Alphabetically sorted unique category list
     """
     categories = set()
     for item in items:
         category = (item.get("category") or "").strip()
         if category:
             categories.add(category)
-    
-    # 返回排序後的列表（這裡使用簡單的快速排序來保持一致性）
+
+    # Return sorted list (using simple quick sort here for consistency)
     result = list(categories)
-    
-    # 對類別名稱進行快速排序
+
+    # Perform quick sort on category names
     if len(result) > 1:
-        # 使用遞迴快速排序對字符串列表排序
+        # Use recursive quick sort to sort string list
         def str_key(item):
             return {"name": item}
-        
+
         temp_list = [{"name": c} for c in result]
-        
+
         def str_key_func(item):
             return item["name"].lower()
-        
+
         if len(temp_list) > 1:
-            _quick_sort_recursive(temp_list, 0, len(temp_list) - 1, str_key_func, False)
-        
+            _quick_sort_recursive(
+                temp_list, 0, len(temp_list) - 1, str_key_func, False
+            )
+
         result = [item["name"] for item in temp_list]
-    
+
     return result
 
 
 def get_price_range(items: List[Dict]) -> Dict[str, float]:
     """
-    獲取菜單項目的價格範圍。
-    
-    時間複雜度: O(n)
-    空間複雜度: O(1)
-    
+    Get price range of menu items.
+
+    Time complexity: O(n)
+    Space complexity: O(1)
+
     Args:
-        items: 菜單項目列表
-    
+        items: Menu item list
+
     Returns:
-        包含 "min" 和 "max" 的字典
+        Dictionary containing "min" and "max"
     """
     if not items:
         return {"min": 0.0, "max": 0.0}
-    
+
     min_price = float('inf')
     max_price = float('-inf')
-    
+
     for item in items:
         try:
             price = float(item.get("price", 0))
@@ -455,12 +481,11 @@ def get_price_range(items: List[Dict]) -> Dict[str, float]:
                 max_price = price
         except (TypeError, ValueError):
             continue
-    
-    # 處理沒有有效價格的情況
+
+    # Handle case where no valid prices exist
     if min_price == float('inf'):
         min_price = 0.0
     if max_price == float('-inf'):
         max_price = 0.0
-    
-    return {"min": min_price, "max": max_price}
 
+    return {"min": min_price, "max": max_price}

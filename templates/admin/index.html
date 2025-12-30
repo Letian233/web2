@@ -2,16 +2,11 @@
 
 {% block head %}
     {{ super() }}
-    <!-- 使用 CDN 加载 Bootstrap 3 CSS（解决 PythonAnywhere 样式丢失问题） -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap-theme.min.css" rel="stylesheet">
-    <!-- 使用 CDN 加载 jQuery（Flask-Admin 需要） -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- 使用 CDN 加载 Bootstrap 3 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
-    <!-- 禁用导航栏 hover 效果 -->
     <style>
-        /* 禁用所有导航链接的 hover 效果 */
         .nav a:hover,
         .nav a:focus,
         .navbar-nav a:hover,

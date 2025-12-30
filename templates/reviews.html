@@ -18,7 +18,7 @@
     <script src="{{ url_for('static', filename='js/reviews.js') }}"></script>
 </head>
 <body class="reviews-page">
-    <!-- 用户菜单 - 固定在右上角 -->
+    <!-- User menu - Fixed at top right corner -->
     <div id="userMenuContainer" class="user-menu-fixed"></div>
     <div id="container">
         <header>
@@ -46,17 +46,18 @@
         <div class="border"></div>
         
         <div class="row mt-4">
-          <!-- 左侧评论区域 -->
+          <!-- Left comment area -->
           <div class="col-12 col-lg-8">
             <article>
               <h3>Reviews</h3>
               
-              <!-- 表单一：顶部静态表单（位于评论列表上方） -->
+              <!-- Form 1: Top static form (located above comment list) -->
               <div class="bili-comment-input" id="static-review-form">
                 <div class="comment-avatar">
                   <div class="avatar-circle" id="currentUserAvatar">U</div>
                 </div>
                 <div class="comment-input-wrapper">
+                  <label for="review-text" class="visually-hidden">Share your thoughts</label>
                   <textarea 
                     id="review-text" 
                     class="comment-textarea" 
@@ -67,23 +68,24 @@
                 <button type="button" class="comment-submit-btn" id="submitReviewBtn">Send</button>
               </div>
 
-              <!-- 评论展示容器（固定高度，内部滚动） -->
+              <!-- Comment display container (fixed height, internal scrolling) -->
               <div class="reviews-widget">
-                <!-- 滚动区域 -->
+                <!-- Scroll area -->
                 <div class="reviews-scroll-area" id="reviews-scroll-area">
-                  <!-- 评论列表容器（容器内滚动） -->
+                  <!-- Comment list container (scrolling within container) -->
                   <div id="reviews-list" class="bili-comments-list">
-                    <!-- 评论将在这里动态生成 -->
+                    <!-- Comments will be dynamically generated here -->
                   </div>
                 </div>
 
-                <!-- 表单二：底部悬浮栏（固定在评论区底部，默认隐藏） -->
+                <!-- Form 2: Bottom sticky bar (fixed at bottom of comment area, hidden by default) -->
                 <div id="sticky-bottom-bar" class="sticky-bottom-bar" aria-hidden="true">
                   <div class="sticky-bar-content">
                     <div class="comment-avatar">
                       <div class="avatar-circle" id="stickyUserAvatar">U</div>
                     </div>
                     <div class="sticky-input-wrapper">
+                      <label for="sticky-review-text" class="visually-hidden">Quick reply</label>
                       <textarea 
                         id="sticky-review-text" 
                         class="sticky-textarea" 
@@ -98,14 +100,40 @@
             </article>
           </div>
           
-          <!-- 右侧边栏 -->
+          <!-- Right sidebar - Article list -->
           <div class="col-12 col-lg-4 mt-4 mt-lg-0">
-            <aside class="sidebar">
-              <h3>Signature Dish: Truffle Sauce Roasted Chicken</h3>
-              <img src="{{ url_for('static', filename='images/1.jpg') }}" class="img-fluid mb-3" alt="snacks">
-              <p><strong>Critic: Gordon Ramsay</strong> At this establishment, I had the distinct pleasure of savoring their signature dish - Truffle Sauce Roasted Chicken. The selection of chicken is impeccable, with tender and succulent meat that offers a natural flavor that is both subtle and rich. The roasting is executed to perfection, with a golden-brown crust that is crisp on the outside and the meat so tender it almost melts in your mouth.<br><br>
-                The addition of truffle sauce is the crowning glory of this dish. The aroma of the truffle is robust yet not overpowering, blending seamlessly with the chicken's natural taste, enhancing the overall flavor profile. The sauce is expertly balanced, neither overshadowing the chicken's essence nor falling short in adding depth.<br>
-                <a href="#"><strong>Continue Reading &raquo;</strong></a></p>
+            <aside class="sidebar bili-sidebar">
+                <h3>Featured Articles</h3>
+              <div class="bili-article-list">
+                {% if articles_list %}
+                  {% for article in articles_list %}
+                  <a href="{{ url_for('about') }}?article={{ article.id }}" class="bili-article-card">
+                    <div class="bili-article-thumb">
+                      {% if article.image_url %}
+                        <img src="{{ article.image_url if article.image_url.startswith('http') or article.image_url.startswith('/') else url_for('static', filename=article.image_url) }}" alt="{{ article.title }}">
+                      {% else %}
+                        <div class="bili-article-placeholder">
+                          <span>{{ article.title[:1] }}</span>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="bili-article-info">
+                      <h4 class="bili-article-title">{{ article.title }}</h4>
+                      <div class="bili-article-meta">
+                        <span class="bili-article-category">{{ article.section_name }}</span>
+                        {% if article.updated_at %}
+                        <span class="bili-article-date">{{ article.updated_at }}</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </a>
+                  {% endfor %}
+                {% else %}
+                  <div class="bili-no-articles">
+                    <p>No articles yet</p>
+                  </div>
+                {% endif %}
+              </div>
             </aside>
           </div>
         </div>

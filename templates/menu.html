@@ -18,9 +18,9 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </head>
 <body class="menu-page">
-    <!-- 用户菜单 - 固定在右上角 -->
+    <!-- User menu - Fixed at top right corner -->
     <div id="userMenuContainer" class="user-menu-fixed"></div>
-    <!-- 购物车按钮 - 固定在右上角，头像下方（仅登录用户显示） -->
+    <!-- Shopping cart button - Fixed at top right corner, below avatar (only shown for logged-in users) -->
     {% if current_user %}
     <div id="cartButtonContainer" class="cart-button-fixed">
       <button class="cart-fixed-btn" id="viewCartBtnFixed" title="View Cart" aria-label="View Cart">
@@ -60,15 +60,15 @@
         <div id="orderHistory"></div>
         
         <div class="row mt-4">
-          <!-- 左侧菜单区域 -->
+          <!-- Left menu area -->
           <div class="col-12 col-lg-8">
             <article class="menu">
               
              
               
-              <!-- 搜索和過濾區域 -->
+              <!-- Search and filter area -->
               <div class="menu-filter-bar mb-4">
-                <!-- 頂部：搜索框 + 漢堡按鈕 -->
+                <!-- Top: Search box + Hamburger button -->
                 <div class="filter-header">
                 <div class="search-input-wrapper">
                   <input 
@@ -86,7 +86,7 @@
                   </button>
                   </div>
                   
-                  <!-- 漢堡過濾按鈕 -->
+                  <!-- Hamburger filter button -->
                   <button type="button" id="filterToggleBtn" class="filter-toggle-btn" aria-label="Toggle filters" aria-expanded="false">
                     <div class="filter-hamburger">
                       <span></span>
@@ -97,31 +97,47 @@
                   </button>
                 </div>
                 
-                <!-- 可折疊的過濾面板 -->
+                <!-- Collapsible filter panel -->
                 <div id="filterPanel" class="filter-panel collapsed">
                   <div class="filter-panel-content">
-                    <!-- 過濾和排序控件 -->
+                    <!-- Filter and sort controls -->
                     <div class="filter-row filter-controls">
-                      <!-- 類別過濾 -->
+                      <!-- Category filter -->
                       <div class="filter-group">
                         <label for="categoryFilter">Category:</label>
                         <select id="categoryFilter" class="filter-select">
                           <option value="">All Categories</option>
-                          <!-- 選項將由 JS 動態填充 -->
+                          <!-- Options will be dynamically populated by JS -->
                         </select>
                       </div>
                       
-                      <!-- 價格範圍 -->
+                      <!-- Price range -->
                       <div class="filter-group price-range-group">
-                        <label>Price:</label>
+                        <label for="minPrice">Price:</label>
                         <div class="price-inputs">
-                          <input type="number" id="minPrice" class="price-input" placeholder="Min" min="0" step="0.01">
+                          <input 
+                            type="number" 
+                            id="minPrice" 
+                            class="price-input" 
+                            placeholder="Min" 
+                            min="0" 
+                            step="0.01"
+                            aria-label="Minimum price"
+                          >
                           <span class="price-separator">-</span>
-                          <input type="number" id="maxPrice" class="price-input" placeholder="Max" min="0" step="0.01">
+                          <input 
+                            type="number" 
+                            id="maxPrice" 
+                            class="price-input" 
+                            placeholder="Max" 
+                            min="0" 
+                            step="0.01"
+                            aria-label="Maximum price"
+                          >
                         </div>
                       </div>
                       
-                      <!-- 排序 -->
+                      <!-- Sort -->
                       <div class="filter-group">
                         <label for="sortBy">Sort by:</label>
                         <select id="sortBy" class="filter-select">
@@ -132,7 +148,7 @@
                         </select>
                       </div>
                       
-                      <!-- 應用/重置按鈕 -->
+                      <!-- Apply/Reset buttons -->
                       <div class="filter-buttons">
                         <button type="button" id="applyFiltersBtn" class="button filter-btn">Apply</button>
                         <button type="button" id="resetFiltersBtn" class="button filter-btn filter-btn-reset">Reset</button>
@@ -141,19 +157,19 @@
                   </div>
                 </div>
                 
-                <!-- 當前過濾狀態顯示 -->
+                <!-- Current filter status display -->
                 <div id="filterStatus" class="filter-status" style="display: none;">
                   <span id="filterStatusText"></span>
                   <button type="button" id="clearFiltersBtn" class="clear-filters-btn">Clear all</button>
                 </div>
               </div>
               
-              <!-- 菜品容器 -->
+              <!-- Menu items container -->
               <div id="menu-container">
-                <!-- 菜单项将在这里动态生成 -->
+                <!-- Menu items will be dynamically generated here -->
               </div>
               
-              <!-- 分页控件 -->
+              <!-- Pagination controls -->
               <div class="menu-pagination mt-4">
                 <button id="prevBtn" class="pagination-btn">Previous</button>
                 <span id="pageInfo" class="pagination-info">Page 1 of 3</span>
@@ -162,7 +178,7 @@
             </article>
           </div>
           
-          <!-- 右侧边栏 -->
+          <!-- Right sidebar -->
           <div class="col-12 col-lg-4 mt-4 mt-lg-0">
             <aside class="sidebar">
               <div class="sidebar-header">
@@ -180,9 +196,23 @@
               </ul>
               <div class="border3"></div>
               <h3>Chef's Specialty</h3>
-              <img src="{{ url_for('static', filename='images/beef_ribs.jpg') }}" class="img-fluid mb-3" alt="Beef Ribs">
-              <p><strong>Slow-Roasted Beef Ribs</strong> Slow-roasted beef ribs are one of the signature dishes of our restaurant, embodying our passion for fine cuisine and commitment to culinary craftsmanship. This dish is renowned for its tender meat and unique flavor profile.<br>
-                <a href="#"><strong>Continue Reading &raquo;</strong></a></p>
+              {% if chef_specialties %}
+                {% for sp in chef_specialties %}
+                  <div class="chef-specialty-card mb-4">
+                    {% if sp.image_url %}
+                      <img 
+                        src="{{ sp.image_url if sp.image_url.startswith('http') or sp.image_url.startswith('/') else url_for('static', filename=sp.image_url) }}" 
+                        class="img-fluid mb-2 chef-specialty-image" 
+                        alt="{{ sp.title }}"
+                      >
+                    {% endif %}
+                    <p class="mb-1"><strong>{{ sp.title }}</strong></p>
+                    <p class="mb-0">{{ sp.description }}</p>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-muted">Coming soon...</p>
+              {% endif %}
               
               <!-- Delivery Info Widget -->
               <div class="border3 mt-4"></div>
@@ -224,11 +254,11 @@
               <div class="footer-widget">
                 <h4>From The Blog</h4>
                 <ul class="blog">
-                  <li><a href="#">Culinary Explorations</a><br>
+                  <li><a class="disabled-link">Culinary Explorations</a><br>
                     We delve into the stories behind various dishes, from traditional cuisines to modern culinary innovations, with each post being a profound tribute to food. </li>
-                  <li><a href="#">Recipe Sharing</a><br>
+                  <li><a class="disabled-link">Recipe Sharing</a><br>
                     Our team of chefs carefully selects and shares exclusive recipes, allowing you to recreate restaurant-quality dishes at home. </li>
-                  <li><a href="#">Diner Experiences</a><br>
+                  <li><a class="disabled-link">Diner Experiences</a><br>
                     Share real experiences and reviews from diners, giving you firsthand information before you make a reservation. </li>
                   
                 </ul>
@@ -239,10 +269,10 @@
                 <h4>We Are Social!</h4>
                 <div id="social"> 
                   <!-- <a href="http//twitter.com/priteshgupta" class="s3d twitter" target="_blank"> Twitter <span class="icons twitter"></span> </a>  -->
-                  <a href="https://m-face-book.com/" class="s3d facebook" target="_blank"> Facebook <span class="icons facebook"></span> </a> 
-                  <a href="https://zurb.com/blog/zurb-acquires-forrst" class="s3d forrst" target="_blank"> Forrst <span class="icons forrst"></span> </a> 
-                  <a href="https://blog.flickr.net/zh" class="s3d flickr" target="_blank"> Flickr <span class="icons flickr"></span> </a> 
-                  <a href="https://designmodo.com/" class="s3d designmoo" target="_blank"> Designmoo <span class="icons designmoo"></span> </a> </div>
+                  <a class="s3d facebook disabled-link"> Facebook <span class="icons facebook"></span> </a> 
+                  <a class="s3d forrst disabled-link"> Forrst <span class="icons forrst"></span> </a> 
+                  <a class="s3d flickr disabled-link"> Flickr <span class="icons flickr"></span> </a> 
+                  <a class="s3d designmoo disabled-link"> Designmoo <span class="icons designmoo"></span> </a> </div>
               </div>
             </div>
           </div>
@@ -266,7 +296,7 @@
     </footer>
   </div>
 
-  <!-- 购物车模态框 -->
+  <!-- Shopping cart modal -->
   <div id="cartModal" class="cart-modal">
     <div class="cart-modal-overlay"></div>
     <div class="cart-modal-content">
@@ -274,25 +304,25 @@
         <h3>Shopping Cart</h3>
         <button class="cart-modal-close" id="cartModalClose">&times;</button>
       </div>
-      <!-- 标签页导航 -->
+      <!-- Tab navigation -->
       <div class="cart-modal-tabs">
         <button class="cart-tab-btn active" data-tab="current" id="tabCurrent">Current Order</button>
         <button class="cart-tab-btn" data-tab="history" id="tabHistory">Order History</button>
       </div>
       <div class="cart-modal-body">
-        <!-- 当前订单区域 -->
+        <!-- Current order area -->
         <div id="currentOrderTab" class="cart-tab-content active">
           <div id="cartItemsList" class="cart-items-list">
-            <!-- 购物车商品列表将在这里动态生成 -->
+            <!-- Shopping cart items list will be dynamically generated here -->
           </div>
           <div class="cart-empty-message" id="cartEmptyMessage">
             <p>Your cart is empty.</p>
           </div>
         </div>
-        <!-- 历史订单区域 -->
+        <!-- Order history area -->
         <div id="orderHistoryTab" class="cart-tab-content">
           <div id="orderHistoryList" class="order-history-list">
-            <!-- 历史订单列表将在这里动态生成 -->
+            <!-- Order history list will be dynamically generated here -->
           </div>
           <div class="order-history-empty" id="orderHistoryEmpty">
             <p>No order history yet.</p>

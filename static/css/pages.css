@@ -92,7 +92,7 @@
   border: 3px solid #9c5959;
 }
 
-/* About 页面推文更新按钮样式 - 在标题右侧 */
+/* About page tweet update button styles - positioned to the right of the title */
 .content-header-wrapper {
   flex-wrap: wrap;
   gap: 15px;
@@ -126,7 +126,7 @@
   display: inline-block;
 }
 
-/* 响应式调整 */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .content-header-wrapper {
     flex-direction: column;
@@ -147,7 +147,7 @@
   }
 }
 
-/* 内容容器样式 */
+/* Content container styles */
 #aboutContentContainer {
   min-height: 200px;
 }
@@ -219,7 +219,7 @@
   color: #693434;
 }
 
-/* 自定义通知提示样式 - 主题风格 */
+/* Custom notification styles - theme style */
 .custom-notification {
   position: fixed;
   top: 20px;
@@ -271,7 +271,7 @@
   line-height: 1.5;
 }
 
-/* 响应式调整 */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .custom-notification {
     top: 10px;
@@ -295,6 +295,27 @@
   padding: 0 !important;
 }
 
+/* Reviews: time text + reply buttons to black for better contrast */
+.reviews-page .comment-date {
+  color: #000000 !important;
+}
+.reviews-page .comment-reply-btn,
+.reviews-page .reply-submit-btn,
+.reviews-page .reply-cancel-btn {
+  color: #000000 !important;
+  background-color: #f5f0e0 !important; /* match card bg but keep contrast */
+  text-shadow: none !important;
+  opacity: 1 !important; /* 防止内联样式将文字透明化 */
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.reviews-page .comment-reply-btn:hover,
+.reviews-page .reply-submit-btn:hover,
+.reviews-page .reply-cancel-btn:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+}
+
 .reviews-page .sidebar {
   width: 100% !important;
   float: none !important;
@@ -305,6 +326,191 @@
 
 .reviews-page .sidebar h3 {
   text-align: left;
+}
+
+/* ==================== Bilibili风格推文侧边栏 ==================== */
+.bili-sidebar {
+  background: #f5f0e0 !important;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 0 !important;
+  overflow: hidden;
+  position: sticky;
+  top: 80px;
+}
+
+.bili-sidebar-header {
+  background: linear-gradient(135deg, #9c5959, #693434);
+  padding: 16px 20px;
+  border-bottom: none;
+}
+
+.bili-sidebar-header h3 {
+  color: #f5f0e0 !important;
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.bili-article-list {
+  padding: 12px;
+  max-height: 600px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #9c5959 #f5f0e0;
+}
+
+.bili-article-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bili-article-list::-webkit-scrollbar-track {
+  background: #f5f0e0;
+}
+
+.bili-article-list::-webkit-scrollbar-thumb {
+  background: #9c5959;
+  border-radius: 2px;
+}
+
+/* 单个推文卡片 */
+.bili-article-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  text-decoration: none !important;
+  border: none !important;
+  border-bottom: none !important;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.bili-article-card:hover {
+  background: rgba(156, 89, 89, 0.1);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(156, 89, 89, 0.15);
+}
+
+.bili-article-card:last-child {
+  margin-bottom: 0;
+}
+
+/* 缩略图 */
+.bili-article-thumb {
+  flex-shrink: 0;
+  width: 120px;
+  height: 75px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #e8e4dc;
+  position: relative;
+}
+
+.bili-article-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.bili-article-card:hover .bili-article-thumb img {
+  transform: scale(1.05);
+}
+
+.bili-article-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #9c5959, #693434);
+  color: #f5f0e0;
+  font-size: 28px;
+  font-weight: bold;
+  font-family: 'Lobster13Regular', cursive;
+}
+
+/* 文章信息 */
+.bili-article-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bili-article-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: Century, sans-serif;
+}
+
+.bili-article-card:hover .bili-article-title {
+  color: #9c5959;
+}
+
+.bili-article-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.bili-article-category {
+  background: rgba(156, 89, 89, 0.1);
+  color: #9c5959;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.bili-article-date {
+  color: #999;
+}
+
+/* 空状态 */
+.bili-no-articles {
+  padding: 40px 20px;
+  text-align: center;
+  color: #999;
+}
+
+.bili-no-articles p {
+  margin: 0;
+  font-style: italic;
+}
+
+/* 响应式 */
+@media (max-width: 991px) {
+  .bili-sidebar {
+    position: static;
+    margin-top: 20px;
+  }
+  
+  .bili-article-list {
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 576px) {
+  .bili-article-card {
+    flex-direction: column;
+  }
+  
+  .bili-article-thumb {
+    width: 100%;
+    height: 120px;
+  }
 }
 
 .reviews-page .sidebar img {
@@ -2016,25 +2222,25 @@
 }
 
 /* ===========================================================================
-   購物車按鈕懸浮樣式 - 與頭像按鈕一致（僅在 menu 頁面顯示）
+   Cart button floating styles - consistent with avatar button (only shown on menu page)
    =========================================================================== */
 
-/* 購物車按鈕固定定位 - 與頭像並排放置 */
+/* Cart button fixed positioning - placed side by side with avatar */
 .cart-button-fixed {
   position: fixed;
-  top: 20px; /* 與頭像同一水平線 */
-  right: 70px; /* 頭像左側（20px right + 40px 頭像寬度 + 10px 間距） */
+  top: 20px; /* Same horizontal line as avatar */
+  right: 70px; /* Left side of avatar (20px right + 40px avatar width + 10px spacing) */
   z-index: 999;
   margin: 0;
   padding: 0;
 }
 
 .cart-fixed-btn {
-  width: 40px; /* 與頭像按鈕寬度一致 */
-  height: 40px; /* 與頭像按鈕高度一致 */
+  width: 40px; /* Same width as avatar button */
+  height: 40px; /* Same height as avatar button */
   border-radius: 50%;
   background-color: #9C5959;
-  border: 2px solid #9c5959; /* 與頭像邊框一致 */
+  border: 2px solid #9c5959; /* Same border as avatar */
   color: #f5f0e0;
   cursor: pointer;
   display: flex;
@@ -2044,7 +2250,7 @@
   transition: all 0.3s ease;
   position: relative;
   padding: 0;
-  margin: 0; /* 確保沒有額外的 margin */
+  margin: 0; /* Ensure no extra margin */
 }
 
 .cart-fixed-btn:hover {
@@ -2084,15 +2290,15 @@
   min-width: 18px;
 }
 
-/* 響應式調整 */
+/* Responsive adjustments */
 @media (max-width: 991px) {
   .cart-button-fixed {
-    top: 10px; /* 與移動端頭像同一水平線 */
-    right: 56px; /* 移動端頭像左側（10px right + 36px 頭像寬度 + 10px 間距） */
+    top: 10px; /* Same horizontal line as mobile avatar */
+    right: 56px; /* Left side of mobile avatar (10px right + 36px avatar width + 10px spacing) */
   }
   
   .cart-fixed-btn {
-    width: 36px; /* 移動端頭像也是 36px */
+    width: 36px; /* Mobile avatar is also 36px */
     height: 36px;
   }
   
@@ -2107,4 +2313,34 @@
     font-size: 9px;
     min-width: 16px;
   }
+}
+
+/* ==================== Menu Page - Fixed Image Size ==================== */
+.menu-item .item-image {
+  width: 100%;
+  height: 125px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .menu-item .item-image {
+    height: 200px;
+  }
+}
+
+/* Chef's Specialty block */
+.chef-specialty-card {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid rgba(105, 52, 52, 0.15);
+}
+
+.chef-specialty-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 6px;
 }

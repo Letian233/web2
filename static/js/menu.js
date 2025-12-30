@@ -1,15 +1,15 @@
-// ==================== 菜单展示模块 ====================
-// 依赖：data.js (需要 MENU_DATABASE)
-// 支持後端 API 過濾和排序（使用快速排序算法）
+// ==================== Menu Display Module ====================
+// Dependencies: data.js (requires MENU_DATABASE)
+// Supports backend API filtering and sorting (uses quicksort algorithm)
 
-// ==================== 菜单控制器 ====================
+// ==================== Menu Controller ====================
 const MenuController = {
   currentPage: 1,
   itemsPerPage: 4,
   searchKeyword: '',
   filteredData: [],
   
-  // 過濾和排序狀態
+  // Filter and sort state
   filters: {
     category: '',
     minPrice: null,
@@ -18,21 +18,21 @@ const MenuController = {
     sortOrder: 'asc'
   },
   
-  // 可用類別和價格範圍（從 API 獲取）
+  // Available categories and price range (fetched from API)
   availableCategories: [],
   priceRange: { min: 0, max: 100 },
   
-  // 是否使用 API（後端過濾和排序）
+  // Whether to use API (backend filtering and sorting)
   useApi: true,
 
-  // 初始化
+  // Initialize
   init: function() {
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     
-    // 過濾控件
+    // Filter controls
     const categoryFilter = document.getElementById('categoryFilter');
     const minPriceInput = document.getElementById('minPrice');
     const maxPriceInput = document.getElementById('maxPrice');
@@ -41,7 +41,7 @@ const MenuController = {
     const resetFiltersBtn = document.getElementById('resetFiltersBtn');
     const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 
-    // 搜索框事件
+    // Search box events
     if (searchInput) {
       searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -61,7 +61,7 @@ const MenuController = {
       });
     }
 
-    // 分頁事件
+    // Pagination events
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
         if (this.currentPage > 1) {
@@ -81,7 +81,7 @@ const MenuController = {
       });
     }
     
-    // 過濾控件事件
+    // Filter control events
     if (applyFiltersBtn) {
       applyFiltersBtn.addEventListener('click', () => {
         this.applyFilters();
@@ -100,21 +100,21 @@ const MenuController = {
       });
     }
     
-    // 排序下拉選單變化時自動應用
+    // Auto-apply when sort dropdown changes
     if (sortBySelect) {
       sortBySelect.addEventListener('change', () => {
         this.applyFilters();
       });
     }
     
-    // 漢堡過濾按鈕點擊事件
+    // Filter toggle button click event
     this.initFilterToggle();
 
-    // 初始加載
+    // Initial load
     this.loadMenuFromApi();
   },
   
-  // 初始化過濾面板展開/收起
+  // Initialize filter panel expand/collapse
   initFilterToggle: function() {
     const toggleBtn = document.getElementById('filterToggleBtn');
     const filterPanel = document.getElementById('filterPanel');
@@ -124,12 +124,12 @@ const MenuController = {
         const isExpanded = !filterPanel.classList.contains('collapsed');
         
         if (isExpanded) {
-          // 收起
+          // Collapse
           filterPanel.classList.add('collapsed');
           toggleBtn.classList.remove('active');
           toggleBtn.setAttribute('aria-expanded', 'false');
         } else {
-          // 展開
+          // Expand
           filterPanel.classList.remove('collapsed');
           toggleBtn.classList.add('active');
           toggleBtn.setAttribute('aria-expanded', 'true');
@@ -138,10 +138,10 @@ const MenuController = {
     }
   },
   
-  // 從 API 加載菜單數據（使用後端快速排序）
+  // Load menu data from API (uses backend quicksort)
   loadMenuFromApi: async function() {
     try {
-      // 構建查詢參數
+      // Build query parameters
       const params = new URLSearchParams();
       
       if (this.filters.category) {
@@ -173,43 +173,43 @@ const MenuController = {
       const data = await response.json();
       console.log('[MenuController] API response:', data);
       
-      // 更新數據
+      // Update data
       this.filteredData = data.items || [];
       this.availableCategories = data.categories || [];
       this.priceRange = data.price_range || { min: 0, max: 100 };
       
-      // 更新類別下拉選單
+      // Update category dropdown
       this.updateCategorySelect();
       
-      // 更新過濾狀態顯示
+      // Update filter status display
       this.updateFilterStatus(data.filters_applied, data.sort_applied);
       
-      // 渲染菜單
+      // Render menu
       this.renderMenu();
       
     } catch (error) {
       console.error('[MenuController] API error:', error);
-      // 回退到本地數據
+      // Fallback to local data
       this.useLocalData();
     }
   },
   
-  // 回退到本地數據（不使用 API）
+  // Fallback to local data (without using API)
   useLocalData: function() {
     console.log('[MenuController] Falling back to local data');
     this.filteredData = MENU_DATABASE || [];
     this.renderMenu();
   },
   
-  // 更新類別下拉選單
+  // Update category dropdown
   updateCategorySelect: function() {
     const categorySelect = document.getElementById('categoryFilter');
     if (!categorySelect) return;
     
-    // 保留當前選中值
+    // Preserve current selected value
     const currentValue = categorySelect.value;
     
-    // 清空並重新填充
+    // Clear and repopulate
     categorySelect.innerHTML = '<option value="">All Categories</option>';
     
     this.availableCategories.forEach(category => {
@@ -223,19 +223,19 @@ const MenuController = {
     });
   },
   
-  // 應用過濾器
+  // Apply filters
   applyFilters: function() {
     const categorySelect = document.getElementById('categoryFilter');
     const minPriceInput = document.getElementById('minPrice');
     const maxPriceInput = document.getElementById('maxPrice');
     const sortBySelect = document.getElementById('sortBy');
     
-    // 讀取過濾值
+    // Read filter values
     this.filters.category = categorySelect ? categorySelect.value : '';
     this.filters.minPrice = minPriceInput && minPriceInput.value ? parseFloat(minPriceInput.value) : null;
     this.filters.maxPrice = maxPriceInput && maxPriceInput.value ? parseFloat(maxPriceInput.value) : null;
     
-    // 讀取排序值
+    // Read sort values
     if (sortBySelect) {
       const sortValue = sortBySelect.value;
       const [sortBy, sortOrder] = sortValue.split('-');
@@ -243,16 +243,16 @@ const MenuController = {
       this.filters.sortOrder = sortOrder;
     }
     
-    // 重置到第一頁
+    // Reset to first page
     this.currentPage = 1;
     
-    // 調用 API
+    // Call API
     this.loadMenuFromApi();
   },
   
-  // 重置過濾器
+  // Reset filters
   resetFilters: function() {
-    // 重置狀態
+    // Reset state
     this.filters = {
       category: '',
       minPrice: null,
@@ -263,7 +263,7 @@ const MenuController = {
     this.searchKeyword = '';
     this.currentPage = 1;
     
-    // 重置 UI
+    // Reset UI
     const searchInput = document.getElementById('searchInput');
     const categorySelect = document.getElementById('categoryFilter');
     const minPriceInput = document.getElementById('minPrice');
@@ -276,11 +276,11 @@ const MenuController = {
     if (maxPriceInput) maxPriceInput.value = '';
     if (sortBySelect) sortBySelect.value = 'price-asc';
     
-    // 重新加載
+    // Reload
     this.loadMenuFromApi();
   },
   
-  // 更新過濾狀態顯示
+  // Update filter status display
   updateFilterStatus: function(filtersApplied, sortApplied) {
     const statusDiv = document.getElementById('filterStatus');
     const statusText = document.getElementById('filterStatusText');
@@ -318,7 +318,7 @@ const MenuController = {
     }
   },
 
-  // 渲染星级评分
+  // Render star rating
   renderStars: function(rating) {
     let starsHtml = '';
     const fullStars = Math.floor(rating);
@@ -337,7 +337,7 @@ const MenuController = {
     return starsHtml;
   },
 
-  // 渲染菜单
+  // Render menu
   renderMenu: function() {
     const container = document.getElementById('menu-container');
     if (!container) return;
@@ -347,7 +347,7 @@ const MenuController = {
     const endIndex = startIndex + this.itemsPerPage;
     const currentItems = this.filteredData.slice(startIndex, endIndex);
 
-    // 生成 HTML
+    // Generate HTML
     let menuHtml = '';
     
     if (currentItems.length === 0) {
@@ -360,7 +360,7 @@ const MenuController = {
       `;
     } else {
       currentItems.forEach(item => {
-        // 兼容不同的屬性名（API 返回 image_url，本地數據用 image）
+        // Compatible with different property names (API returns image_url, local data uses image)
         const imageUrl = item.image_url || item.image || '/static/images/blank.png';
         const price = parseFloat(item.price).toFixed(2);
         const rating = parseFloat(item.rating || 0);
@@ -391,7 +391,7 @@ const MenuController = {
 
     container.innerHTML = menuHtml;
 
-    // 更新分页信息
+    // Update pagination info
     const pageInfo = document.getElementById('pageInfo');
     if (pageInfo) {
       if (this.filteredData.length === 0) {
@@ -401,7 +401,7 @@ const MenuController = {
       }
     }
 
-    // 更新分页按钮状态
+    // Update pagination button states
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     
@@ -417,7 +417,7 @@ const MenuController = {
       nextBtn.style.cursor = (this.currentPage >= totalPages || this.filteredData.length === 0) ? 'not-allowed' : 'pointer';
     }
 
-    // 重新绑定 Order Now 按钮事件
+    // Re-bind Order Now button events
     container.querySelectorAll('.button[data-pizza-type]').forEach(button => {
       button.addEventListener('click', handleOrderClick);
     });

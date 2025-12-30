@@ -1,23 +1,32 @@
-// ==================== 购物车模块 ====================
-// 依赖：data.js (需要 menuDatabase)，订单历史改为通过后端 API 获取
+// ==================== Shopping Cart Module ====================
+// Dependencies: data.js (requires menuDatabase), order history now fetched via backend API
 
-// ==================== Toast 通知系统 ====================
+// ==================== Toast Notification System ====================
 const Toast = {
   show: function(message, duration = 3000) {
-    // 移除已存在的 toast
     const existingToast = document.getElementById('toast-notification');
     if (existingToast) {
       existingToast.remove();
     }
 
-    // 创建 toast 元素
+    // Calculate position: prioritize proximity to user avatar (userMenuContainer in top right)
+    let topPx = 20;
+    let rightPx = 20;
+    const anchor = document.getElementById('userMenuContainer') || document.querySelector('.user-menu-fixed');
+    if (anchor && anchor.getBoundingClientRect) {
+      const rect = anchor.getBoundingClientRect();
+      topPx = rect.bottom + 10;
+      rightPx = Math.max(window.innerWidth - rect.right, 20);
+    }
+
+    // Create toast element
     const toast = document.createElement('div');
     toast.id = 'toast-notification';
     toast.textContent = message;
     toast.style.cssText = `
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: ${topPx}px;
+      right: ${rightPx}px;
       background-color: #9c5959;
       color: #f5f5f5;
       padding: 15px 25px;
@@ -33,13 +42,13 @@ const Toast = {
 
     document.body.appendChild(toast);
 
-    // 触发动画
+    // Trigger animation
     setTimeout(() => {
       toast.style.opacity = '1';
       toast.style.transform = 'translateX(0)';
     }, 10);
 
-    // 自动消失
+    // Auto dismiss
     setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(100px)';
@@ -52,40 +61,41 @@ const Toast = {
   }
 };
 
-// ==================== 购物车对象 ====================
+// ==================== Shopping Cart Object ====================
 const Cart = {
   orderHistory: [],
-  // 从 localStorage 读取购物车数据
+  // Read cart data from localStorage
   get: function() {
     const cartData = localStorage.getItem('cart');
     return cartData ? JSON.parse(cartData) : [];
   },
 
-  // 保存购物车数据到 localStorage
+  // Save cart data to localStorage
   save: function(cartItems) {
     localStorage.setItem('cart', JSON.stringify(cartItems));
-    // 保存后更新 UI
+    // Update UI after saving
     this.updateCartUI();
   },
 
-  // 添加商品到购物车（如果已存在则增加数量）
-  add: function(itemId) {
+  // Add item to cart (increment quantity if already exists)
+  // itemData: optional, directly pass {id, name, price, image} to avoid dependency on menuDatabase
+  add: function(itemId, itemData = null) {
     const cartItems = this.get();
-    const menuItem = menuDatabase[itemId];
+    const menuItem = itemData || menuDatabase[itemId];
     
     if (!menuItem) {
       console.error('Item not found in database:', itemId);
       return false;
     }
 
-    // 查找购物车中是否已存在该商品
+    // Check if item already exists in cart
     const existingItem = cartItems.find(item => item.id === itemId);
     
     if (existingItem) {
-      // 如果已存在，增加数量
+      // If exists, increment quantity
       existingItem.quantity += 1;
     } else {
-      // 如果不存在，添加新商品
+      // If not exists, add new item
       cartItems.push({
         id: menuItem.id,
         name: menuItem.name,
@@ -99,7 +109,7 @@ const Cart = {
     return true;
   },
 
-  // 计算购物车总价
+  // Calculate total cart price
   getTotal: function() {
     const cartItems = this.get();
     return cartItems.reduce((total, item) => {
@@ -107,7 +117,7 @@ const Cart = {
     }, 0);
   },
 
-  // 获取购物车商品总数
+  // Get total quantity of items in cart
   getTotalQuantity: function() {
     const cartItems = this.get();
     return cartItems.reduce((total, item) => {
@@ -115,13 +125,13 @@ const Cart = {
     }, 0);
   },
 
-  // 更新购物车 UI（更新导航栏的购物车计数器和悬浮按钮）
+  // Update cart UI (update cart counter in navigation bar and floating button)
   updateCartUI: function() {
     const cartBadge = document.getElementById('cart-badge');
     const cartBadgeFixed = document.getElementById('cartBadgeFixed');
     const totalQuantity = this.getTotalQuantity();
     
-    // 更新导航栏角标
+    // Update navigation bar badge
     if (cartBadge) {
       cartBadge.textContent = totalQuantity;
       if (totalQuantity === 0) {
@@ -131,7 +141,7 @@ const Cart = {
       }
     }
     
-    // 更新悬浮按钮角标（menu 页面）
+    // Update floating button badge (menu page)
     if (cartBadgeFixed) {
       cartBadgeFixed.textContent = totalQuantity;
       if (totalQuantity === 0) {
@@ -142,7 +152,7 @@ const Cart = {
     }
   },
 
-  // 更新商品数量
+  // Update item quantity
   updateQuantity: function(itemId, change) {
     const cartItems = this.get();
     const item = cartItems.find(item => item.id === itemId);
@@ -151,7 +161,7 @@ const Cart = {
 
     item.quantity += change;
     
-    // 如果数量小于等于 0，移除该商品
+    // If quantity is less than or equal to 0, remove the item
     if (item.quantity <= 0) {
       const index = cartItems.findIndex(item => item.id === itemId);
       if (index > -1) {
@@ -163,7 +173,7 @@ const Cart = {
     return true;
   },
 
-  // 渲染购物车模态框
+  // Render cart modal
   renderCartModal: function() {
     const cartItems = this.get();
     const cartItemsList = document.getElementById('cartItemsList');
@@ -175,16 +185,16 @@ const Cart = {
       return;
     }
 
-    // 清空列表
+    // Clear list
     cartItemsList.innerHTML = '';
 
     if (cartItems.length === 0) {
-      // 购物车为空
+      // Cart is empty
       cartItemsList.style.display = 'none';
       cartEmptyMessage.style.display = 'block';
       cartTotalPrice.textContent = '0.00';
     } else {
-      // 显示商品列表
+      // Show item list
       cartItemsList.style.display = 'flex';
       cartEmptyMessage.style.display = 'none';
 
@@ -209,7 +219,7 @@ const Cart = {
         cartItemsList.appendChild(cartItem);
       });
 
-      // 绑定数量调整按钮事件
+      // Bind quantity adjustment button events
       const quantityButtons = cartItemsList.querySelectorAll('.quantity-btn');
       quantityButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -218,38 +228,38 @@ const Cart = {
           const change = action === 'increase' ? 1 : -1;
           
           this.updateQuantity(itemId, change);
-          this.renderCartModal(); // 重新渲染
+          this.renderCartModal(); // Re-render
         });
       });
     }
 
-    // 更新总价
+    // Update total price
     const total = this.getTotal();
     cartTotalPrice.textContent = total.toFixed(2);
   },
 
-  // 显示购物车模态框
+  // Show cart modal
   showModal: function() {
     const cartModal = document.getElementById('cartModal');
     if (cartModal) {
       this.renderCartModal();
       cartModal.classList.add('active');
-      document.body.style.overflow = 'hidden'; // 防止背景滚动
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
     }
   },
 
-  // 隐藏购物车模态框
+  // Hide cart modal
   hideModal: function() {
     const cartModal = document.getElementById('cartModal');
     if (cartModal) {
       cartModal.classList.remove('active');
-      document.body.style.overflow = ''; // 恢复滚动
+      document.body.style.overflow = ''; // Restore scrolling
     }
   },
 
-  // 切换标签页
+  // Switch tab
   switchTab: function(tabName) {
-    // 更新标签按钮状态
+    // Update tab button states
     const tabButtons = document.querySelectorAll('.cart-tab-btn');
     tabButtons.forEach(btn => {
       if (btn.getAttribute('data-tab') === tabName) {
@@ -259,24 +269,24 @@ const Cart = {
       }
     });
 
-    // 更新内容区域显示
+
     const currentTab = document.getElementById('currentOrderTab');
     const historyTab = document.getElementById('orderHistoryTab');
 
     if (tabName === 'current') {
       if (currentTab) currentTab.classList.add('active');
       if (historyTab) historyTab.classList.remove('active');
-      // 重新渲染当前购物车
+      // Re-render current cart
       this.renderCartModal();
     } else if (tabName === 'history') {
       if (currentTab) currentTab.classList.remove('active');
       if (historyTab) historyTab.classList.add('active');
-      // 从后端加载并渲染历史订单
+      // Load and render order history from backend
       this.fetchHistory();
     }
   },
 
-  // 渲染历史订单列表
+  // Render order history list
   renderHistory: function() {
     const orderHistoryList = document.getElementById('orderHistoryList');
     const orderHistoryEmpty = document.getElementById('orderHistoryEmpty');
@@ -286,7 +296,7 @@ const Cart = {
       return;
     }
 
-    // 清空列表
+    // Clear list
     orderHistoryList.innerHTML = '';
 
     if (!this.orderHistory || this.orderHistory.length === 0) {
@@ -298,7 +308,7 @@ const Cart = {
     orderHistoryList.style.display = 'flex';
     orderHistoryEmpty.style.display = 'none';
 
-    // 渲染每个订单
+    // Render each order
     this.orderHistory.forEach(order => {
       const orderItem = document.createElement('div');
       orderItem.className = 'order-history-item';
@@ -327,14 +337,14 @@ const Cart = {
       `;
       orderHistoryList.appendChild(orderItem);
 
-      // 绑定展开/收起事件
+      // Bind expand/collapse events
       const header = orderItem.querySelector('.order-history-header');
       const details = orderItem.querySelector('.order-history-details');
       
       header.addEventListener('click', function() {
         const isActive = header.classList.contains('active');
         
-        // 关闭所有其他订单详情
+        // Close all other order details
         document.querySelectorAll('.order-history-header').forEach(h => {
           if (h !== header) {
             h.classList.remove('active');
@@ -346,7 +356,7 @@ const Cart = {
           }
         });
 
-        // 切换当前订单详情
+        // Toggle current order details
         if (isActive) {
           header.classList.remove('active');
           details.classList.remove('active');
@@ -358,13 +368,13 @@ const Cart = {
     });
   },
 
-  // 从后端加载订单历史
+  // Load order history from backend
   fetchHistory: function() {
     const orderHistoryList = document.getElementById('orderHistoryList');
     const orderHistoryEmpty = document.getElementById('orderHistoryEmpty');
     if (!orderHistoryList || !orderHistoryEmpty) return;
 
-    // 简单的加载状态
+    // Simple loading state
     orderHistoryList.innerHTML = '<p style="padding: 16px;">Loading orders...</p>';
     orderHistoryList.style.display = 'block';
     orderHistoryEmpty.style.display = 'none';
@@ -376,7 +386,7 @@ const Cart = {
       .then(res => res.json().then(data => ({ ok: res.ok, data })))
       .then(result => {
         if (!result.ok) {
-          // 未登录或其他错误
+          // Not logged in or other error
           this.orderHistory = [];
           if (result.data && result.data.error) {
             Toast.show(result.data.error);
@@ -396,7 +406,7 @@ const Cart = {
   }
 };
 
-// ==================== 根据菜品名称查找 ID ====================
+// ==================== Find ID by item name ====================
 function findItemIdByName(itemName) {
   for (const id in menuDatabase) {
     if (menuDatabase[id].name === itemName) {
@@ -406,13 +416,13 @@ function findItemIdByName(itemName) {
   return null;
 }
 
-// ==================== 处理订单按钮点击 ====================
+// ==================== Handle order button click ====================
 function handleOrderClick(event) {
   event.preventDefault();
   
-  // 检查登录状态
+  // Check login status
   if (typeof UserMenu !== 'undefined' && !UserMenu.requireLogin()) {
-    return; // 未登录，已跳转到登录页面
+    return; // Not logged in, already redirected to login page
   }
   
   const button = event.currentTarget;
@@ -423,15 +433,33 @@ function handleOrderClick(event) {
     return;
   }
 
-  const itemId = findItemIdByName(itemName);
+  // Prioritize data-* attributes to reduce dependency on menuDatabase
+  const dataId = button.dataset.itemId ? parseInt(button.dataset.itemId, 10) : null;
+  const dataPrice = button.dataset.itemPrice ? parseFloat(button.dataset.itemPrice) : null;
+  const dataImage = button.dataset.itemImage;
+
+  let itemId = dataId;
+  let itemData = null;
+
+  if (dataId && !Number.isNaN(dataId)) {
+    itemData = {
+      id: dataId,
+      name: itemName,
+      price: dataPrice || 0,
+      image: dataImage || ''
+    };
+  } else {
+    itemId = findItemIdByName(itemName);
+  }
+
   if (!itemId) {
     console.error('Item ID not found for:', itemName);
     Toast.show('Item not found, please try again later');
     return;
   }
 
-  // 添加到购物车
-  const success = Cart.add(itemId);
+  // Add to cart
+  const success = Cart.add(itemId, itemData);
   if (success) {
     Toast.show('Added to cart!');
   } else {

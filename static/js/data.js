@@ -1,15 +1,15 @@
-// ==================== 数据层 ====================
-// 菜单数据库（完全由后端提供）
-// Flask 通过 window.MENU_ITEMS_FROM_DB 注入来自 MySQL menu_items 表的数据。
+// ==================== Data Layer ====================
+// Menu database (completely provided by backend)
+// Flask injects data from MySQL menu_items table via window.MENU_ITEMS_FROM_DB.
 
-// 后端注入的原始菜单数据（可能为 null 或空数组）
+// Raw menu data injected from backend (may be null or empty array)
 const RAW_MENU_FROM_DB =
   typeof window !== 'undefined' && Array.isArray(window.MENU_ITEMS_FROM_DB)
     ? window.MENU_ITEMS_FROM_DB
     : null;
 
-// 统一构建 MENU_DATABASE，字段结构：id, name, price, image, description, category, rating
-// 不再使用前端占位的静态菜单数据，如果后端没传数据则视为无菜单项。
+// Build MENU_DATABASE uniformly, field structure: id, name, price, image, description, category, rating
+// No longer using frontend placeholder static menu data, if backend doesn't provide data, treat as no menu items.
 const MENU_SOURCE =
   RAW_MENU_FROM_DB && RAW_MENU_FROM_DB.length ? RAW_MENU_FROM_DB : [];
 
@@ -26,7 +26,7 @@ const MENU_DATABASE = MENU_SOURCE.map((item, index) => {
   };
 });
 
-// 保留 menuDatabase 对象格式以兼容现有购物车代码
+// Keep menuDatabase object format for compatibility with existing cart code
 const menuDatabase = {};
 MENU_DATABASE.forEach(item => {
   menuDatabase[item.id] = {
@@ -37,5 +37,4 @@ MENU_DATABASE.forEach(item => {
   };
 });
 
-// 历史订单数据改由后端 API `/api/orders` 提供，这里不再定义静态 MOCK_ORDER_HISTORY。
 

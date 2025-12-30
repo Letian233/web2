@@ -1,3 +1,5 @@
+import logging
+
 from flask import render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import (
@@ -13,35 +15,41 @@ from sqlalchemy import (
     ForeignKey,
     text,
 )
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 
 
-# ==================== SQLAlchemy 配置 ====================
+# ==================== SQLAlchemy Configuration ====================
 
-# NOTE: DB_NAME 必须与你已经创建的数据库名称一致
 DB_NAME = "Web2"
 DB_USER = "root"
 DB_PASSWORD = "root"
 DB_HOST = "localhost"
 
-# 使用 SQLAlchemy + PyMySQL 连接 MySQL
+# Use SQLAlchemy + PyMySQL to connect to MySQL
 DATABASE_URL = (
-    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}?charset=utf8mb4"
+    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+    f"?charset=utf8mb4"
 )
 
 engine = create_engine(
     DATABASE_URL,
     echo=False,
-    pool_pre_ping=True,  # 探测失效连接
+    pool_pre_ping=True,  # Detect failed connections
+    # Recycle connections after 1 hour to avoid "MySQL has gone away"
+    pool_recycle=3600,
 )
+# Create sessionmaker (factory for creating sessions)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+# Create scoped_session (thread-safe session manager)
+db_session = scoped_session(SessionLocal)
 Base = declarative_base()
 
 
 class User(Base):
     """
-    ORM 映射到已存在的 users 表。
-    不会自动建表，也不会修改结构（我们不调用 Base.metadata.create_all）。
+    ORM mapping to existing users table.
+    Does not auto-create tables or modify structure
+    (we don't call Base.metadata.create_all).
     """
 
     __tablename__ = "users"
@@ -49,7 +57,6 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(80), unique=True, nullable=False)
     email = Column(String(120), unique=True, nullable=False)
-    # 实际数据库中可以是 VARCHAR(255) 或 TEXT，ORM 这里用 Text 兼容
     password_hash = Column(Text, nullable=False)
     is_admin = Column(Boolean, default=False)
     # Optional columns (see sql/Users.sql ALTER TABLE)
@@ -59,7 +66,8 @@ class User(Base):
 
 class MenuItem(Base):
     """
-    ORM 映射到已存在的 menu_items 表，用于首页 Popular Categories 区域。
+    ORM mapping to existing menu_items table,
+    used for homepage Popular Categories section.
     """
 
     __tablename__ = "menu_items"
@@ -75,7 +83,8 @@ class MenuItem(Base):
 
 class Review(Base):
     """
-    ORM 映射到已存在的 reviews 表，用于评论区与数据库交互。
+    ORM mapping to existing reviews table,
+    used for comment section database interactions.
     """
 
     __tablename__ = "reviews"
@@ -90,20 +99,41 @@ class Review(Base):
 
 class ReviewLike(Base):
     """
-    ORM 映射到 review_likes 表，用於追蹤用戶對評論的點讚狀態。
-    複合主鍵 (user_id, review_id) 確保每個用戶對每個評論只能點讚一次。
+    ORM mapping to review_likes table,
+    used to track user like status for reviews.
+    Composite primary key (user_id, review_id) ensures
+    each user can only like each review once.
     """
 
     __tablename__ = "review_likes"
 
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
-    review_id = Column(Integer, ForeignKey("reviews.id", ondelete="CASCADE"), primary_key=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    review_id = Column(
+        Integer, ForeignKey("reviews.id", ondelete="CASCADE"), primary_key=True
+    )
     created_at = Column(DateTime)
+
+
+class ChefSpecialty(Base):
+    """
+    ORM mapping to chef_specialty table,
+    used for dynamic display of "Chef's Specialty" on menu page.
+    """
+
+    __tablename__ = "chef_specialty"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(100), nullable=False)
+    description = Column(Text, nullable=False)
+    image_url = Column(String(255))
+    updated_at = Column(DateTime)
 
 
 class Order(Base):
     """
-    ORM 映射到已存在的 orders 表（不自动建表）。
+    ORM mapping to existing orders table (does not auto-create).
     """
 
     __tablename__ = "orders"
@@ -117,20 +147,24 @@ class Order(Base):
 
 class OrderItem(Base):
     """
-    ORM 映射到已存在的 order_items 表（不自动建表）。
+    ORM mapping to existing order_items table (does not auto-create).
     """
 
     __tablename__ = "order_items"
 
-    order_id = Column(Integer, ForeignKey("orders.id"), primary_key=True)
-    menu_item_id = Column(Integer, ForeignKey("menu_items.id"), primary_key=True)
+    order_id = Column(
+        Integer, ForeignKey("orders.id"), primary_key=True
+    )
+    menu_item_id = Column(
+        Integer, ForeignKey("menu_items.id"), primary_key=True
+    )
     quantity = Column(Integer, nullable=False)
     price_at_purchase = Column(Numeric(10, 2), nullable=False)
 
 
 class Address(Base):
     """
-    ORM 映射到已存在的 addresses 表（不自动建表）。
+    ORM mapping to existing addresses table (does not auto-create).
     """
 
     __tablename__ = "addresses"
@@ -149,26 +183,28 @@ class Address(Base):
 
 class AboutContent(Base):
     """
-    ORM 映射到已存在的 about_content 表（不自动建表）。
-    用于存储 About 页面的各个区块内容。
+    ORM mapping to existing about_content table (does not auto-create).
+    Used to store content blocks for About page.
     """
 
     __tablename__ = "about_content"
 
     id = Column(Integer, primary_key=True)
-    section_name = Column(String(50), unique=True, nullable=False)  # 区块标识，如 'History', 'Chef', 'Vision'
-    title = Column(String(100), nullable=False)  # 推文标题
-    content = Column(Text, nullable=False)  # 推文内容
-    image_url = Column(String(200), nullable=True)  # 图片路径
+    section_name = Column(String(50), unique=True, nullable=False)
+    title = Column(String(100), nullable=False)  # Article title
+    content = Column(Text, nullable=False)  # Article content
+    image_url = Column(String(200), nullable=True)  # Image path
     updated_at = Column(DateTime)
 
 
 def init_db() -> None:
     """
-    仅检查数据库连接是否可用，不做任何建库 / 建表操作。
+    Only check if database connection is available,
+    do not create database or tables.
 
-    你已经在 MySQL 中手动创建好了数据库和数据表，这里只尝试连一次，
-    如果配置错误会在启动时抛出异常，方便你及时发现。
+    You have already manually created the database and tables in MySQL.
+    This only attempts to connect once. If configuration is wrong,
+    it will raise an exception at startup for easy detection.
     """
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))
@@ -189,7 +225,8 @@ def init_auth_routes(app) -> None:
             confirm_password = request.form.get("confirmPassword", "")
 
             # Basic validation
-            if not username or not email or not password or not confirm_password:
+            if (not username or not email or not password or
+                    not confirm_password):
                 return render_template(
                     "register.html",
                     error="All fields are required.",
@@ -207,13 +244,15 @@ def init_auth_routes(app) -> None:
                     error="Password must be at least 6 characters long.",
                 )
 
-            # 使用 SQLAlchemy 会话访问数据库
-            db = SessionLocal()
+            # Use scoped_session to get current thread's database session
+            db = db_session()
             try:
-                # 检查用户名或邮箱是否已存在
+                # Check if username or email already exists
                 existing = (
                     db.query(User)
-                    .filter((User.username == username) | (User.email == email))
+                    .filter(
+                        (User.username == username) | (User.email == email)
+                    )
                     .first()
                 )
                 if existing:
@@ -222,7 +261,7 @@ def init_auth_routes(app) -> None:
                         error="Username or email is already registered.",
                     )
 
-                # 创建新用户
+                # Create new user
                 password_hash = generate_password_hash(password)
                 new_user = User(
                     username=username,
@@ -236,7 +275,8 @@ def init_auth_routes(app) -> None:
             finally:
                 db.close()
 
-            # After successful registration, show login page with success message
+            # After successful registration,
+            # show login page with success message
             return render_template(
                 "login.html",
                 success="Registration successful! Please log in.",
@@ -257,13 +297,20 @@ def init_auth_routes(app) -> None:
                     error="Please enter both email and password.",
                 )
 
-            db = SessionLocal()
+            db = db_session()
             try:
                 user = db.query(User).filter(User.email == email).first()
             finally:
                 db.close()
 
-            if user is None or not check_password_hash(user.password_hash, password):
+            if (user is None or
+                    not check_password_hash(user.password_hash, password)):
+                logger = logging.getLogger("user_activity")
+                logger.info(
+                    "Login failed: email=%s ip=%s",
+                    email,
+                    request.remote_addr,
+                )
                 return render_template(
                     "login.html",
                     error="Invalid email or password.",
@@ -276,6 +323,15 @@ def init_auth_routes(app) -> None:
             session["email"] = user.email
             session["is_admin"] = bool(user.is_admin)
 
+            logger = logging.getLogger("user_activity")
+            logger.info(
+                "Login success: user_id=%s username=%s email=%s ip=%s",
+                user.id,
+                user.username,
+                user.email,
+                request.remote_addr,
+            )
+
             return redirect(url_for("index"))
 
         # GET
@@ -283,7 +339,12 @@ def init_auth_routes(app) -> None:
 
     @app.route("/logout")
     def logout():
+        logger = logging.getLogger("user_activity")
+        logger.info(
+            "Logout: user_id=%s username=%s ip=%s",
+            session.get("user_id"),
+            session.get("username"),
+            request.remote_addr,
+        )
         session.clear()
         return redirect(url_for("index"))
-
-
